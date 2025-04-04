@@ -1,11 +1,14 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,6 +27,10 @@ public class Endereco {
 	@ManyToOne
 	@JoinColumn(name = "cidade_id")
 	private Cidade cidades;
+	
+	@OneToOne(mappedBy = "endereco", cascade = CascadeType.ALL)
+	private Pessoa pessoa;
+	
 	
 	public Endereco() {
 		
