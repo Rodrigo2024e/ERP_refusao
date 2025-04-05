@@ -1,4 +1,4 @@
-package com.smartprocessrefusao.erprefusao.entities;
+package com.smartprocessrefusao.erprefusao.cadastros.entities;
 
 import java.util.ArrayList;
 import java.util.List;

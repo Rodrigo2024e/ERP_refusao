@@ -1,4 +1,4 @@
-package com.smartprocessrefusao.erprefusao.entities;
+package com.smartprocessrefusao.erprefusao.cadastros.entities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class Cidade {
 	private long id;
 	
 	@Column(nullable = false)
-	private String nome;
+	private String nomeCidade;
 	private String cep;
 	
 	@OneToMany(mappedBy = "cidades")
@@ -36,9 +36,9 @@ public class Cidade {
 		
 	}
 
-	public Cidade(long id, String nome, String cep) {
+	public Cidade(long id, String nomeCidade, String cep) {
 		this.id = id;
-		this.nome = nome;
+		this.nomeCidade = nomeCidade;
 		this.cep = cep;
 	}
 
@@ -50,12 +50,12 @@ public class Cidade {
 		this.id = id;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getNomeCidade() {
+		return nomeCidade;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setNomeCidade(String nomeCidade) {
+		this.nomeCidade = nomeCidade;
 	}
 
 	public String getCep() {
@@ -69,5 +69,16 @@ public class Cidade {
 	public List<Endereco> getEnderecos() {
 		return enderecos;
 	}
+
+	public Estado getEstados() {
+		return estados;
+	}
+
+	public void setEstados(Estado estados) {
+		this.estados = estados;
+	}
+	
+	
+	
 	
 }

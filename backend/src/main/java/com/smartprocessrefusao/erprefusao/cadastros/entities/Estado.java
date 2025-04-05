@@ -1,4 +1,4 @@
-package com.smartprocessrefusao.erprefusao.entities;
+package com.smartprocessrefusao.erprefusao.cadastros.entities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class Estado {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	private String nome;
+	private String nomeEstado;
 	private String uf;
 	
 	@OneToMany(mappedBy = "estados")
@@ -33,9 +33,9 @@ public class Estado {
 		
 	}
 
-	public Estado(long id, String nome, String uf) {
+	public Estado(long id, String nomeEstado, String uf) {
 		this.id = id;
-		this.nome = nome;
+		this.nomeEstado = nomeEstado;
 		this.uf = uf;
 	}
 
@@ -47,12 +47,12 @@ public class Estado {
 		this.id = id;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getNomeEstado() {
+		return nomeEstado;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setNomeEstado(String nome) {
+		this.nomeEstado = nome;
 	}
 
 	public String getUf() {
@@ -70,11 +70,5 @@ public class Estado {
 	public Pais getPaises() {
 		return paises;
 	}
-
-	public void setPaises(Pais paises) {
-		this.paises = paises;
-	}
-	
-	
 	
 }

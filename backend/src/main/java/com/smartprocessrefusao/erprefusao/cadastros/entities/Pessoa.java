@@ -1,4 +1,4 @@
-package com.smartprocessrefusao.erprefusao.entities;
+package com.smartprocessrefusao.erprefusao.cadastros.entities;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -21,7 +21,7 @@ public abstract class Pessoa implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	private String nome;
+	private String nomePessoa;
 	private String email;
 	private String celular;
 	private String telefone;
@@ -34,9 +34,9 @@ public abstract class Pessoa implements Serializable {
 		
 	}
 
-	public Pessoa(long id, String nome, String email, String celular, String telefone, Endereco endereco) {
+	public Pessoa(long id, String nomePessoa, String email, String celular, String telefone, Endereco endereco) {
 		this.id = id;
-		this.nome = nome;
+		this.nomePessoa = nomePessoa;
 		this.email = email;
 		this.celular = celular;
 		this.telefone = telefone;
@@ -51,12 +51,12 @@ public abstract class Pessoa implements Serializable {
 		this.id = id;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getNomePessoa() {
+		return nomePessoa;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setNomePessoa(String nomePessoa) {
+		this.nomePessoa = nomePessoa;
 	}
 
 	public String getEmail() {

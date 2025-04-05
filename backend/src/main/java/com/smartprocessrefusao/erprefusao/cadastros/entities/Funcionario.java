@@ -1,4 +1,4 @@
-package com.smartprocessrefusao.erprefusao.entities;
+package com.smartprocessrefusao.erprefusao.cadastros.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -19,6 +19,7 @@ public class Funcionario extends Pessoa {
 	@ManyToOne
 	@JoinColumn(name = "setor_id")
 	private Setor setor;
+	
 	
 	public Funcionario() {
 		
@@ -55,6 +56,15 @@ public class Funcionario extends Pessoa {
 	public void setUsuarioSistema(boolean usuarioSistema) {
 		this.usuarioSistema = usuarioSistema;
 	}
+
+	public Setor getSetor() {
+		return setor;
+	}
+
+	public void setSetor(Setor setor) {
+		this.setor = setor;
+	}
+
 	
 	
 }

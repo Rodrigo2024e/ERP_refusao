@@ -1,4 +1,4 @@
-package com.smartprocessrefusao.erprefusao.entities;
+package com.smartprocessrefusao.erprefusao.cadastros.entities;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

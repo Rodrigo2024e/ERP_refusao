@@ -1,4 +1,4 @@
-package com.smartprocessrefusao.erprefusao.entities;
+package com.smartprocessrefusao.erprefusao.cadastros.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
