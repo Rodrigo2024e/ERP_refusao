@@ -1,4 +1,4 @@
-package com.smartprocessrefusao.erprefusao.cadastros.controllers.exceptions;
+package com.smartprocessrefusao.erprefusao.exceptions.controllers;
 
 import java.util.ArrayList;
 import java.util.List;

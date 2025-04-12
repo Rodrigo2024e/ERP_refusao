@@ -2,42 +2,51 @@ package com.smartprocessrefusao.erprefusao.cadastros.dto;
 
 import com.smartprocessrefusao.erprefusao.cadastros.entities.Setor;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class SetorDTO {
 	
-	private long id;
-	private String setor;
+	private Long id;
+	
+	@Size(min = 3, max = 20, message = "O nome do setor deve ter entre 3 a 20 caracteres")
+	@NotBlank(message = "O campo setor é obrigatório")
+	private String setorNome;
+	
+	@Size(min = 3, max = 20, message = "O nome do processo deve ter entre 3 a 20 caracteres")
+	@NotBlank(message = "O campo processo é obrigatório")
 	private String processo;
 	
 	public SetorDTO() {
 		
 	}
 
-	public SetorDTO(long id, String setor, String processo) {
+	public SetorDTO(Long id, String setorNome, String processo) {
 		this.id = id;
-		this.setor = setor;
+		this.setorNome = setorNome;
 		this.processo = processo;
 	}
 
 	public SetorDTO(Setor entity) {
 		id = entity.getId();
-		setor = entity.getsetor();
+		setorNome = entity.getSetorNome();
 		processo = entity.getProcesso();
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public String getSetor() {
-		return setor;
+	public String getSetorNome() {
+		return setorNome;
 	}
 
-	public void setSetor(String setor) {
-		this.setor = setor;
+	public void setSetorNome(String setorNome) {
+		this.setorNome= setorNome;
 	}
 
 	public String getProcesso() {

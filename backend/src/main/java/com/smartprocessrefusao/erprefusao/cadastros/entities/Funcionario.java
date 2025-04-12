@@ -1,6 +1,7 @@
 package com.smartprocessrefusao.erprefusao.cadastros.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
@@ -11,13 +12,13 @@ import jakarta.persistence.Table;
 @PrimaryKeyJoinColumn(name = "id")
 public class Funcionario extends Pessoa {
 	private static final long serialVersionUID = 1L;
-	
+
 	private String cpf;
 	private String rg;
 	private boolean usuarioSistema;
 	
-	@ManyToOne
-	@JoinColumn(name = "setor_id")
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "setor_id", nullable = false)
 	private Setor setor;
 	
 	
@@ -25,7 +26,7 @@ public class Funcionario extends Pessoa {
 		
 	}
 
-	public Funcionario(long id, String nome, String email, String celular, String telefone, Endereco endereco,
+	public Funcionario(Long id, String nome, String email, String celular, String telefone, Endereco endereco,
 			String cpf, String rg, boolean usuarioSistema) {
 		super(id, nome, email, celular, telefone, endereco);
 		this.cpf = cpf;
@@ -63,6 +64,11 @@ public class Funcionario extends Pessoa {
 
 	public void setSetor(Setor setor) {
 		this.setor = setor;
+	}
+
+	public void add(Funcionario funcionarios) {
+		funcionarios.add(funcionarios);
+		
 	}
 
 	

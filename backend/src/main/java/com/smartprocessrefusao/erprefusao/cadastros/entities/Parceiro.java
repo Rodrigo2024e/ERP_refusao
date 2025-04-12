@@ -20,7 +20,7 @@ public class Parceiro extends Pessoa {
 		
 	}
 
-	public Parceiro(long id, String nome, String email, String celular, String telefone, Endereco endereco, String cnpj,
+	public Parceiro(Long id, String nome, String email, String celular, String telefone, Endereco endereco, String cnpj,
 			String ie, boolean fornecedor, boolean cliente, boolean ativo) {
 		super(id, nome, email, celular, telefone, endereco);
 		this.cnpj = cnpj;

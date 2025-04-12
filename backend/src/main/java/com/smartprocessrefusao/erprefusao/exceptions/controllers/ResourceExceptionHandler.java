@@ -1,4 +1,4 @@
-package com.smartprocessrefusao.erprefusao.cadastros.controllers.exceptions;
+package com.smartprocessrefusao.erprefusao.exceptions.controllers;
 
 import java.time.Instant;
 
@@ -9,8 +9,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.smartprocessrefusao.erprefusao.cadastros.services.exceptions.DatabaseException;
-import com.smartprocessrefusao.erprefusao.cadastros.services.exceptions.ResourceNotFoundException;
+import com.smartprocessrefusao.erprefusao.exceptions.services.DatabaseException;
+import com.smartprocessrefusao.erprefusao.exceptions.services.ResourceNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -36,6 +36,18 @@ public class ResourceExceptionHandler {
 		err.setTimestamp(Instant.now());
 		err.setStatus(status.value());
 		err.setError("Database exception");
+		err.setMessage(e.getMessage());
+		err.setPath(request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
+	
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<StandardError> database(IllegalArgumentException e, HttpServletRequest request){
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		StandardError err = new StandardError();
+		err.setTimestamp(Instant.now());
+		err.setStatus(status.value());
+		err.setError("Error insert Uf States");
 		err.setMessage(e.getMessage());
 		err.setPath(request.getRequestURI());
 		return ResponseEntity.status(status).body(err);

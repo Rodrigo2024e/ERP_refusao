@@ -1,4 +1,4 @@
-package com.smartprocessrefusao.erprefusao.cadastros.controllers.exceptions;
+package com.smartprocessrefusao.erprefusao.exceptions.controllers;
 
 import java.io.Serializable;
 import java.time.Instant;

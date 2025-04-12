@@ -1,20 +1,55 @@
 package com.smartprocessrefusao.erprefusao.cadastros.dto;
 
+import org.hibernate.validator.constraints.br.CPF;
+
 import com.smartprocessrefusao.erprefusao.cadastros.entities.Funcionario;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public class FuncionarioDTO {
 
-	private long id;
+	private Long id;
+	
+	@Size(min = 5, max = 50, message = "O campo nome deve ter entre 5 a 50 caracteres")
+	@NotBlank(message = "O campo nome é obrigatório")
 	private String nomePessoa;
+	
+	@NotEmpty(message = "Informe um e-mail válido")
+    @Email
 	private String email;
+	
+	@NotBlank(message = "O celular é obrigatório")
+	@Pattern(regexp = "^\\d{2}9\\d{8}$", message = "O celular deve conter DDD e 9 dígitos, ex: 1199998888")
 	private String celular;
+	
+	@NotBlank(message = "O telefone é obrigatório")
+	@Pattern(regexp = "^\\d{10}$",
+			message = "O tlefone deve conter DDD e 10 dígitos, ex: 119999888")
 	private String telefone;
+	
+	@NotBlank(message = "O campo CPF é obrigatório")
+	@CPF(message = "CPF deve ser no formato, 00.000.000-00")
 	private String cpf;
+	
+	@NotBlank(message = "O campo RG é obrigatório")
+	@Pattern(regexp = "\\d{2}.\\d{3}.\\d{3}-\\d{2}", message = "O RG deve estar no formato 00.000.000-00")
 	private String rg;
+	
+	@NotNull(message = "Informe se o funcionário é usuário do sistema")
 	private boolean usuarioSistema;
-	private long setorId;
+	
+	@NotNull(message = "Informe o setor do funcionário")
+	private Long setorId;
 	private String setorNome;
 	private String setorProcesso;
+	
+	@NotBlank(message = "Informe o endereço do funcionário")
+	private Long enderecoId;
 	private String logradouro;
 	private Integer numero;
 	private String complemento;
@@ -22,17 +57,14 @@ public class FuncionarioDTO {
 	private String cep;
 	private String nomeCidade;
 	private String nomeEstado;
-	private String nomePais;
 
-	
 	public FuncionarioDTO() {
-		
 	}
 
-	public FuncionarioDTO(long id, String nomePessoa, String email, String celular, String telefone, String cpf,
-			String rg, boolean usuarioSistema, long setorId, String setorNome, String setorProcesso, String logradouro,
-			Integer numero, String complemento, String bairro, String cep, String nomeCidade, String nomeEstado,
-			String nomePais) {
+	public FuncionarioDTO(Long id, String nomePessoa, String email, String celular, String telefone, String cpf,
+			String rg, boolean usuarioSistema, Long setorId, String setorNome, String setorProcesso, Long enderecoId,
+			String logradouro, Integer numero, String complemento, String bairro, String cep, String nomeCidade,
+			String nomeEstado) {
 		this.id = id;
 		this.nomePessoa = nomePessoa;
 		this.email = email;
@@ -44,6 +76,7 @@ public class FuncionarioDTO {
 		this.setorId = setorId;
 		this.setorNome = setorNome;
 		this.setorProcesso = setorProcesso;
+		this.enderecoId = enderecoId;
 		this.logradouro = logradouro;
 		this.numero = numero;
 		this.complemento = complemento;
@@ -51,7 +84,7 @@ public class FuncionarioDTO {
 		this.cep = cep;
 		this.nomeCidade = nomeCidade;
 		this.nomeEstado = nomeEstado;
-		this.nomePais = nomePais;
+	
 	}
 
 	public FuncionarioDTO(Funcionario entity) {
@@ -64,24 +97,25 @@ public class FuncionarioDTO {
 		rg = entity.getRg();
 		usuarioSistema = entity.isUsuarioSistema();
 		setorId = entity.getSetor().getId();
-		setorNome = entity.getSetor().getsetor();
+		setorNome = entity.getSetor().getSetorNome();
 		setorProcesso = entity.getSetor().getProcesso();
+		enderecoId = entity.getEndereco().getId();
 		logradouro = entity.getEndereco().getLogradouro();
 		numero = entity.getEndereco().getNumero();
 		complemento = entity.getEndereco().getComplemento();
-		bairro =  entity.getEndereco().getBairro();
+		bairro = entity.getEndereco().getBairro();
 		cep = entity.getEndereco().getCidade().getCep();
 		nomeCidade = entity.getEndereco().getCidade().getNomeCidade();
-		nomeEstado = entity.getEndereco().getCidade().getEstados().getNomeEstado();
-		nomePais =  entity.getEndereco().getCidade().getEstados().getPaises().getNomePais();
+		nomeEstado = entity.getEndereco().getCidade().getEstado().getNome();	
 	}
-	
-	
-	public long getId() {
+
+	// Getters e Setters
+
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -141,11 +175,11 @@ public class FuncionarioDTO {
 		this.usuarioSistema = usuarioSistema;
 	}
 
-	public long getSetorId() {
+	public Long getSetorId() {
 		return setorId;
 	}
 
-	public void setSetorId(long setorId) {
+	public void setSetorId(Long setorId) {
 		this.setorId = setorId;
 	}
 
@@ -163,6 +197,14 @@ public class FuncionarioDTO {
 
 	public void setSetorProcesso(String setorProcesso) {
 		this.setorProcesso = setorProcesso;
+	}
+
+	public Long getEnderecoId() {
+		return enderecoId;
+	}
+
+	public void setEnderecoId(Long enderecoId) {
+		this.enderecoId = enderecoId;
 	}
 
 	public String getLogradouro() {
@@ -221,14 +263,6 @@ public class FuncionarioDTO {
 		this.nomeEstado = nomeEstado;
 	}
 
-	public String getNomePais() {
-		return nomePais;
-	}
-
-	public void setNomePais(String nomePais) {
-		this.nomePais = nomePais;
-	}
-
-	
 	
 }
+

@@ -3,12 +3,14 @@ package com.smartprocessrefusao.erprefusao.cadastros.entities;
 import java.io.Serializable;
 import java.util.Objects;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -20,21 +22,22 @@ public abstract class Pessoa implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 	private String nomePessoa;
 	private String email;
 	private String celular;
 	private String telefone;
 	
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "endereco_id", unique = true)
 	private Endereco endereco;
 	
 	public Pessoa() {
 		
 	}
 
-	public Pessoa(long id, String nomePessoa, String email, String celular, String telefone, Endereco endereco) {
+	public Pessoa(Long id, String nomePessoa, String email, String celular, String telefone, Endereco endereco) {
 		this.id = id;
 		this.nomePessoa = nomePessoa;
 		this.email = email;
@@ -43,11 +46,11 @@ public abstract class Pessoa implements Serializable {
 		this.endereco = endereco;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

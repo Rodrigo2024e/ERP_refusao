@@ -1,4 +1,4 @@
-package com.smartprocessrefusao.erprefusao.cadastros.services.exceptions;
+package com.smartprocessrefusao.erprefusao.exceptions.services;
 
 public class DatabaseException extends RuntimeException{
 	private static final long serialVersionUID = 1L;

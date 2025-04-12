@@ -1,5 +1,7 @@
 package com.smartprocessrefusao.erprefusao.cadastros.entities;
 
+import java.io.Serializable;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,17 +9,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_endereco")
-public class Endereco {
+public class Endereco implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 	private String logradouro;
 	private Integer numero;
 	private String complemento;
@@ -36,7 +38,7 @@ public class Endereco {
 		
 	}
 
-	public Endereco(long id, String logradouro, Integer numero, String complemento, String bairro) {
+	public Endereco(Long id, String logradouro, Integer numero, String complemento, String bairro) {
 		this.id = id;
 		this.logradouro = logradouro;
 		this.numero = numero;
@@ -44,11 +46,11 @@ public class Endereco {
 		this.bairro = bairro;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
