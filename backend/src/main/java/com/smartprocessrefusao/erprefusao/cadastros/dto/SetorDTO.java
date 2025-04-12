@@ -1,5 +1,8 @@
 package com.smartprocessrefusao.erprefusao.cadastros.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.smartprocessrefusao.erprefusao.cadastros.entities.Setor;
 
 import jakarta.validation.constraints.NotBlank;
@@ -16,6 +19,8 @@ public class SetorDTO {
 	@Size(min = 3, max = 20, message = "O nome do processo deve ter entre 3 a 20 caracteres")
 	@NotBlank(message = "O campo processo é obrigatório")
 	private String processo;
+	
+	private List<FuncionarioDTO> funcionarios = new ArrayList<>();
 	
 	public SetorDTO() {
 		
@@ -56,8 +61,13 @@ public class SetorDTO {
 	public void setProcesso(String processo) {
 		this.processo = processo;
 	}
-	
-	
-	
+
+	public List<FuncionarioDTO> getFuncionarios() {
+		return funcionarios;
+	}
+
+	public void setFuncionarios(List<FuncionarioDTO> funcionarios) {
+		this.funcionarios = funcionarios;
+	}
 	
 }

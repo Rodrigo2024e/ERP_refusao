@@ -1,4 +1,4 @@
-package com.smartprocessrefusao.erprefusao.cadastros.controllers;
+package com.smartprocessrefusao.erprefusao.cadastros.resources;
 
 import java.net.URI;
 
@@ -23,7 +23,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/funcionarios")
-public class FuncionarioController {
+public class FuncionarioResource {
 
 	@Autowired
 	private FuncionarioService funcionarioService;

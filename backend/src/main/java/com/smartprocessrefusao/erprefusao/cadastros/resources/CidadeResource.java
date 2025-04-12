@@ -1,4 +1,4 @@
-package com.smartprocessrefusao.erprefusao.cadastros.controllers;
+package com.smartprocessrefusao.erprefusao.cadastros.resources;
 
 import java.net.URI;
 
@@ -23,7 +23,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/cidades")
-public class CidadeController {
+public class CidadeResource {
 	
 	@Autowired
 	private CidadeService cidadeService;

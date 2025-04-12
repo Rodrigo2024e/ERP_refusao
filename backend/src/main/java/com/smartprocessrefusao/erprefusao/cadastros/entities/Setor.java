@@ -64,9 +64,9 @@ public class Setor implements Serializable {
         return funcionarios;
     }
 
- //   public void setFuncionarios(List<Funcionario> funcionarios) {
- //       this.funcionarios = funcionarios;
-//    }
+    public void setFuncionarios(List<Funcionario> funcionarios) {
+        this.funcionarios = funcionarios;
+    }
 
     // Métodos utilitários
     public void adicionarFuncionario(Funcionario funcionario) {
