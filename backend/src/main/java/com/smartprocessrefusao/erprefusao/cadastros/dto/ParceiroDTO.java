@@ -11,6 +11,8 @@ import jakarta.validation.constraints.NotNull;
 
 public class ParceiroDTO {
 
+	private Long id;
+	
 	@NotBlank(message = "O campo CPF é obrigatório")
 	@CNPJ(message = "CNPJ deve ser no formato, 00.000.000/0000-00")
 	private String cnpj;
@@ -40,9 +42,10 @@ public class ParceiroDTO {
 		
 	}
 
-	public ParceiroDTO(String cnpj, String ie, boolean fornecedor, boolean cliente, boolean ativo, Long enderecoId,
+	public ParceiroDTO(Long id, String cnpj, String ie, boolean fornecedor, boolean cliente, boolean ativo, Long enderecoId,
 			String logradouro, Integer numero, String complemento, String bairro, String cep, String nomeCidade,
 			String nomeEstado) {
+		this.id = id;
 		this.cnpj = cnpj;
 		this.ie = ie;
 		this.fornecedor = fornecedor;
@@ -59,6 +62,7 @@ public class ParceiroDTO {
 	}
 	
 	public ParceiroDTO(Parceiro entity) {
+		id = entity.getId();
 		cnpj = entity.getCnpj();
 		ie = entity.getIe();
 		fornecedor = entity.isFornecedor();
@@ -72,6 +76,14 @@ public class ParceiroDTO {
 		cep = entity.getEndereco().getCidade().getCep();
 		nomeCidade = entity.getEndereco().getCidade().getNomeCidade();
 		nomeEstado = entity.getEndereco().getCidade().getEstado().getNome();
+	}
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getCnpj() {

@@ -16,49 +16,50 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.smartprocessrefusao.erprefusao.cadastros.dto.CidadeDTO;
-import com.smartprocessrefusao.erprefusao.cadastros.services.CidadeService;
+import com.smartprocessrefusao.erprefusao.cadastros.dto.SetorDTO;
+import com.smartprocessrefusao.erprefusao.cadastros.services.SetorService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/cidades")
-public class CidadeResource {
-	
+@RequestMapping(value = "/setores")
+public class SetorResource {
+
 	@Autowired
-	private CidadeService cidadeService;
+	private SetorService setorService;
 	
 	@GetMapping
-	public ResponseEntity<Page<CidadeDTO>> findAll(Pageable pageable) {
-		Page<CidadeDTO> list = cidadeService.findAllPaged(pageable);		
+	public ResponseEntity<Page<SetorDTO>> findAll(Pageable pageable) {
+		Page<SetorDTO> list = setorService.findAllPaged(pageable);		
 		return ResponseEntity.ok().body(list);
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<CidadeDTO> findById(@PathVariable Long id){
-		CidadeDTO dto = cidadeService.findById(id);
+	public ResponseEntity<SetorDTO> findById(@PathVariable Long id){
+		SetorDTO dto = setorService.findById(id);
 		return ResponseEntity.ok().body(dto);
 	}
 	
 	@PostMapping
-	public ResponseEntity<CidadeDTO> insert(@Valid @RequestBody CidadeDTO dto) {
-		dto = cidadeService.insert(dto);
+	public ResponseEntity<SetorDTO> insert(@Valid @RequestBody SetorDTO dto) {
+		dto = setorService.insert(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(dto.getId()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<CidadeDTO> update(@PathVariable Long id, @Valid @RequestBody CidadeDTO dto) {
-		dto = cidadeService.update(id, dto);
+	public ResponseEntity<SetorDTO> update(@PathVariable Long id, @Valid @RequestBody SetorDTO dto) {
+		dto = setorService.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}
 	
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
-		cidadeService.delete(id);
+		setorService.delete(id);
 		return ResponseEntity.noContent().build();
-	}	
+	}
 	
-
+	
+	
 }
