@@ -11,9 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.cadastros.dto.SetorDTO;
-import com.smartprocessrefusao.erprefusao.cadastros.entities.Funcionario;
 import com.smartprocessrefusao.erprefusao.cadastros.entities.Setor;
-import com.smartprocessrefusao.erprefusao.cadastros.repositories.FuncionarioRepository;
 import com.smartprocessrefusao.erprefusao.cadastros.repositories.SetorRepository;
 import com.smartprocessrefusao.erprefusao.exceptions.services.DatabaseException;
 import com.smartprocessrefusao.erprefusao.exceptions.services.ResourceNotFoundException;
@@ -25,9 +23,6 @@ public class SetorService {
 
 	@Autowired
 	private SetorRepository setorRepository;
-	
-	@Autowired
-	private FuncionarioRepository funcionarioRepository;
 
 	@Transactional(readOnly = true)
 	public Page<SetorDTO> findAllPaged(Pageable pageable) {
@@ -86,13 +81,6 @@ public class SetorService {
 	    entity.setSetorNome(dto.getSetorNome());
 	    entity.setProcesso(dto.getProcesso());
 
-	    if (dto.getFuncionarios() != null) {
-	    Funcionario funcionario = funcionarioRepository.findById(dto.getFuncionarios().get(0).getId())
-	        .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado"));
-	    entity.adicionarFuncionario(funcionario);
-	    } else {
-	    	entity.setFuncionarios(null);
-	    }   
-
 	}
+	
 }

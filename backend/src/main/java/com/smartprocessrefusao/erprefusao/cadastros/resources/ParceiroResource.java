@@ -34,7 +34,7 @@ public class ParceiroResource {
 		return ResponseEntity.ok().body(list);
 	}
 	
-	@GetMapping(value = "/{id}")
+	@GetMapping(value = "/{idPessoa}")
 	public ResponseEntity<ParceiroDTO> findById(@PathVariable Long id){
 		ParceiroDTO dto = parceiroService.findById(id);
 		return ResponseEntity.ok().body(dto);
@@ -43,10 +43,11 @@ public class ParceiroResource {
 	@PostMapping
 	public ResponseEntity<ParceiroDTO> insert(@Valid @RequestBody ParceiroDTO dto) {
 		dto = parceiroService.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{idPessoa}")
 				.buildAndExpand(dto.getId()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
+	
 	
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<ParceiroDTO> update(@PathVariable Long id, @Valid @RequestBody ParceiroDTO dto) {

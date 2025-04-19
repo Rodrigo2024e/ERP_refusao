@@ -61,4 +61,15 @@ public enum Estado {
 	}
     
     
+	 public static Estado fromUf(String uf) {
+	        for (Estado estado : values()) {
+	            if (estado.name().equalsIgnoreCase(uf)) {
+	                return estado;
+	            }
+	        }
+	        throw new IllegalArgumentException("UF inválida: " + uf);
+	    }
+	
+	
+	
 }

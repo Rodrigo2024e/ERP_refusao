@@ -1,27 +1,25 @@
 package com.smartprocessrefusao.erprefusao.cadastros.entities;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "tb_parceiro")
-@PrimaryKeyJoinColumn(name = "id")
+@Table (name = "tb_parceiro")
 public class Parceiro extends Pessoa {
 	private static final long serialVersionUID = 1L;
 
 	private String cnpj;
 	private String ie;
-	private boolean fornecedor;
-	private boolean cliente;
-	private boolean ativo;
+	private Boolean fornecedor;
+	private Boolean cliente;
+	private Boolean ativo;
 	
 	public Parceiro() {
 		
 	}
 
 	public Parceiro(Long id, String nome, String email, String celular, String telefone, Endereco endereco, String cnpj,
-			String ie, boolean fornecedor, boolean cliente, boolean ativo) {
+			String ie, Boolean fornecedor, Boolean cliente, Boolean ativo) {
 		super(id, nome, email, celular, telefone, endereco);
 		this.cnpj = cnpj;
 		this.ie = ie;
@@ -46,29 +44,30 @@ public class Parceiro extends Pessoa {
 		this.ie = ie;
 	}
 
-	public boolean isFornecedor() {
+	public Boolean getFornecedor() {
 		return fornecedor;
 	}
 
-	public void setFornecedor(boolean fornecedor) {
+	public void setFornecedor(Boolean fornecedor) {
 		this.fornecedor = fornecedor;
 	}
 
-	public boolean isCliente() {
+	public Boolean getCliente() {
 		return cliente;
 	}
 
-	public void setCliente(boolean cliente) {
+	public void setCliente(Boolean cliente) {
 		this.cliente = cliente;
 	}
 
-	public boolean isAtivo() {
+	public Boolean getAtivo() {
 		return ativo;
 	}
 
-	public void setAtivo(boolean ativo) {
+	public void setAtivo(Boolean ativo) {
 		this.ativo = ativo;
 	}
+
 	
 	
 }

@@ -13,8 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.smartprocessrefusao.erprefusao.cadastros.dto.EnderecoDTO;
 import com.smartprocessrefusao.erprefusao.cadastros.entities.Cidade;
 import com.smartprocessrefusao.erprefusao.cadastros.entities.Endereco;
+import com.smartprocessrefusao.erprefusao.cadastros.entities.Pessoa;
 import com.smartprocessrefusao.erprefusao.cadastros.repositories.CidadeRepository;
 import com.smartprocessrefusao.erprefusao.cadastros.repositories.EnderecoRepository;
+import com.smartprocessrefusao.erprefusao.cadastros.repositories.PessoaRepository;
 import com.smartprocessrefusao.erprefusao.exceptions.services.DatabaseException;
 import com.smartprocessrefusao.erprefusao.exceptions.services.ResourceNotFoundException;
 
@@ -28,6 +30,9 @@ public class EnderecoService {
 	
 	@Autowired
 	private CidadeRepository cidadeRepository;
+	
+	@Autowired
+	private PessoaRepository pessoaRepository;
 
 	@Transactional(readOnly = true)
 	public Page<EnderecoDTO> findAllPaged(Pageable pageable) {
@@ -86,14 +91,27 @@ public class EnderecoService {
 	    entity.setLogradouro(dto.getLogradouro());
 	    entity.setNumero(dto.getNumero());
 	    entity.setComplemento(dto.getComplemento());
-	    entity.setBairro(dto.getComplemento());
-	
-	    if (dto.getCidade() != null) {
-		    Cidade cidade = cidadeRepository.findById(dto.getCidade().getId())
-		        .orElseThrow(() -> new ResourceNotFoundException("Cidade não encontrado"));
-		    entity.setCidade(cidade);
+	    entity.setBairro(dto.getBairro());
+	   
+	    //SEM LISTA NA ENTIDADE
+	    if (dto.getCidadeId() != null) {
+		    Cidade cidade = cidadeRepository.findById(dto.getCidadeId())
+		        .orElseThrow(() -> new ResourceNotFoundException("Cidade não encontrada"));
+		    entity.setCidades(cidade);
 		    } else {
-		    	entity.setCidade(null);
+		    	entity.setCidades(null);
 		    }
+	        
+	    
+	    //SEM LISTA NA ENTIDADE
+	    if (dto.getPessoaId() != null) {
+		    Pessoa pessoa = pessoaRepository.findById(dto.getPessoaId())
+		        .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada"));
+		    entity.setPessoa(pessoa);
+		    } else {
+		    	entity.setCidades(null);
+		    }
+		   
 	}
+		   
 }

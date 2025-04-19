@@ -44,9 +44,10 @@ public class FuncionarioResource {
 	public ResponseEntity<FuncionarioDTO> insert(@Valid @RequestBody FuncionarioDTO dto) {
 		dto = funcionarioService.insert(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(dto.getId()).toUri();
+				.buildAndExpand(dto.getIdPessoa()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
+	
 	
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<FuncionarioDTO> update(@PathVariable Long id, @Valid @RequestBody FuncionarioDTO dto) {

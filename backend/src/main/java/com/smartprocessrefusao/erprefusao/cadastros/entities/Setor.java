@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,7 +23,7 @@ public class Setor implements Serializable {
     private String setorNome;
     private String processo;
 
-    @OneToMany(mappedBy = "setor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "setor")
     private List<Funcionario> funcionarios = new ArrayList<>();
 
     public Setor() {
@@ -63,19 +62,5 @@ public class Setor implements Serializable {
     public List<Funcionario> getFuncionarios() {
         return funcionarios;
     }
-
-    public void setFuncionarios(List<Funcionario> funcionarios) {
-        this.funcionarios = funcionarios;
-    }
-
-    // Métodos utilitários
-    public void adicionarFuncionario(Funcionario funcionario) {
-        funcionarios.add(funcionario);
-        funcionario.setSetor(this);
-    }
-
-    public void removerFuncionario(Funcionario funcionario) {
-        funcionarios.remove(funcionario);
-        funcionario.setSetor(null);
-    }
+  
 }

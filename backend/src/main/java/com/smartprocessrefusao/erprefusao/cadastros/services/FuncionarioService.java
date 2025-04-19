@@ -10,11 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.smartprocessrefusao.erprefusao.cadastros.dto.FichaFuncionarioDTO;
 import com.smartprocessrefusao.erprefusao.cadastros.dto.FuncionarioDTO;
-import com.smartprocessrefusao.erprefusao.cadastros.entities.Endereco;
 import com.smartprocessrefusao.erprefusao.cadastros.entities.Funcionario;
 import com.smartprocessrefusao.erprefusao.cadastros.entities.Setor;
-import com.smartprocessrefusao.erprefusao.cadastros.repositories.EnderecoRepository;
 import com.smartprocessrefusao.erprefusao.cadastros.repositories.FuncionarioRepository;
 import com.smartprocessrefusao.erprefusao.cadastros.repositories.SetorRepository;
 import com.smartprocessrefusao.erprefusao.exceptions.services.DatabaseException;
@@ -30,17 +29,14 @@ public class FuncionarioService {
 	
 	@Autowired
 	private SetorRepository setorRepository;
-	
-	@Autowired
-	private EnderecoRepository enderecoRepository;
-	
-	
+
 	@Transactional(readOnly = true)
 	public Page<FuncionarioDTO> findAllPaged(Pageable pageable) {
 		Page<Funcionario> list = funcionarioRepository.findAll(pageable);
 		return list.map(x -> new FuncionarioDTO(x));
 	}
-
+	
+	
 	@Transactional(readOnly = true)
 	public FuncionarioDTO findById(Long id) {
 		try {
@@ -95,9 +91,9 @@ public class FuncionarioService {
 	    entity.setTelefone(dto.getTelefone());
 	    entity.setCpf(dto.getCpf());
 	    entity.setRg(dto.getRg());
-	    entity.setUsuarioSistema(dto.isUsuarioSistema());
-
-	  
+	    entity.setUsuarioSistema(dto.getUsuarioSistema());
+	    
+	  //SEM LISTA - 1 FUNCIONARIO PARA 1 SETOR
 	    if (dto.getSetorId() != null) {
 	    Setor setor = setorRepository.findById(dto.getSetorId())
 	        .orElseThrow(() -> new ResourceNotFoundException("Setor não encontrado"));
@@ -105,15 +101,8 @@ public class FuncionarioService {
 	    } else {
 	    	entity.setSetor(null);
 	    }
-
-	   
-	    if (dto.getEnderecoId() != null) {
-	        Endereco endereco = enderecoRepository.findById(dto.getEnderecoId())
-	            .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado"));
-	        entity.setEndereco(endereco);
-	    } else {
-	        entity.setEndereco(null); 
-	    }
+		    
 	}
+
 	
 }

@@ -42,32 +42,16 @@ public class SetorDTO {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getSetorNome() {
 		return setorNome;
-	}
-
-	public void setSetorNome(String setorNome) {
-		this.setorNome= setorNome;
 	}
 
 	public String getProcesso() {
 		return processo;
 	}
 
-	public void setProcesso(String processo) {
-		this.processo = processo;
-	}
-
 	public List<FuncionarioDTO> getFuncionarios() {
 		return funcionarios;
 	}
 
-	public void setFuncionarios(List<FuncionarioDTO> funcionarios) {
-		this.funcionarios = funcionarios;
-	}
-	
 }

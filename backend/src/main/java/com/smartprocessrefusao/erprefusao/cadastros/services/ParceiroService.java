@@ -11,9 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.cadastros.dto.ParceiroDTO;
-import com.smartprocessrefusao.erprefusao.cadastros.entities.Endereco;
 import com.smartprocessrefusao.erprefusao.cadastros.entities.Parceiro;
-import com.smartprocessrefusao.erprefusao.cadastros.repositories.EnderecoRepository;
 import com.smartprocessrefusao.erprefusao.cadastros.repositories.ParceiroRepository;
 import com.smartprocessrefusao.erprefusao.exceptions.services.DatabaseException;
 import com.smartprocessrefusao.erprefusao.exceptions.services.ResourceNotFoundException;
@@ -25,9 +23,6 @@ public class ParceiroService {
 
 	@Autowired
 	private ParceiroRepository parceiroRepository;
-	
-	@Autowired
-	private EnderecoRepository enderecoRepository;
 	
 	@Transactional(readOnly = true)
 	public Page<ParceiroDTO> findAllPaged(Pageable pageable) {
@@ -83,19 +78,16 @@ public class ParceiroService {
 	}
 	
 	public void copyDtoToEntity(ParceiroDTO dto, Parceiro entity) {
-	    entity.setCnpj(dto.getCnpj());
+		entity.setNomePessoa(dto.getNomePessoa());
+		entity.setEmail(dto.getEmail());
+		entity.setCelular(dto.getCelular());
+		entity.setTelefone(dto.getTelefone());
+		entity.setCnpj(dto.getCnpj());
 	    entity.setIe(dto.getIe());
-	    entity.setFornecedor(dto.isFornecedor());
-	    entity.setCliente(dto.isCliente());
-	    entity.setAtivo(dto.isAtivo());
-	   
-	    if (dto.getEnderecoId() != null) {
-	        Endereco endereco = enderecoRepository.findById(dto.getEnderecoId())
-	            .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado"));
-	        entity.setEndereco(endereco);
-	    } else {
-	        entity.setEndereco(null); 
-	    }
+	    entity.setFornecedor(dto.getFornecedor());
+	    entity.setCliente(dto.getCliente());
+	    entity.setAtivo(dto.getAtivo());
+	    
 	}
 	
 }

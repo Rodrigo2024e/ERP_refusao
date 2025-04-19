@@ -2,13 +2,13 @@ package com.smartprocessrefusao.erprefusao.cadastros.entities;
 
 import java.io.Serializable;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -25,14 +25,14 @@ public class Endereco implements Serializable {
 	private String complemento;
 	private String bairro;
 	
-	
 	@ManyToOne
 	@JoinColumn(name = "cidade_id")
 	private Cidade cidades;
 	
-	@OneToOne(mappedBy = "endereco", cascade = CascadeType.ALL)
+	@OneToOne
+	@MapsId
+	@JoinColumn(name = "pessoa_id")
 	private Pessoa pessoa;
-	
 	
 	public Endereco() {
 		
@@ -86,14 +86,22 @@ public class Endereco implements Serializable {
 		this.bairro = bairro;
 	}
 
-	public Cidade getCidade() {
+	public Pessoa getPessoa() {
+		return pessoa;
+	}
+
+	public void setPessoa(Pessoa pessoa) {
+		this.pessoa = pessoa;
+	}
+
+	public Cidade getCidades() {
 		return cidades;
 	}
 
-	public void setCidade(Cidade cidade) {
-		this.cidades = cidade;
+	public void setCidades(Cidade cidades) {
+		this.cidades = cidades;
 	}
-
-	
 	
 }
+
+

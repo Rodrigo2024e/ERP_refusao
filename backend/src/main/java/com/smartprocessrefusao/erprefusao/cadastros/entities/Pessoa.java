@@ -10,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -23,14 +22,13 @@ public abstract class Pessoa implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
 	private String nomePessoa;
 	private String email;
 	private String celular;
 	private String telefone;
 	
-
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "endereco_id", unique = true)
+	@OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL)
 	private Endereco endereco;
 	
 	public Pessoa() {
@@ -89,7 +87,7 @@ public abstract class Pessoa implements Serializable {
 	public Endereco getEndereco() {
 		return endereco;
 	}
-
+	
 	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
 	}
@@ -108,9 +106,8 @@ public abstract class Pessoa implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Pessoa other = (Pessoa) obj;
-		return id == other.id;
+		return Objects.equals(id, other.id);
 	}
 
-	
 	
 }

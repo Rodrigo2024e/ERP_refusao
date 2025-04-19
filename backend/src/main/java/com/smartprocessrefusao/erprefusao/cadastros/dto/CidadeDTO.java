@@ -1,8 +1,14 @@
+
 package com.smartprocessrefusao.erprefusao.cadastros.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.smartprocessrefusao.erprefusao.cadastros.entities.Cidade;
+import com.smartprocessrefusao.erprefusao.cadastros.entities.Endereco;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -12,102 +18,71 @@ public class CidadeDTO {
 	
 	@Size(min = 5, max = 100, message = "O nome deve ter entre 5 a 100 caracteres")
 	@NotBlank(message = "O campo nome da cidade é obrigatório")
-	private String nomeCidade;
+	private String cidade;
 	
 	@NotBlank(message = "O campo CEP é obrigatório")
 	@Pattern(regexp = "\\d{2}.\\d{3}-\\d{3}", message = "O CEP deve estar no formato 00.000-000.")
 	private String cep;
 	
-	private int estadoId;
+	@NotNull(message = "O campo UF do Estado é obrigatório")
+	private String ufEstado;
 	
-	@NotBlank(message = "O campo UF do Estado é obrigatório")
-	private String estadoUf;
-	
-	private String estadoNome;
-	private String pais;
-	
+	private String nomeEstado;
+
+	private List<EnderecoDTO> enderecos = new ArrayList<>();
 	
 	public CidadeDTO() {
 		
 	}
 
-	public CidadeDTO(Long id, String nomeCidade, String cep, int estadoId, String estadoUf, String estadoNome, String pais) {
+	public CidadeDTO(Long id, String cidade, String cep, String ufEstado, String nomeEstado) {
 		this.id = id;
-		this.nomeCidade = nomeCidade;
+		this.cidade = cidade;
 		this.cep = cep;
-		this.estadoId = estadoId;
-		this.estadoUf = estadoUf;
-		this.estadoNome = estadoNome;
-		this.pais = pais;
-
+		this.ufEstado = ufEstado;
+		this.nomeEstado = nomeEstado;
 		
 	}
 	
 	public CidadeDTO(Cidade entity) {
 		id = entity.getId();
-		nomeCidade = entity.getNomeCidade();
+		cidade = entity.getCidade();
 		cep = entity.getCep();
-	    estadoId = entity.getEstado().getId();
-		estadoUf = entity.getEstado().getUf();
-		estadoNome = entity.getEstado().getNome();
-		pais = entity.getEstado().getPais();	
+		
+		if(entity.getEstado().getUf() != null) {
+			ufEstado = entity.getEstado().getUf();
+			nomeEstado = entity.getEstado().getNome();
+		}
+		
+		if (entity.getEnderecos() != null)
+			for (Endereco end : entity.getEnderecos()) {
+				enderecos.add(new EnderecoDTO(end));
+			}
+		
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getNomeCidade() {
-		return nomeCidade;
-	}
-
-	public void setNomeCidade(String nomeCidade) {
-		this.nomeCidade = nomeCidade;
+	public String getCidade() {
+		return cidade;
 	}
 
 	public String getCep() {
 		return cep;
 	}
 
-	public void setCep(String cep) {
-		this.cep = cep;
-	}
-	
-	public int getEstadoId() {
-		return estadoId;
+	public String getUfEstado() {
+		return ufEstado;
 	}
 
-	public void setEstadoId(int estadoId) {
-		this.estadoId = estadoId;
+	public String getNomeEstado() {
+		return nomeEstado;
 	}
 
-	public String getEstadoUf() {
-		return estadoUf;
+	public List<EnderecoDTO> getEnderecos() {
+		return enderecos;
 	}
 
-	public void setEstadoUf(String estadoUf) {
-		this.estadoUf = estadoUf;
-	}
-
-	public String getEstadoNome() {
-		return estadoNome;
-	}
-
-	public void setEstadoNome(String estadoNome) {
-		this.estadoNome = estadoNome;
-	}
-
-	public String getPais() {
-		return pais;
-	}
-
-	public void setPais(String pais) {
-		this.pais = pais;
-	}
-	
-	
 }

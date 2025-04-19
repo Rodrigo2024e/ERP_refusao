@@ -1,39 +1,40 @@
 package com.smartprocessrefusao.erprefusao.cadastros.entities;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "tb_funcionario")
-@PrimaryKeyJoinColumn(name = "id")
+@Table (name = "tb_funcionario")
 public class Funcionario extends Pessoa {
 	private static final long serialVersionUID = 1L;
 
 	private String cpf;
 	private String rg;
-	private boolean usuarioSistema;
+	private Boolean usuarioSistema;
 	
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "setor_id", nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "setor_id")
 	private Setor setor;
 	
+//	private Endereco enderecos;
 	
 	public Funcionario() {
 		
 	}
 
-	public Funcionario(Long id, String nome, String email, String celular, String telefone, Endereco endereco,
-			String cpf, String rg, boolean usuarioSistema) {
-		super(id, nome, email, celular, telefone, endereco);
+	public Funcionario(Long id, String nomePessoa, String email, String celular, String telefone,
+			Endereco endereco, String cpf, String rg, Boolean usuarioSistema, Setor setor) {
+		super(id, nomePessoa, email, celular, telefone, endereco);
 		this.cpf = cpf;
 		this.rg = rg;
 		this.usuarioSistema = usuarioSistema;
+		this.setor = setor;
+//		this.enderecos = enderecos;
 	}
-
+	
+	
 	public String getCpf() {
 		return cpf;
 	}
@@ -50,11 +51,11 @@ public class Funcionario extends Pessoa {
 		this.rg = rg;
 	}
 
-	public boolean isUsuarioSistema() {
+	public Boolean getUsuarioSistema() {
 		return usuarioSistema;
 	}
 
-	public void setUsuarioSistema(boolean usuarioSistema) {
+	public void setUsuarioSistema(Boolean usuarioSistema) {
 		this.usuarioSistema = usuarioSistema;
 	}
 
@@ -65,12 +66,13 @@ public class Funcionario extends Pessoa {
 	public void setSetor(Setor setor) {
 		this.setor = setor;
 	}
-
-	public void add(Funcionario funcionarios) {
-		funcionarios.add(funcionarios);
-		
+/*
+	public Endereco getEnderecos() {
+		return enderecos;
 	}
 
-	
-	
+	public void setEnderecos(Endereco enderecos) {
+		this.enderecos = enderecos;
+	}
+*/	
 }

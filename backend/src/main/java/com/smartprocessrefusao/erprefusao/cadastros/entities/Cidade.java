@@ -27,7 +27,7 @@ public class Cidade implements Serializable {
 	private Long id;
 	
 	@Column(nullable = false)
-	private String nomeCidade;
+	private String cidade;
 	private String cep;
 	
 	@Enumerated(EnumType.STRING)
@@ -40,9 +40,9 @@ public class Cidade implements Serializable {
 		
 	}
 
-	public Cidade(Long id, String nomeCidade, String cep, Estado estado) {
+	public Cidade(Long id, String cidade, String cep, Estado estado) {
 		this.id = id;
-		this.nomeCidade = nomeCidade;
+		this.cidade = cidade;
 		this.cep = cep;
 		this.estado= estado;	}
 
@@ -54,12 +54,12 @@ public class Cidade implements Serializable {
 		this.id = id;
 	}
 
-	public String getNomeCidade() {
-		return nomeCidade;
+	public String getCidade() {
+		return cidade;
 	}
 
-	public void setNomeCidade(String nomeCidade) {
-		this.nomeCidade = nomeCidade;
+	public void setCidade(String cidade) {
+		this.cidade = cidade;
 	}
 
 	public String getCep() {
@@ -70,13 +70,15 @@ public class Cidade implements Serializable {
 		this.cep = cep;
 	}
 
+	
+	public Estado getEstado() {
+		return estado;
+	}
+
 	public List<Endereco> getEnderecos() {
 		return enderecos;
 	}
 
-	public Estado getEstado() {
-		return estado;
-	}
 
 	public void setEstado(Estado estado) {
 		this.estado = estado;

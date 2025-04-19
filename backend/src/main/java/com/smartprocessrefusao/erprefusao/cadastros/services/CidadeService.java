@@ -11,8 +11,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.cadastros.dto.CidadeDTO;
+import com.smartprocessrefusao.erprefusao.cadastros.dto.EnderecoDTO;
 import com.smartprocessrefusao.erprefusao.cadastros.entities.Cidade;
+import com.smartprocessrefusao.erprefusao.cadastros.entities.Endereco;
 import com.smartprocessrefusao.erprefusao.cadastros.repositories.CidadeRepository;
+import com.smartprocessrefusao.erprefusao.cadastros.repositories.EnderecoRepository;
 import com.smartprocessrefusao.erprefusao.enumerados.Estado;
 import com.smartprocessrefusao.erprefusao.exceptions.services.DatabaseException;
 import com.smartprocessrefusao.erprefusao.exceptions.services.ResourceNotFoundException;
@@ -25,7 +28,9 @@ public class CidadeService {
 	@Autowired
 	private CidadeRepository cidadeRepository;
 	
-
+	@Autowired
+	private EnderecoRepository enderecoRepository;
+	
 	@Transactional(readOnly = true)
 	public Page<CidadeDTO> findAllPaged(Pageable pageable) {
 		Page<Cidade> list = cidadeRepository.findAll(pageable);
@@ -78,22 +83,27 @@ public class CidadeService {
 			throw new DatabaseException("Integrity violation");
 		}
 	}
-	
+
 	public void copyDtoToEntity(CidadeDTO dto, Cidade entity) {
-	    entity.setNomeCidade(dto.getNomeCidade());
+		entity.setCidade(dto.getCidade());
 	    entity.setCep(dto.getCep());
-	
-	    if (dto.getEstadoUf() != null && !dto.getEstadoUf().isEmpty()) {
-	    	   try {
-	               entity.setEstado(Estado.valueOf(dto.getEstadoUf()));
-	           } catch (IllegalArgumentException e) {
-	               throw new IllegalArgumentException("Sigla de estado inválida: " + dto.getEstadoUf());
-	           }
-	       } else {
-	           throw new IllegalArgumentException("Estado não pode ser nulo ou vazio");
-	       }
+
+	    // COM ENUMERADO
+	    if (dto.getUfEstado() != null && !dto.getUfEstado().isEmpty()) {
+	        Estado estado = Estado.fromUf(dto.getUfEstado()); // converte sigla em enum
+	        entity.setEstado(estado);
+	        
+	    } else {
+	        throw new IllegalArgumentException("A UF do estado é obrigatória.");
+	    }
+	    
+	    // COM LISTA NA ENTIDADE
+	    entity.getEnderecos().clear();
+		for (EnderecoDTO citDto : dto.getEnderecos()) {
+			Endereco endereco = enderecoRepository.getReferenceById(citDto.getId());
+			entity.getEnderecos().add(endereco);			
+		}
 
 	}
 	
-
 }
