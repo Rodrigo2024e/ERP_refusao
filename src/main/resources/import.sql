@@ -14,6 +14,7 @@ INSERT INTO tb_people (name, email, cell_phone, telephone) VALUES ('Michele Souz
 INSERT INTO tb_people (name, email, cell_phone, telephone) VALUES ('Apple S/A','aplle@ecoalumi.com.br', '44-12244-1222','44-1442-2222')
 INSERT INTO tb_people (name, email, cell_phone, telephone) VALUES ('TSS S/A','aplle@ecoalumi.com.br', '44-14244-1222','44-1442-2222');
 INSERT INTO tb_people (name, email, cell_phone, telephone) VALUES ('João Carlos','jo@ecoalumi.com.br', '44-14244-1222','44-1442-2222');
+INSERT INTO tb_people (name, email, cell_phone, telephone) VALUES ('Luciano R Carvalho','luciano@gmail.com.br', '44-14244-1222','44-1442-2222');
 
 INSERT INTO tb_city (name_city, uf_state) VALUES ('São Roque', 'SP');
 INSERT INTO tb_city (name_city, uf_state) VALUES ('Maringá', 'PR');
@@ -31,6 +32,7 @@ INSERT INTO tb_sector (name_sector, process) VALUES ('Administração', 'Qualida
 INSERT INTO tb_employee (cpf, rg, sys_user, id, sector_id) VALUES ('100.125.255-49', '20.533.347.45', true, 1, 1);
 INSERT INTO tb_employee (cpf, rg, sys_user, id, sector_id) VALUES ('520.123.255-49', '20.513.347.42', true, 2, 1);
 INSERT INTO tb_employee (cpf, rg, sys_user, id, sector_id) VALUES ('111.121.225-49', '10.113.147.42', true, 3, 8);
+INSERT INTO tb_employee (cpf, rg, sys_user, id, sector_id) VALUES ('111.000.111-49', '10.113.147.42', true, 7, 8);
 
 INSERT INTO tb_partner (cnpj, ie, supplier, client, active, id) VALUES ('00.252.457/0001-45', '114.115.225', true, true, true, 4);
 INSERT INTO tb_partner (cnpj, ie, supplier, client, active, id) VALUES ('00.111.157/0001-45', '114.100.225', true, true, true, 5);

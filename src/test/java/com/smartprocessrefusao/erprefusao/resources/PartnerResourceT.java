@@ -16,13 +16,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smartprocessrefusao.erprefusao.dto.CityDTO;
+import com.smartprocessrefusao.erprefusao.dto.PartnerDTO;
 import com.smartprocessrefusao.erprefusao.tests.TokenUtil;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class CityResourceT {
+public class PartnerResourceT {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -56,11 +56,11 @@ public class CityResourceT {
 	@Test
 	public void insertShouldReturn401WhenInvalidToken() throws Exception {
 
-		CityDTO dto = new CityDTO(null, "Sorocoba", "SP", (long) 1, "São Paulo", "Brasil");
+		PartnerDTO dto = new PartnerDTO(null, "Apple", "apple@gmail.com", "44-12345-7652", "00-0000-0000", "00.252.457/000-45", "114.115.225", true, true, true);
 		String jsonBody = objectMapper.writeValueAsString(dto);
 		
 		ResultActions result =
-				mockMvc.perform(post("/citiesS")
+				mockMvc.perform(post("/partners")
 					.header("Authorization", "Bearer " + invalidToken)
 					.content(jsonBody)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -68,16 +68,16 @@ public class CityResourceT {
 		
 		result.andExpect(status().isUnauthorized());
 	}
-
+	
 //2	
 	@Test
 	public void insertShouldReturn403WhenClientLogged() throws Exception {
 		
-		CityDTO dto = new CityDTO(null, "Sorocoba", "SP", (long) 1, "São Paulo", "Brasil");
+		PartnerDTO dto = new PartnerDTO(null, "Apple", "apple@gmail.com.br", "44-12244-1222", "44-1442-2222", "07.911.773/0001-79", "114.115.225", true, true, true);
 		String jsonBody = objectMapper.writeValueAsString(dto);
 		
 		ResultActions result =
-				mockMvc.perform(post("/cities")
+				mockMvc.perform(post("/partners")
 					.header("Authorization", "Bearer " + clientToken)
 					.content(jsonBody)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -85,57 +85,60 @@ public class CityResourceT {
 		
 		result.andExpect(status().isForbidden());
 	}
-		
+
 //3	
 	@Test
 	public void insertShouldInsertResourceWhenAdminLoggedAndCorrectData() throws Exception {
 
-		CityDTO dto = new CityDTO(null, "Sorocoba", "SP", (long) 26, "São Paulo", "Brasil");
+		PartnerDTO dto = new PartnerDTO(null, "Apple", "apple@gmail.com.br", "44-12244-1222", "44-1442-2222", "07.911.773/0001-79", "114.115.225", true, true, true);
 		String jsonBody = objectMapper.writeValueAsString(dto);
 		
 		ResultActions result =
-				mockMvc.perform(post("/cities")
+				mockMvc.perform(post("/partners")
 					.header("Authorization", "Bearer " + adminToken)
 					.content(jsonBody)
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON));
 		
 		result.andExpect(status().isCreated());
-		result.andExpect(jsonPath("$.id").exists()); 
-		result.andExpect(jsonPath("$.nameCity").value("Sorocoba"));
-		result.andExpect(jsonPath("$.ufState").value("SP"));
-		result.andExpect(jsonPath("$.idState").value((long) 26));
-		result.andExpect(jsonPath("$.nameState").value("São Paulo"));
-		result.andExpect(jsonPath("$.country").value("Brasil"));
-		
+		result.andExpect(jsonPath("$.id").exists()); //Parceiro herda id de pessoa
+		result.andExpect(jsonPath("$.name").value("Apple"));
+		result.andExpect(jsonPath("$.email").value("apple@gmail.com.br"));
+		result.andExpect(jsonPath("$.cellPhone").value("44-12244-1222"));
+		result.andExpect(jsonPath("$.telephone").value("44-1442-2222"));
+		result.andExpect(jsonPath("$.cnpj").value("07.911.773/0001-79"));
+		result.andExpect(jsonPath("$.ie").value("114.115.225"));
+		result.andExpect(jsonPath("$.supplier").value("true"));
+		result.andExpect(jsonPath("$.client").value("true"));
+		result.andExpect(jsonPath("$.active").value("true"));
 	}
-	
+
+
 //4
 	@Test
-	public void insertShouldReturn422WhenAdminLoggedAndBlankCity() throws Exception {
+	public void insertShouldReturn422WhenAdminLoggedAndBlankName() throws Exception {
 
-		CityDTO dto = new CityDTO(null, "", "SP", (long) 1, "São Paulo", "Brasil");
+		PartnerDTO dto = new PartnerDTO(null, " ", "apple@gmail.com.br", "44-12244-1222", "44-1442-2222", "07.911.773/0001-79", "114.115.225", true, true, true);
 		String jsonBody = objectMapper.writeValueAsString(dto);
 		
 		ResultActions result =
-				mockMvc.perform(post("/cities")
+				mockMvc.perform(post("/partners")
 					.header("Authorization", "Bearer " + adminToken)
 					.content(jsonBody)
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON));
 		
 		result.andExpect(status().isUnprocessableEntity());
-		result.andExpect(jsonPath("$.errors[0].fieldName").value("nameCity"));
-		result.andExpect(jsonPath("$.errors[0].message").value("O nome deve ter entre 5 a 100 caracteres"));		
+		result.andExpect(jsonPath("$.errors[0].fieldName").value("name"));
+		result.andExpect(jsonPath("$.errors[0].message").value("O campo nome deve ter entre 3 a 50 caracteres"));		
 
 	}
-	
 //5	
 	@Test
-	public void findAllShouldReturnAllResourcesList() throws Exception {
+	public void findAllShouldReturnAllResourcesPageable() throws Exception {
 		
 		ResultActions result =
-				mockMvc.perform(get("/cities")
+				mockMvc.perform(get("/partners/report")
 					.header("Authorization", "Bearer " + adminToken)
 					.contentType(MediaType.APPLICATION_JSON));
 
@@ -147,14 +150,13 @@ public class CityResourceT {
 	public void findAllShouldReturnAllResourcesSortedByName() throws Exception {
 		
 		ResultActions result =
-				mockMvc.perform(get("/cities")
+				mockMvc.perform(get("/partners/report")
 					.header("Authorization", "Bearer " + adminToken)
 					.contentType(MediaType.APPLICATION_JSON));
 
 		result.andExpect(status().isOk());
-		result.andExpect(jsonPath("$[0].nameCity").value("Maringá"));
-		result.andExpect(jsonPath("$[1].nameCity").value("São José dos Pinhais"));
-		result.andExpect(jsonPath("$[2].nameCity").value("São Roque"));
+		result.andExpect(jsonPath("$.content[0].name").value("Apple S/A"));
+		result.andExpect(jsonPath("$.content[1].name").value("TSS S/A"));
 
 	}
 	

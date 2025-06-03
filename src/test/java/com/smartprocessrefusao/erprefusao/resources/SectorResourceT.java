@@ -16,13 +16,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smartprocessrefusao.erprefusao.dto.CityDTO;
+import com.smartprocessrefusao.erprefusao.dto.SectorDTO;
 import com.smartprocessrefusao.erprefusao.tests.TokenUtil;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class CityResourceT {
+public class SectorResourceT {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -52,15 +52,15 @@ public class CityResourceT {
 		adminToken = tokenUtil.obtainAccessToken(mockMvc, adminUsername, adminPassword);
 		invalidToken = adminToken + "xpto"; // Simulates a wrong token
 	}
-//1
+
 	@Test
 	public void insertShouldReturn401WhenInvalidToken() throws Exception {
 
-		CityDTO dto = new CityDTO(null, "Sorocoba", "SP", (long) 1, "São Paulo", "Brasil");
+		SectorDTO dto = new SectorDTO(null, "Produção", "Expedição");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 		
 		ResultActions result =
-				mockMvc.perform(post("/citiesS")
+				mockMvc.perform(post("/sectors")
 					.header("Authorization", "Bearer " + invalidToken)
 					.content(jsonBody)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -68,16 +68,16 @@ public class CityResourceT {
 		
 		result.andExpect(status().isUnauthorized());
 	}
+	
 
-//2	
 	@Test
 	public void insertShouldReturn403WhenClientLogged() throws Exception {
 		
-		CityDTO dto = new CityDTO(null, "Sorocoba", "SP", (long) 1, "São Paulo", "Brasil");
+		SectorDTO dto = new SectorDTO(null, "Gerência Industrial", "Administração");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 		
 		ResultActions result =
-				mockMvc.perform(post("/cities")
+				mockMvc.perform(post("/sectors")
 					.header("Authorization", "Bearer " + clientToken)
 					.content(jsonBody)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -85,16 +85,16 @@ public class CityResourceT {
 		
 		result.andExpect(status().isForbidden());
 	}
-		
-//3	
-	@Test
-	public void insertShouldInsertResourceWhenAdminLoggedAndCorrectData() throws Exception {
 
-		CityDTO dto = new CityDTO(null, "Sorocoba", "SP", (long) 26, "São Paulo", "Brasil");
+
+	@Test
+	public void insertShouldResourceWhenAdminLoggedAndCorrectData() throws Exception {
+
+		SectorDTO dto = new SectorDTO(null, "Gerência Industrial", "Administração");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 		
 		ResultActions result =
-				mockMvc.perform(post("/cities")
+				mockMvc.perform(post("/sectors")
 					.header("Authorization", "Bearer " + adminToken)
 					.content(jsonBody)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -102,40 +102,37 @@ public class CityResourceT {
 		
 		result.andExpect(status().isCreated());
 		result.andExpect(jsonPath("$.id").exists()); 
-		result.andExpect(jsonPath("$.nameCity").value("Sorocoba"));
-		result.andExpect(jsonPath("$.ufState").value("SP"));
-		result.andExpect(jsonPath("$.idState").value((long) 26));
-		result.andExpect(jsonPath("$.nameState").value("São Paulo"));
-		result.andExpect(jsonPath("$.country").value("Brasil"));
+		result.andExpect(jsonPath("$.nameSector").value("Gerência Industrial"));
+		result.andExpect(jsonPath("$.process").value("Administração"));
 		
 	}
 	
-//4
-	@Test
-	public void insertShouldReturn422WhenAdminLoggedAndBlankCity() throws Exception {
 
-		CityDTO dto = new CityDTO(null, "", "SP", (long) 1, "São Paulo", "Brasil");
+	@Test
+	public void insertShouldReturn422WhenAdminLoggedAndBlankSector() throws Exception {
+
+		SectorDTO dto = new SectorDTO(null, "  ", "Carregamento de fornos");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 		
 		ResultActions result =
-				mockMvc.perform(post("/cities")
+				mockMvc.perform(post("/sectors")
 					.header("Authorization", "Bearer " + adminToken)
 					.content(jsonBody)
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON));
 		
 		result.andExpect(status().isUnprocessableEntity());
-		result.andExpect(jsonPath("$.errors[0].fieldName").value("nameCity"));
-		result.andExpect(jsonPath("$.errors[0].message").value("O nome deve ter entre 5 a 100 caracteres"));		
+		result.andExpect(jsonPath("$.errors[0].fieldName").value("nameSector"));
+		result.andExpect(jsonPath("$.errors[0].message").value("O nome do setor deve ter entre 3 a 15 caracteres"));		
 
 	}
 	
-//5	
+	
 	@Test
-	public void findAllShouldReturnAllResourcesList() throws Exception {
+	public void findAllShouldReturnAllResourcesPageable() throws Exception {
 		
 		ResultActions result =
-				mockMvc.perform(get("/cities")
+				mockMvc.perform(get("/sectors")
 					.header("Authorization", "Bearer " + adminToken)
 					.contentType(MediaType.APPLICATION_JSON));
 
@@ -147,15 +144,14 @@ public class CityResourceT {
 	public void findAllShouldReturnAllResourcesSortedByName() throws Exception {
 		
 		ResultActions result =
-				mockMvc.perform(get("/cities")
+				mockMvc.perform(get("/sectors")
 					.header("Authorization", "Bearer " + adminToken)
 					.contentType(MediaType.APPLICATION_JSON));
 
 		result.andExpect(status().isOk());
-		result.andExpect(jsonPath("$[0].nameCity").value("Maringá"));
-		result.andExpect(jsonPath("$[1].nameCity").value("São José dos Pinhais"));
-		result.andExpect(jsonPath("$[2].nameCity").value("São Roque"));
+		result.andExpect(jsonPath("$[0].nameSector").value("Administração"));
+		result.andExpect(jsonPath("$[1].nameSector").value("Produção"));
 
 	}
-	
+
 }
