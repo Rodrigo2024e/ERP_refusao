@@ -11,16 +11,14 @@ public class SectorDTO {
 	@Size(min = 3, max = 20, message = "O nome do setor deve ter entre 3 a 15 caracteres")
 	private String nameSector;
 	
-//	@Size(min = 3, max = 20, message = "O nome do processo deve ter entre 3 a 16 caracteres")
+	@Size(min = 3, max = 20, message = "O nome do processo deve ter entre 3 a 16 caracteres")
 	private String process;
 	
 	public SectorDTO() {
 		
 	}
 	
-
 	public SectorDTO(Long id, String nameSector, String process) {
-		super();
 		this.id = id;
 		this.nameSector = nameSector;
 		this.process = process;
@@ -33,21 +31,30 @@ public class SectorDTO {
 		process = entity.getProcess();
 		
 	}
-	
+
 	public Long getId() {
 		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getNameSector() {
 		return nameSector;
 	}
 
+	public void setNameSector(String nameSector) {
+		this.nameSector = nameSector;
+	}
+
 	public String getProcess() {
 		return process;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setProcess(String process) {
+		this.process = process;
 	}
+	
 
 }

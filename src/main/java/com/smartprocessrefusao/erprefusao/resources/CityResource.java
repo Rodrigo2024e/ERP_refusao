@@ -28,14 +28,14 @@ public class CityResource {
 	@Autowired
 	private CityService cityService;
 
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping
 	public ResponseEntity<List<CityDTO>> findAll() {
 		List<CityDTO> list = cityService.findAll();	
 		return ResponseEntity.ok().body(list);
 	}
 	
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<CityDTO> findById(@PathVariable Long id){
 		CityDTO dto = cityService.findById(id);

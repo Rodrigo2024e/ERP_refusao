@@ -29,11 +29,11 @@ public class Sector implements IdProjection<Long> {
     public Sector() {
     }
 
-	public Sector(Long id, String nameSector, String process, Set<Employee> employees) {
+	public Sector(Long id, String nameSector, String process) {
 		this.id = id;
 		this.nameSector = nameSector;
 		this.process = process;
-		this.employees = employees;
+		
 	}
 
 	public Long getId() {

@@ -30,14 +30,14 @@ public class AddressResource {
     @Autowired
     private AddressService addressService;
     
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping
     public ResponseEntity<Page<AddressDTO>> findAll(Pageable pageable) {
         Page<AddressDTO> page = addressService.findAll(pageable);
         return ResponseEntity.ok(page);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping(value = "/search")
     public ResponseEntity<Page<AddressDTO>> searchAddresses(
             @RequestParam(name = "nameCity", required = false) String nameCity,
@@ -57,14 +57,14 @@ public class AddressResource {
                 .buildAndExpand(newDto.getIdAddress()).toUri();
         return ResponseEntity.created(uri).body(newDto);
     }
- 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping(value = "/{id}")
 	public ResponseEntity<AddressDTO> update(@PathVariable Long id, @Valid @RequestBody AddressDTO dto) {
 		dto = addressService.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}
     
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
     	addressService.delete(id);

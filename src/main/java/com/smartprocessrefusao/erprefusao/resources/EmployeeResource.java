@@ -32,7 +32,7 @@ public class EmployeeResource {
 	@Autowired
 	private EmployeeService employeeService;
 	
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/report")
 	 public ResponseEntity<Page<ReportEmployeeDTO>> getReportEmployee(
 			 @RequestParam(name = "name", required = false) String name,
@@ -44,7 +44,7 @@ public class EmployeeResource {
 	    
 	}
 
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping
 	public ResponseEntity<Page<EmployeeSectorDTO>>findBySetor(
 			@RequestParam(defaultValue = "") String name,
@@ -55,7 +55,7 @@ public class EmployeeResource {
 		return ResponseEntity.ok(list);
 	}
 
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<EmployeeDTO> findById(@PathVariable Long id){
 		EmployeeDTO dto = employeeService.findById(id);

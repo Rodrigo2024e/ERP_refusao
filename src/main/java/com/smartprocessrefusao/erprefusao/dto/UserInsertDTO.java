@@ -21,5 +21,4 @@ public class UserInsertDTO extends UserDTO {
 		this.password = password;
 	}
 	
-	
 }

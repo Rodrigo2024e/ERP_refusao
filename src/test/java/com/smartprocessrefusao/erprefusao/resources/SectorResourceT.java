@@ -1,5 +1,6 @@
 package com.smartprocessrefusao.erprefusao.resources;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -111,7 +112,7 @@ public class SectorResourceT {
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndBlankSector() throws Exception {
 
-		SectorDTO dto = new SectorDTO(null, "  ", "Carregamento de fornos");
+		SectorDTO dto = new SectorDTO(null, "", "Carregamento de fornos");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 		
 		ResultActions result =
@@ -122,10 +123,31 @@ public class SectorResourceT {
 					.accept(MediaType.APPLICATION_JSON));
 		
 		result.andExpect(status().isUnprocessableEntity());
-		result.andExpect(jsonPath("$.errors[0].fieldName").value("nameSector"));
-		result.andExpect(jsonPath("$.errors[0].message").value("O nome do setor deve ter entre 3 a 15 caracteres"));		
+		result.andExpect(jsonPath("$.errors[*].fieldName", hasItem("nameSector")));
+		result.andExpect(jsonPath("$.errors[*].message", hasItem("O nome do setor deve ter entre 3 a 15 caracteres")));	
 
 	}
+	
+
+	@Test
+	public void insertShouldReturn422WhenAdminLoggedAndBlankProcess() throws Exception {
+
+		SectorDTO dto = new SectorDTO(null, "Produção", "");
+		String jsonBody = objectMapper.writeValueAsString(dto);
+		
+		ResultActions result =
+				mockMvc.perform(post("/sectors")
+					.header("Authorization", "Bearer " + adminToken)
+					.content(jsonBody)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON));
+		
+		result.andExpect(status().isUnprocessableEntity());
+		result.andExpect(jsonPath("$.errors[*].fieldName", hasItem("process")));
+		result.andExpect(jsonPath("$.errors[*].message", hasItem("O nome do processo deve ter entre 3 a 16 caracteres")));	
+
+	}
+	
 	
 	
 	@Test

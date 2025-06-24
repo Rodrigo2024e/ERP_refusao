@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.smartprocessrefusao.erprefusao.dto.CityDTO;
 import com.smartprocessrefusao.erprefusao.entities.City;
@@ -79,8 +80,8 @@ public class CityService {
 
 	public void copyDtoToEntity(CityDTO dto, City entity) {
 		entity.setNameCity(dto.getNameCity());
-
-		        if (dto.getUfState() != null && !dto.getUfState().isBlank()) {
+		
+			if (StringUtils.hasText(dto.getUfState())) {
 		            try {
 		                StateBrazil state = StateBrazil.fromUf(dto.getUfState());
 		                entity.setUfState(state);

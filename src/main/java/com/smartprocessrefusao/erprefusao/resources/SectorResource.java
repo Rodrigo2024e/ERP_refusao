@@ -28,32 +28,15 @@ public class SectorResource {
 	@Autowired
 	private SectorService sectorService;
 	
-/*	
-	@GetMapping
-	public ResponseEntity<Page<SetorDTO>> findAll(
-			@RequestParam(defaultValue = "") String setor,
-			@RequestParam(defaultValue = "0") String funcionarioId,
-			Pageable pageable){
-			Page<SetorDTO> list = setorService.findAllPaged(setor, funcionarioId, pageable);		
-			return ResponseEntity.ok().body(list);
-		}
-*/
 	
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping
 	public ResponseEntity<List<SectorDTO>> findAll(){
 			List<SectorDTO> list = sectorService.findAll();		
 			return ResponseEntity.ok().body(list);
 		}
-/*	
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
-	@GetMapping
-	public ResponseEntity<List<SetorFuncionarioDTO>> findAllSetorWithEmployees(){
-			List<SetorFuncionarioDTO> list = setorService.findAllSetorWithEmployees();		
-			return ResponseEntity.ok().body(list);
-		}
-*/	
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<SectorDTO> findById(@PathVariable Long id){
 		SectorDTO dto = sectorService.findById(id);

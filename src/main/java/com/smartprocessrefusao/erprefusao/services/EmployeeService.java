@@ -43,7 +43,9 @@ public class EmployeeService {
 	@Transactional(readOnly = true)
 	public Page<EmployeeSectorDTO> EmployeesBySector(Long sectorId, String name, Pageable pageable) {
 		
-		Sector sector = (sectorId == 0) ? null:
+		Sector sector = (sectorId == 0)
+			    ? null
+			    : sectorRepository.getReferenceById(sectorId);
 			sectorRepository.getReferenceById(sectorId);
 		Page<Employee> page = employeeRepository.searchBySector(sector, name, pageable);
 		

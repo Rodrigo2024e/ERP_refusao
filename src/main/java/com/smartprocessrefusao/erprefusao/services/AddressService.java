@@ -22,6 +22,7 @@ import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundEx
 
 import jakarta.persistence.EntityNotFoundException;
 
+
 @Service
 public class AddressService {
 
@@ -91,18 +92,15 @@ public class AddressService {
     	    City city = cityRepository.findById(dto.getCityId())
     	        .orElseThrow(() -> new ResourceNotFoundException("Cidade não encontrado"));
     	    entity.setCity(city);
-    	    } else {
-    	    	entity.setCity(null);
-    	    }
+    	 
+        }
         
 			      if (dto.getPeople_id() != null) {
 			    	    People people = peopleRepository.findById(dto.getPeople_id())
 			    	        .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrado"));
 			    	    entity.setPeople(people);
-			    	    } else {
-			    	    	entity.setPeople(null);
-			    	    }
+			      } 
 
-    }
+    	}
    
   }

@@ -100,31 +100,46 @@ public class AddressResourceT {
 	@Test
 	public void insertShouldInsertResourceWhenAdminLoggedAndCorrectData() throws Exception {
 		
-		AddressDTO dto = new AddressDTO(null, "Avenida sem fim", 62, "casa B", "Residencial Moreschi", "87.080-127", (long) 1, "São Roque", "SP", "São Paulo", "Brasil",  (long) 7);
-		String jsonBody = objectMapper.writeValueAsString(dto);
-		
-		ResultActions result =
-				mockMvc.perform(post("/addresses")
-					.header("Authorization", "Bearer " + adminToken)
-					.content(jsonBody)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON));
-		
-		result.andExpect(status().isCreated());
-		result.andExpect(jsonPath("$.idAddress").exists()); 
-		result.andExpect(jsonPath("$.street").value("Avenida sem fim"));
-		result.andExpect(jsonPath("$.numberAddress").value(62));
-		result.andExpect(jsonPath("$.complement").value("casa B"));
-		result.andExpect(jsonPath("$.neighborhood").value("Residencial Moreschi"));
-		result.andExpect(jsonPath("$.zipCode").value("87.080-127"));
-		result.andExpect(jsonPath("$.cityId").value((long) 1));
-		result.andExpect(jsonPath("$.nameCity").value("São Roque"));
-		result.andExpect(jsonPath("$.ufState").value("SP"));
-		result.andExpect(jsonPath("$.nameState").value("São Paulo"));
-		result.andExpect(jsonPath("$.country").value("Brasil"));
-		result.andExpect(jsonPath("$.people_id").value((long) 7));
+	    AddressDTO dto = new AddressDTO(
+	        null,
+	        "Avenida sem fim",
+	        62,
+	        "casa B",
+	        "Residencial Moreschi",
+	        "87.080-127",
+	        1L,
+	        "São Roque",
+	        "SP",
+	        "São Paulo",
+	        "Brasil",
+	        8L
+	    );
 
+	    String jsonBody = objectMapper.writeValueAsString(dto);
+
+	    ResultActions result =
+	        mockMvc.perform(post("/addresses")
+	            .header("Authorization", "Bearer " + adminToken)
+	            .content(jsonBody)
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .accept(MediaType.APPLICATION_JSON));
+
+	    result.andExpect(status().isCreated());
+
+	    result.andExpect(jsonPath("$.idAddress").exists()); 
+	    result.andExpect(jsonPath("$.street").value("Avenida sem fim"));
+	    result.andExpect(jsonPath("$.numberAddress").value(62));
+	    result.andExpect(jsonPath("$.complement").value("casa B"));
+	    result.andExpect(jsonPath("$.neighborhood").value("Residencial Moreschi"));
+	    result.andExpect(jsonPath("$.zipCode").value("87.080-127"));
+	    result.andExpect(jsonPath("$.cityId").value(1L));
+	    result.andExpect(jsonPath("$.nameCity").value("São Roque"));
+	    result.andExpect(jsonPath("$.ufState").value("SP"));
+	    result.andExpect(jsonPath("$.nameState").value("São Paulo"));
+	    result.andExpect(jsonPath("$.country").value("Brasil"));
+	    result.andExpect(jsonPath("$.people_id").value(8L));
 	}
+
 
 //4
 	@Test
@@ -171,8 +186,11 @@ public class AddressResourceT {
 		result.andExpect(jsonPath("$.content[0].nameCity").value("Maringá"));
 		result.andExpect(jsonPath("$.content[1].nameCity").value("Maringá"));
 		result.andExpect(jsonPath("$.content[2].nameCity").value("Maringá"));
-		result.andExpect(jsonPath("$.content[3].nameCity").value("São José dos Pinhais"));
-		result.andExpect(jsonPath("$.content[4].nameCity").value("São Roque"));
+		result.andExpect(jsonPath("$.content[3].nameCity").value("Maringá"));
+		result.andExpect(jsonPath("$.content[4].nameCity").value("São José dos Pinhais"));
+		result.andExpect(jsonPath("$.content[5].nameCity").value("São José dos Pinhais"));
+		result.andExpect(jsonPath("$.content[6].nameCity").value("São Roque"));
+	
 	}
 
 }

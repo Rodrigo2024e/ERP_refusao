@@ -2,8 +2,8 @@
 
 package com.smartprocessrefusao.erprefusao.dto;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.smartprocessrefusao.erprefusao.entities.User;
 
@@ -16,7 +16,7 @@ public class UserDTO {
 	@Email(message = "Favor entrar um email válido")
 	private String email;
 
-	Set<RoleDTO> roles = new HashSet<>();
+	List<RoleDTO> roles = new ArrayList<>();
 	
 	public UserDTO() {
 		
@@ -33,7 +33,6 @@ public class UserDTO {
 		entity.getRoles().forEach(role -> this.roles.add(new RoleDTO(role)));
 	}
 
-	
 	public long getId() {
 		return id;
 	}
@@ -41,7 +40,6 @@ public class UserDTO {
 	public void setId(long id) {
 		this.id = id;
 	}
-
 
 	public String getEmail() {
 		return email;
@@ -51,9 +49,12 @@ public class UserDTO {
 		this.email = email;
 	}
 
-	public Set<RoleDTO> getRoles() {
+	public List<RoleDTO> getRoles() {
 		return roles;
 	}
 
+	public void setRoles(List<RoleDTO> roles) {
+		this.roles = roles;
+	}
 	
 }

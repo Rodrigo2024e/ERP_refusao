@@ -31,7 +31,7 @@ public class PartnerResource {
 	@Autowired
 	private PartnerService partnerService;
 	
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/report")
 	 public ResponseEntity<Page<ReportPartnerDTO>> getReportPartner(
 			 @RequestParam(name = "name", required = false) String name,

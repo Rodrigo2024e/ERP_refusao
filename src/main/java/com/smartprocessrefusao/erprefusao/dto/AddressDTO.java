@@ -26,11 +26,15 @@ public class AddressDTO {
     @Pattern(regexp = "\\d{2}.\\d{3}-\\d{3}", message = "O CEP deve estar no formato 00.000-000.")
     private String zipCode;
 
+    @NotNull(message = "O campo cidade não pode ser nulo")
     private Long cityId;
+    
     private String nameCity;
     private String ufState; 
     private String nameState; 
-    private String country;   
+    private String country; 
+    
+    @NotNull(message = "O campo pessoa não pode ser nulo")
     private Long people_id;
 
     public AddressDTO() {
@@ -54,18 +58,36 @@ public class AddressDTO {
     }
 
     public AddressDTO(Address entity) {
-    	idAddress = entity.getIdAddress();
-        street = entity.getStreet();
-        numberAddress = entity.getNumberAddress();
-        complement = entity.getComplement();
-        neighborhood = entity.getNeighborhood();
-        zipCode = entity.getZipCode();
-        cityId = entity.getCity().getId();
-        nameCity = entity.getCity().getNameCity();
-        ufState = entity.getCity().getUfState().getUf();
-        nameState = entity.getCity().getUfState().getNameState();
-        country =  entity.getCity().getUfState().getCountry();
-        people_id = entity.getPeople().getId();
+        this.idAddress = entity.getIdAddress();
+        this.street = entity.getStreet();
+        this.numberAddress = entity.getNumberAddress();
+        this.complement = entity.getComplement();
+        this.neighborhood = entity.getNeighborhood();
+        this.zipCode = entity.getZipCode();
+
+        if (entity.getCity() != null) {
+            this.cityId = entity.getCity().getId();
+            this.nameCity = entity.getCity().getNameCity();
+
+            if (entity.getCity().getUfState() != null) {
+                this.ufState = entity.getCity().getUfState().getUf(); 
+                this.nameState = entity.getCity().getUfState().getNameState();
+                this.country = entity.getCity().getUfState().getCountry();
+            } else {
+                this.ufState = null; 
+            }
+        } else {
+            this.cityId = null;
+            this.nameCity = null;
+            this.ufState = null;
+        }
+
+        if (entity.getPeople() != null) {
+            this.people_id = entity.getPeople().getId();
+          
+        } else {
+            this.people_id = null;
+        }
     }
 
     public AddressDTO(AddressProjection projection) {
@@ -100,48 +122,96 @@ public class AddressDTO {
 		return idAddress;
 	}
 
+	public void setIdAddress(Long idAddress) {
+		this.idAddress = idAddress;
+	}
+
 	public String getStreet() {
 		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
 	}
 
 	public Integer getNumberAddress() {
 		return numberAddress;
 	}
 
+	public void setNumberAddress(Integer numberAddress) {
+		this.numberAddress = numberAddress;
+	}
+
 	public String getComplement() {
 		return complement;
+	}
+
+	public void setComplement(String complement) {
+		this.complement = complement;
 	}
 
 	public String getNeighborhood() {
 		return neighborhood;
 	}
 
+	public void setNeighborhood(String neighborhood) {
+		this.neighborhood = neighborhood;
+	}
+
 	public String getZipCode() {
 		return zipCode;
+	}
+
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
 	}
 
 	public Long getCityId() {
 		return cityId;
 	}
 
+	public void setCityId(Long cityId) {
+		this.cityId = cityId;
+	}
+
 	public String getNameCity() {
 		return nameCity;
+	}
+
+	public void setNameCity(String nameCity) {
+		this.nameCity = nameCity;
 	}
 
 	public String getUfState() {
 		return ufState;
 	}
 
+	public void setUfState(String ufState) {
+		this.ufState = ufState;
+	}
+
 	public String getNameState() {
 		return nameState;
+	}
+
+	public void setNameState(String nameState) {
+		this.nameState = nameState;
 	}
 
 	public String getCountry() {
 		return country;
 	}
 
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
 	public Long getPeople_id() {
 		return people_id;
+	}
+
+	public void setPeople_id(Long people_id) {
+		this.people_id = people_id;
 	}
 
 	
