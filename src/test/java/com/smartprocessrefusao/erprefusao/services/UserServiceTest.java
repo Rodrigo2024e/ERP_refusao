@@ -82,7 +82,7 @@ public class UserServiceTest {
 
     @Test
     void findByIdShouldReturnDTOWhenIdExists() {
-        User user = UserFactory.createAdminUser();
+        User user = UserFactory.createClientUser();
         when(repository.findById(1L)).thenReturn(Optional.of(user));
 
         UserDTO result = service.findById(1L);
@@ -120,7 +120,7 @@ public class UserServiceTest {
 
     @Test
     void updateShouldReturnDTOWhenIdExists() {
-        User user = UserFactory.createAdminUser();
+        User user = UserFactory.createClientUser();
         UserUpdateDTO dto = new UserUpdateDTO();
         dto.setEmail("luciano@gmail.com");
         dto.setRoles(List.of(new RoleDTO(2L, "ROLE_ADMIN")));

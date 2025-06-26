@@ -64,30 +64,13 @@ public class AddressDTO {
         this.complement = entity.getComplement();
         this.neighborhood = entity.getNeighborhood();
         this.zipCode = entity.getZipCode();
-
-        if (entity.getCity() != null) {
-            this.cityId = entity.getCity().getId();
-            this.nameCity = entity.getCity().getNameCity();
-
-            if (entity.getCity().getUfState() != null) {
-                this.ufState = entity.getCity().getUfState().getUf(); 
-                this.nameState = entity.getCity().getUfState().getNameState();
-                this.country = entity.getCity().getUfState().getCountry();
-            } else {
-                this.ufState = null; 
-            }
-        } else {
-            this.cityId = null;
-            this.nameCity = null;
-            this.ufState = null;
-        }
-
-        if (entity.getPeople() != null) {
-            this.people_id = entity.getPeople().getId();
-          
-        } else {
-            this.people_id = null;
-        }
+        this.cityId = entity.getCity().getId();
+        this.nameCity = entity.getCity().getNameCity();
+        this.ufState = entity.getCity().getUfState().getUf(); 
+        this.nameState = entity.getCity().getUfState().getNameState();
+        this.country = entity.getCity().getUfState().getCountry();
+        this.people_id = entity.getPeople().getId();
+              
     }
 
     public AddressDTO(AddressProjection projection) {

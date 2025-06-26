@@ -157,9 +157,9 @@ public class EmployeeResourceT {
 
 		result.andExpect(status().isOk());
 		result.andExpect(jsonPath("$.content[0].name").value("Luciano R Carvalho"));
-		result.andExpect(jsonPath("$.content[1].name").value("Marcos Paulo"));
-		result.andExpect(jsonPath("$.content[2].name").value("Michele Souza"));
-		result.andExpect(jsonPath("$.content[3].name").value("Pateta Souza"));
+		result.andExpect(jsonPath("$.content[1].name").value("Michele Souza"));
+		result.andExpect(jsonPath("$.content[2].name").value("Pateta Souza"));
+		result.andExpect(jsonPath("$.content[3].name").value("Teste"));
 		result.andExpect(jsonPath("$.content[4].name").value("Zickey Mouse"));
 	}
 	

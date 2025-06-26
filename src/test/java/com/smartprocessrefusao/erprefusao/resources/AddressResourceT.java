@@ -19,11 +19,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartprocessrefusao.erprefusao.dto.AddressDTO;
 import com.smartprocessrefusao.erprefusao.dto.EmployeeDTO;
+import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.People;
+import com.smartprocessrefusao.erprefusao.entities.Sector;
+import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
+import com.smartprocessrefusao.erprefusao.tests.EmployeeFactory;
 import com.smartprocessrefusao.erprefusao.tests.TokenUtil;
 
-@SpringBootTest
 @AutoConfigureMockMvc
+@SpringBootTest
 @Transactional
 public class AddressResourceT {
 
@@ -35,6 +39,9 @@ public class AddressResourceT {
 	
 	@Autowired
 	private TokenUtil tokenUtil;
+	
+	@Autowired
+	private EmployeeRepository employeeRepository;
 
 	private String clientUsername;
 	private String clientPassword;
@@ -43,17 +50,20 @@ public class AddressResourceT {
 	private String clientToken;
 	private String adminToken;
 	private String invalidToken;
+	private Employee employee;
+	private AddressDTO addressDTO;
+	private Sector sector;
 	
 	@Mock
 	private People people;
 	
 	@SuppressWarnings("unused")
-	private EmployeeDTO employee;
+	private EmployeeDTO employeeDTO;
 	
 	@BeforeEach
 	void setUp() throws Exception {
 		
-		employee = new EmployeeDTO(7L, "Luciano R Carvalho","luciano@gmail.com.br", "44-14244-1222","44-1442-2222", "111.000.111-49", "10.113.147.42", true, 1L, "Produção", "Recebimento e classificação de sucata");
+		employeeDTO = new EmployeeDTO(null, "Luciano R Carvalho","luciano@gmail.com.br", "44-14244-1222","44-1442-2222", "111.000.111-49", "10.113.147.42", true, 1L, "Produção", "Recebimento e classificação de sucata");
 	
 		clientUsername = "ana@gmail.com";
 		clientPassword = "123456";
@@ -100,21 +110,8 @@ public class AddressResourceT {
 	@Test
 	public void insertShouldInsertResourceWhenAdminLoggedAndCorrectData() throws Exception {
 		
-	    AddressDTO dto = new AddressDTO(
-	        null,
-	        "Avenida sem fim",
-	        62,
-	        "casa B",
-	        "Residencial Moreschi",
-	        "87.080-127",
-	        1L,
-	        "São Roque",
-	        "SP",
-	        "São Paulo",
-	        "Brasil",
-	        8L
-	    );
-
+		AddressDTO dto = new AddressDTO(null, "Avenida sem fim", 62, "casa B", "Residencial Moreschi", "87.080-127", (long) 1, "São Roque", "SP", "São Paulo", "Brasil",  (long) 8);
+		
 	    String jsonBody = objectMapper.writeValueAsString(dto);
 
 	    ResultActions result =
@@ -138,8 +135,8 @@ public class AddressResourceT {
 	    result.andExpect(jsonPath("$.nameState").value("São Paulo"));
 	    result.andExpect(jsonPath("$.country").value("Brasil"));
 	    result.andExpect(jsonPath("$.people_id").value(8L));
-	}
 
+	}
 
 //4
 	@Test
@@ -193,4 +190,5 @@ public class AddressResourceT {
 	
 	}
 
+	
 }

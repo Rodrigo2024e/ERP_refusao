@@ -20,9 +20,11 @@ import com.smartprocessrefusao.erprefusao.dto.RoleDTO;
 import com.smartprocessrefusao.erprefusao.dto.UserDTO;
 import com.smartprocessrefusao.erprefusao.dto.UserInsertDTO;
 import com.smartprocessrefusao.erprefusao.dto.UserUpdateDTO;
+import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.Role;
 import com.smartprocessrefusao.erprefusao.entities.User;
 import com.smartprocessrefusao.erprefusao.projections.UserDetailsProjection;
+import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.RoleRepository;
 import com.smartprocessrefusao.erprefusao.repositories.UserRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
@@ -41,6 +43,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private RoleRepository roleRepository;
+    
+    @Autowired
+    private EmployeeRepository employeeRepository;
     
     @Transactional(readOnly = true)
     public Page<UserDTO> findAllPaged(Pageable pageable) {
@@ -98,6 +103,16 @@ public class UserService implements UserDetailsService {
     
     private void copyDtoToEntity(UserDTO dto, User entity) {
         entity.setEmail(dto.getEmail());
+        
+        //SEM LISTA - 1 FUNCIONARIO PARA 1 SETOR
+	    if (dto.getEmployee_id() != null) {
+	    Employee employee = employeeRepository.findById(dto.getEmployee_id())
+	        .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+	    entity.setEmployee(employee);
+	    } else {
+	    	entity.setEmployee(null);
+	    }
+	
         
         entity.getRoles().clear();
         for (RoleDTO roleDto : dto.getRoles()) {

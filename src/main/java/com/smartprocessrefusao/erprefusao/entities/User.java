@@ -1,5 +1,4 @@
 
-
 package com.smartprocessrefusao.erprefusao.entities;
 
 import java.util.Collection;
@@ -18,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -33,6 +33,10 @@ public class User implements UserDetails {
 	private String email;
 	private String password;
 	
+	@OneToOne
+	@JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = true)
+	private Employee employee;
+	
 	@ManyToMany
 	@JoinTable(name = "tb_user_role",
 			joinColumns = @JoinColumn(name = "user_id"),
@@ -42,10 +46,13 @@ public class User implements UserDetails {
 	public User() {
 	}
 
-	public User(long id, String email, String password) {
+	public User(long id, String email, String password, Employee employee) {
+		super();
 		this.id = id;
 		this.email = email;
 		this.password = password;
+		this.employee = employee;
+		
 	}
 
 	public long getId() {
@@ -71,12 +78,20 @@ public class User implements UserDetails {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
 	
-	  public void addRole(Role role) {
+	  public Employee getEmployee() {
+		return employee;
+	}
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
+
+	public void addRole(Role role) {
 	    	roles.add(role);
 	    }
 	    
+
 		public boolean hasRole(String roleName) {
 			for (Role role : roles) {
 				if (role.getAuthority().equals(roleName)) {
