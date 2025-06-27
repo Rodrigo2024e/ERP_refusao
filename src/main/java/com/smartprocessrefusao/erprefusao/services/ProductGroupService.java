@@ -1,7 +1,6 @@
 package com.smartprocessrefusao.erprefusao.services;
 
 import java.util.List;
-
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,32 +9,32 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.smartprocessrefusao.erprefusao.dto.UnitOfMeasureDTO;
-import com.smartprocessrefusao.erprefusao.entities.UnitOfMeasure;
-import com.smartprocessrefusao.erprefusao.repositories.UnitOfMeasureRepository;
+import com.smartprocessrefusao.erprefusao.dto.ProductGroupDTO;
+import com.smartprocessrefusao.erprefusao.entities.ProductGroup;
+import com.smartprocessrefusao.erprefusao.repositories.ProductGroupRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class UnitOfMeasureService {
+public class ProductGroupService {
 
 	@Autowired
-	private UnitOfMeasureRepository unitOfMeasureRepository;
+	private ProductGroupRepository productGroupRepository;
 	
 	@Transactional(readOnly = true)
-	public List<UnitOfMeasureDTO> findAll() {
-	    List<UnitOfMeasure> list = unitOfMeasureRepository.findAll();
-	    return list.stream().map(UnitOfMeasureDTO::new).toList();
+	public List<ProductGroupDTO> findAll() {
+	    List<ProductGroup> list = productGroupRepository.findAll();
+	    return list.stream().map(ProductGroupDTO::new).toList();
 	}
 
 	@Transactional(readOnly = true)
-	public UnitOfMeasureDTO findById(Long id) {
+	public ProductGroupDTO findById(Long id) {
 		try {
-		Optional<UnitOfMeasure> obj = unitOfMeasureRepository.findById(id);
-		UnitOfMeasure entity = obj.orElseThrow(()-> new EntityNotFoundException("Entity not found"));
-		return new UnitOfMeasureDTO(entity);
+		Optional<ProductGroup> obj = productGroupRepository.findById(id);
+		ProductGroup entity = obj.orElseThrow(()-> new EntityNotFoundException("Entity not found"));
+		return new ProductGroupDTO(entity);
 		}
 		catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
@@ -44,20 +43,20 @@ public class UnitOfMeasureService {
 	}
 
 	@Transactional
-	public UnitOfMeasureDTO insert(UnitOfMeasureDTO dto) {
-		UnitOfMeasure entity = new UnitOfMeasure();
+	public ProductGroupDTO insert(ProductGroupDTO dto) {
+		ProductGroup entity = new ProductGroup();
 		copyDtoToEntity(dto, entity);
-		entity = unitOfMeasureRepository.save(entity);
-		return new UnitOfMeasureDTO(entity);
+		entity = productGroupRepository.save(entity);
+		return new ProductGroupDTO(entity);
 	}
 	
 	@Transactional
-	public UnitOfMeasureDTO update(Long id, UnitOfMeasureDTO dto) {	
+	public ProductGroupDTO update(Long id, ProductGroupDTO dto) {	
 		try {
-			UnitOfMeasure entity = unitOfMeasureRepository.getReferenceById(id);
+			ProductGroup entity = productGroupRepository.getReferenceById(id);
 			copyDtoToEntity(dto, entity);
-			entity = unitOfMeasureRepository.save(entity);
-			return new UnitOfMeasureDTO(entity);
+			entity = productGroupRepository.save(entity);
+			return new ProductGroupDTO(entity);
 		}
 		catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
@@ -66,20 +65,19 @@ public class UnitOfMeasureService {
 
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public void delete(Long id) {
-		if (!unitOfMeasureRepository.existsById(id)) {
+		if (!productGroupRepository.existsById(id)) {
 			throw new ResourceNotFoundException("Id not found " + id);
 		}
 		try {
-			unitOfMeasureRepository.deleteById(id);
+			productGroupRepository.deleteById(id);
 		}
 		catch (DataIntegrityViolationException e) {
 			throw new DatabaseException("Integrity violation");
 		}
 	}
 	
-	public void copyDtoToEntity(UnitOfMeasureDTO dto, UnitOfMeasure entity) {
+	public void copyDtoToEntity(ProductGroupDTO dto, ProductGroup entity) {
 	    entity.setDescription(dto.getDescription());
-	    entity.setAcronym(dto.getAcronym());
 
 	}
 }

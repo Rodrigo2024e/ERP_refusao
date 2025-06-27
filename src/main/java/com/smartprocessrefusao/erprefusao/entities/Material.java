@@ -2,6 +2,8 @@ package com.smartprocessrefusao.erprefusao.entities;
 
 import java.util.Objects;
 
+import com.smartprocessrefusao.erprefusao.projections.IdProjection;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,7 +14,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_material")
-public class Material {
+public class Material implements IdProjection<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

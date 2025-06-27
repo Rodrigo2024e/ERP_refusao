@@ -23,8 +23,11 @@ public class ProductGroup {
 	@OneToMany(mappedBy = "prodGroup")
 	private List<Material> materials = new ArrayList<>();
 
+	public ProductGroup() {
+		
+	}
+	
 	public ProductGroup(Long id, String description) {
-		super();
 		this.id = id;
 		this.description = description;
 		

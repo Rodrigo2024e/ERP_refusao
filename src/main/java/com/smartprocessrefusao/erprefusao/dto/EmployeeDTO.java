@@ -66,9 +66,6 @@ public class EmployeeDTO {
 		this.process = process;
 	}
 
-
-
-
 	public EmployeeDTO(Employee entity) {
 		id = entity.getId();
 		name = entity.getName();
