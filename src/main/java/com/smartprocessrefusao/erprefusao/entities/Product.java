@@ -8,21 +8,21 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "tb_material")
-public class Material implements IdProjection<Long> {
+@Table(name = "tb_product")
+public class Product implements IdProjection<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String description;
+	private Integer alloy;
+	private Integer inch;
+	private Integer length;
 	
 	@ManyToOne
 	@JoinColumn(name = "uom_id")
@@ -36,15 +36,17 @@ public class Material implements IdProjection<Long> {
 	@JoinColumn(name = "prodGroup_id")
 	private ProductGroup prodGroup;
 	
-	public Material () {
+	public Product () {
 		
 	}
 
-	public Material(Long id, String description, UnitOfMeasure uom, TaxClassification taxclass,
-			ProductGroup prodGroup) {
-		super();
+	public Product(Long id, String description, Integer alloy, Integer inch, Integer length, UnitOfMeasure uom,
+			TaxClassification taxclass, ProductGroup prodGroup) {
 		this.id = id;
 		this.description = description;
+		this.alloy = alloy;
+		this.inch = inch;
+		this.length = length;
 		this.uom = uom;
 		this.taxclass = taxclass;
 		this.prodGroup = prodGroup;
@@ -64,6 +66,30 @@ public class Material implements IdProjection<Long> {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Integer getAlloy() {
+		return alloy;
+	}
+
+	public void setAlloy(Integer alloy) {
+		this.alloy = alloy;
+	}
+
+	public Integer getInch() {
+		return inch;
+	}
+
+	public void setInch(Integer inch) {
+		this.inch = inch;
+	}
+
+	public Integer getLength() {
+		return length;
+	}
+
+	public void setLength(Integer length) {
+		this.length = length;
 	}
 
 	public UnitOfMeasure getUom() {
@@ -103,10 +129,8 @@ public class Material implements IdProjection<Long> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Material other = (Material) obj;
+		Product other = (Product) obj;
 		return Objects.equals(id, other.id);
 	}
-
-
 	
 }

@@ -58,6 +58,7 @@ INSERT INTO tb_product_group (description) VALUES ('Sucata de alumínio');
 INSERT INTO tb_product_group (description) VALUES ('Produto acabado');
 
 INSERT INTO tb_material (description, uom_id, taxclass_id, prod_group_id) VALUES ('Perfil de alumínio', 1, 1, 1);
-INSERT INTO tb_material (description, uom_id, taxclass_id, prod_group_id) VALUES ('Tarugo de alumínio', 1, 2, 2);
 
+
+INSERT INTO tb_product (description, alloy, inch, length, uom_id, taxclass_id, prod_group_id) VALUES ('Tarugo de alumínio', '6060', 5, 6, 1, 2, 2);
 

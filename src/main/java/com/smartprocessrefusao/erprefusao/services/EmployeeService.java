@@ -113,9 +113,7 @@ public class EmployeeService {
 	    Sector setor = sectorRepository.findById(dto.getSectorId())
 	        .orElseThrow(() -> new ResourceNotFoundException("Setor não encontrado"));
 	    entity.setSector(setor);
-	    } else {
-	    	entity.setSector(null);
-	    }
+	    } 
 	}
 }
 	
