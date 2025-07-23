@@ -60,7 +60,7 @@ public class ReportEmployeeDTO {
 	}
 
 	public ReportEmployeeDTO(ReportEmployeeProjection projection) {
-		this.idPessoa = projection.getIdAddress();
+		this.idPessoa = projection.getIdPessoa();
 		this.name = projection.getName();
 		this.cpf = projection.getCpf();
 		this.rg = projection.getRg();

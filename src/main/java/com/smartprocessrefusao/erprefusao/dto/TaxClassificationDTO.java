@@ -45,5 +45,4 @@ public class TaxClassificationDTO {
 		return number;
 	}
 	
-	
 }

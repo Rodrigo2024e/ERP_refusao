@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.smartprocessrefusao.erprefusao.dto.EmployeeDTO;
-import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
 import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeSectorDTO;
 import com.smartprocessrefusao.erprefusao.services.EmployeeService;
 
 import jakarta.validation.Valid;
@@ -45,12 +45,12 @@ public class EmployeeResource {
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-	@GetMapping
-	public ResponseEntity<Page<EmployeeSectorDTO>>findBySetor(
-			@RequestParam(defaultValue = "") String name,
-			@RequestParam(defaultValue = "0") Long sectorId, Pageable pageable){
+	@GetMapping(value = "/report2")
+	public ResponseEntity<Page<ReportEmployeeSectorDTO>>findEmployeeBySetor(
+			 @RequestParam(name = "name", required = false) String name,
+			 @RequestParam(name = "sectorId", required = false) Long sectorId, Pageable pageable){
 		
-		Page<EmployeeSectorDTO> list = employeeService.EmployeesBySector(sectorId, name, pageable);
+		Page<ReportEmployeeSectorDTO> list = employeeService.reportEmployeeBySector(name, sectorId, pageable);
 		
 		return ResponseEntity.ok(list);
 	}

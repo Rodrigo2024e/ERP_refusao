@@ -68,7 +68,7 @@ public class PartnerService {
 	}
 	
 	public void copyDtoToEntity(PartnerDTO dto, Partner entity) {
-		entity.setname(dto.getName());
+		entity.setName(dto.getName());
 		entity.setEmail(dto.getEmail());
 		entity.setCellPhone(dto.getCellPhone());
 		entity.setTelephone(dto.getTelephone());

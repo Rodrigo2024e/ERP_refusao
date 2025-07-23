@@ -15,7 +15,7 @@ public class Employee extends People implements IdProjection<Long> {
 	
 	private String cpf;
 	private String rg;
-	private Boolean sysUser;
+	private boolean sysUser;
 	
 	@OneToOne(mappedBy = "employee")
 	private User user;
@@ -28,8 +28,9 @@ public class Employee extends People implements IdProjection<Long> {
 		
 	}
 
-	public Employee(String cpf, String rg, Boolean sysUser, User user, Sector sector) {
-		super();
+	public Employee(Long id, String name, String email, String cellPhone, String telephone, Address address, String cpf,
+			String rg, boolean sysUser, User user, Sector sector) {
+		super(id, name, email, cellPhone, telephone, address);
 		this.cpf = cpf;
 		this.rg = rg;
 		this.sysUser = sysUser;
@@ -37,44 +38,28 @@ public class Employee extends People implements IdProjection<Long> {
 		this.sector = sector;
 	}
 
-
 	public String getCpf() {
 		return cpf;
 	}
-
 
 	public void setCpf(String cpf) {
 		this.cpf = cpf;
 	}
 
-
 	public String getRg() {
 		return rg;
 	}
-
 
 	public void setRg(String rg) {
 		this.rg = rg;
 	}
 
-
-	public Boolean getSysUser() {
+	public boolean getSysUser() {
 		return sysUser;
 	}
 
-
-	public void setSysUser(Boolean sysUser) {
+	public void setSysUser(boolean sysUser) {
 		this.sysUser = sysUser;
-	}
-
-
-	public Sector getSector() {
-		return sector;
-	}
-
-
-	public void setSector(Sector sector) {
-		this.sector = sector;
 	}
 
 	public User getUser() {
@@ -84,7 +69,15 @@ public class Employee extends People implements IdProjection<Long> {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
+
+	public Sector getSector() {
+		return sector;
+	}
+
+	public void setSector(Sector sector) {
+		this.sector = sector;
+	}
+
 	
 	
 }

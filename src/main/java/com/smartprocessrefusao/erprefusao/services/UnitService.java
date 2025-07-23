@@ -10,32 +10,32 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.smartprocessrefusao.erprefusao.dto.UnitOfMeasureDTO;
-import com.smartprocessrefusao.erprefusao.entities.UnitOfMeasure;
-import com.smartprocessrefusao.erprefusao.repositories.UnitOfMeasureRepository;
+import com.smartprocessrefusao.erprefusao.dto.UnitDTO;
+import com.smartprocessrefusao.erprefusao.entities.Unit;
+import com.smartprocessrefusao.erprefusao.repositories.UnitRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class UnitOfMeasureService {
+public class UnitService {
 
 	@Autowired
-	private UnitOfMeasureRepository unitOfMeasureRepository;
+	private UnitRepository unitRepository;
 	
 	@Transactional(readOnly = true)
-	public List<UnitOfMeasureDTO> findAll() {
-	    List<UnitOfMeasure> list = unitOfMeasureRepository.findAll();
-	    return list.stream().map(UnitOfMeasureDTO::new).toList();
+	public List<UnitDTO> findAll() {
+	    List<Unit> list = unitRepository.findAll();
+	    return list.stream().map(UnitDTO::new).toList();
 	}
 
 	@Transactional(readOnly = true)
-	public UnitOfMeasureDTO findById(Long id) {
+	public UnitDTO findById(Long id) {
 		try {
-		Optional<UnitOfMeasure> obj = unitOfMeasureRepository.findById(id);
-		UnitOfMeasure entity = obj.orElseThrow(()-> new EntityNotFoundException("Entity not found"));
-		return new UnitOfMeasureDTO(entity);
+		Optional<Unit> obj = unitRepository.findById(id);
+		Unit entity = obj.orElseThrow(()-> new EntityNotFoundException("Entity not found"));
+		return new UnitDTO(entity);
 		}
 		catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
@@ -44,20 +44,20 @@ public class UnitOfMeasureService {
 	}
 
 	@Transactional
-	public UnitOfMeasureDTO insert(UnitOfMeasureDTO dto) {
-		UnitOfMeasure entity = new UnitOfMeasure();
+	public UnitDTO insert(UnitDTO dto) {
+		Unit entity = new Unit();
 		copyDtoToEntity(dto, entity);
-		entity = unitOfMeasureRepository.save(entity);
-		return new UnitOfMeasureDTO(entity);
+		entity = unitRepository.save(entity);
+		return new UnitDTO(entity);
 	}
 	
 	@Transactional
-	public UnitOfMeasureDTO update(Long id, UnitOfMeasureDTO dto) {	
+	public UnitDTO update(Long id, UnitDTO dto) {	
 		try {
-			UnitOfMeasure entity = unitOfMeasureRepository.getReferenceById(id);
+			Unit entity = unitRepository.getReferenceById(id);
 			copyDtoToEntity(dto, entity);
-			entity = unitOfMeasureRepository.save(entity);
-			return new UnitOfMeasureDTO(entity);
+			entity = unitRepository.save(entity);
+			return new UnitDTO(entity);
 		}
 		catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
@@ -66,18 +66,18 @@ public class UnitOfMeasureService {
 
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public void delete(Long id) {
-		if (!unitOfMeasureRepository.existsById(id)) {
+		if (!unitRepository.existsById(id)) {
 			throw new ResourceNotFoundException("Id not found " + id);
 		}
 		try {
-			unitOfMeasureRepository.deleteById(id);
+			unitRepository.deleteById(id);
 		}
 		catch (DataIntegrityViolationException e) {
 			throw new DatabaseException("Integrity violation");
 		}
 	}
 	
-	public void copyDtoToEntity(UnitOfMeasureDTO dto, UnitOfMeasure entity) {
+	public void copyDtoToEntity(UnitDTO dto, Unit entity) {
 	    entity.setDescription(dto.getDescription());
 	    entity.setAcronym(dto.getAcronym());
 

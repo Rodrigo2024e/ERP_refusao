@@ -1,23 +1,19 @@
 package com.smartprocessrefusao.erprefusao.services;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -26,114 +22,122 @@ import com.smartprocessrefusao.erprefusao.entities.Sector;
 import com.smartprocessrefusao.erprefusao.repositories.SectorRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
+import com.smartprocessrefusao.erprefusao.tests.SectorFactory;
 
 import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(SpringExtension.class)
 public class SectorServiceTest {
 
-	
-	    @InjectMocks
-	    private SectorService service;
+	@InjectMocks
+	private SectorService service;
 
-	    @Mock
-	    private SectorRepository repository;
+	@Mock
+	private SectorRepository sectorRepository;
 
-	    private Sector sector;
-	    private SectorDTO sectorDTO;
-	    private Long existingId;
-	    private Long nonExistingId;
+	private Sector sector;
+	private SectorDTO sectorDTO;
 
-	    @BeforeEach
-	    void setUp() {
-	        existingId = 1L;
-	        nonExistingId = 999L;
+	@BeforeEach
+	void setUp() {
+		sector = SectorFactory.createSector();
+		sectorDTO = SectorFactory.createSectorDTO();
+	}
 
-	        sector = new Sector();
-	        sector.setId(existingId);
-	        sector.setNameSector("Setor A");
-	        sector.setProcess("Processo A");
+	// 1 - FindAll Sector
+	@Test
+	void findAllShouldReturnSortedList() {
+		List<Sector> list = List.of(sector);
+		when(sectorRepository.findAllByOrderByNameSectorAsc()).thenReturn(list);
 
-	        sectorDTO = new SectorDTO();
-	        sectorDTO.setNameSector("Setor Atualizado");
-	        sectorDTO.setProcess("Processo Atualizado");
+		List<SectorDTO> result = service.findAll();
 
-	        when(repository.findAllByOrderByNameSectorAsc()).thenReturn(List.of(sector));
-	        when(repository.findById(existingId)).thenReturn(Optional.of(sector));
-	        when(repository.findById(nonExistingId)).thenReturn(Optional.empty());
-	        when(repository.getReferenceById(existingId)).thenReturn(sector);
-	        when(repository.getReferenceById(nonExistingId)).thenThrow(EntityNotFoundException.class);
-	        when(repository.save(any())).thenReturn(sector);
-	        when(repository.existsById(existingId)).thenReturn(true);
-	        when(repository.existsById(nonExistingId)).thenReturn(false);
-	    }
+		Assertions.assertFalse(result.isEmpty());
+		Assertions.assertEquals("Producão", result.get(0).getNameSector());
+	}
 
-	    @Test
-	    public void findAllShouldReturnListOfSectorDTO() {
-	        List<SectorDTO> result = service.findAll();
-	        assertFalse(result.isEmpty());
-	        assertEquals(1, result.size());
-	        assertEquals("Setor A", result.get(0).getNameSector());
-	    }
+	// 2 - FindById
+	@Test
+	void findByIdShouldReturnSectorDTOWhenIdExists() {
+		when(sectorRepository.findById(1L)).thenReturn(Optional.of(sector));
 
-	    @Test
-	    public void findByIdShouldReturnSectorDTOWhenIdExists() {
-	        SectorDTO result = service.findById(existingId);
-	        assertNotNull(result);
-	        assertEquals("Setor A", result.getNameSector());
-	    }
+		SectorDTO result = service.findById(1L);
 
-	    @Test
-	    public void findByIdShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
-	        assertThrows(ResourceNotFoundException.class, () -> service.findById(nonExistingId));
-	    }
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals("Producão", result.getNameSector());
+	}
 
-	    @Test
-	    public void insertShouldReturnSectorDTO() {
-	        SectorDTO dto = new SectorDTO();
-	        dto.setNameSector("Setor Atualizado"); // <- Isso precisa estar de acordo com o que você está testando
-	        dto.setProcess("Processo 1");
+	// 3 - FindById-EntityNotFoundException
+	@Test
+	void findByIdShouldThrowResourceNotFoundWhenIdDoesNotExist() {
+		when(sectorRepository.findById(99L)).thenReturn(Optional.empty());
 
-	        when(repository.save(any(Sector.class)))
-	            .thenAnswer(invocation -> {
-	                Sector entity = invocation.getArgument(0);
-	                entity.setId(1L); // Simula salvamento com ID
-	                return entity;
-	            });
+		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+			service.findById(99L);
+		});
+	}
 
-	        SectorDTO result = service.insert(dto);
+	// 4 - Insert Sector
+	@Test
+	void insertShouldSaveSectorAndReturnDTO() {
+		when(sectorRepository.save(Mockito.any())).thenReturn(sector);
 
-	        assertNotNull(result);
-	        assertEquals("Setor Atualizado", result.getNameSector()); // Aqui foi onde falhou
-	        assertEquals("Processo 1", result.getProcess());
-	    }
+		SectorDTO result = service.insert(sectorDTO);
 
-	    @Test
-	    public void updateShouldReturnSectorDTOWhenIdExists() {
-	        SectorDTO result = service.update(existingId, sectorDTO);
-	        assertNotNull(result);
-	        assertEquals(sectorDTO.getNameSector(), result.getNameSector());
-	    }
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals("Producão", result.getNameSector());
+	}
 
-	    @Test
-	    public void updateShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
-	        assertThrows(ResourceNotFoundException.class, () -> service.update(nonExistingId, sectorDTO));
-	    }
+	// 5 - Update Product
+	@Test
+	void updateShouldUpdateWhenIdExists() {
+		when(sectorRepository.getReferenceById(1L)).thenReturn(sector);
+		when(sectorRepository.save(sector)).thenReturn(sector);
 
-	    @Test
-	    public void deleteShouldDoNothingWhenIdExists() {
-	        assertDoesNotThrow(() -> service.delete(existingId));
-	        verify(repository).deleteById(existingId);
-	    }
+		SectorDTO result = service.update(1L, sectorDTO);
 
-	    @Test
-	    public void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
-	        assertThrows(ResourceNotFoundException.class, () -> service.delete(nonExistingId));
-	    }
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals("Producão", result.getNameSector());
+	}
 
-	    @Test
-	    public void deleteShouldThrowDatabaseExceptionWhenIntegrityViolationOccurs() {
-	        doThrow(DataIntegrityViolationException.class).when(repository).deleteById(existingId);
-	        assertThrows(DatabaseException.class, () -> service.delete(existingId));
-	    }
+	// 6 - Update Product Invalid
+	@Test
+	void updateShouldThrowResourceNotFoundWhenIdDoesNotExist() {
+		when(sectorRepository.getReferenceById(99L)).thenThrow(EntityNotFoundException.class);
+
+		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+			service.update(99L, sectorDTO);
+		});
+	}
+
+	// 7 - Delete Id exists
+	@Test
+	void deleteShouldDoNothingWhenIdExists() {
+		when(sectorRepository.existsById(1L)).thenReturn(true);
+		doNothing().when(sectorRepository).deleteById(1L);
+
+		Assertions.assertDoesNotThrow(() -> service.delete(1L));
+	}
+
+	// 8 - Delete Id Does Not exists
+	@Test
+	void deleteShouldThrowResourceNotFoundWhenIdDoesNotExist() {
+		when(sectorRepository.existsById(99L)).thenReturn(false);
+
+		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+			service.delete(99L);
+		});
+	}
+
+	// 9 - Delete Id Dependent
+	@Test
+	void deleteShouldThrowDatabaseExceptionOnIntegrityViolation() {
+		when(sectorRepository.existsById(1L)).thenReturn(true);
+		doThrow(DataIntegrityViolationException.class).when(sectorRepository).deleteById(1L);
+
+		Assertions.assertThrows(DatabaseException.class, () -> {
+			service.delete(1L);
+		});
+	}
+
 }

@@ -1,6 +1,5 @@
 package com.smartprocessrefusao.erprefusao.services;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +28,7 @@ import com.smartprocessrefusao.erprefusao.repositories.RoleRepository;
 import com.smartprocessrefusao.erprefusao.repositories.UserRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
+import com.smartprocessrefusao.erprefusao.util.CustomUserUtil;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -46,6 +46,10 @@ public class UserService implements UserDetailsService {
     
     @Autowired
     private EmployeeRepository employeeRepository;
+    
+    @Autowired
+	private CustomUserUtil customUserUtil;
+
     
     @Transactional(readOnly = true)
     public Page<UserDTO> findAllPaged(Pageable pageable) {
@@ -104,15 +108,12 @@ public class UserService implements UserDetailsService {
     private void copyDtoToEntity(UserDTO dto, User entity) {
         entity.setEmail(dto.getEmail());
         
-        //SEM LISTA - 1 FUNCIONARIO PARA 1 SETOR
-	    if (dto.getEmployee_id() != null) {
-	    Employee employee = employeeRepository.findById(dto.getEmployee_id())
-	        .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
-	    entity.setEmployee(employee);
-	    } else {
-	    	entity.setEmployee(null);
-	    }
-	
+        Optional.ofNullable(dto.getEmployee_id())
+	    .ifPresent(id -> {
+	    	Employee employee = employeeRepository.findById(id)
+	            .orElseThrow(() -> new ResourceNotFoundException("Unidade de medida não encontrada"));
+	        entity.setEmployee(employee);
+	    });
         
         entity.getRoles().clear();
         for (RoleDTO roleDto : dto.getRoles()) {
@@ -138,5 +139,22 @@ public class UserService implements UserDetailsService {
         
         return user;
     }
+    
+	protected User authenticated() {
+		try {
+			String username = customUserUtil.getLoggedUsername();
+			return repository.findByEmail(username).get();
+		}
+		catch (Exception e) {
+			throw new UsernameNotFoundException("Invalid user");
+		}
+	}
+	
+	@Transactional(readOnly = true)
+	public UserDTO getMe() {
+		User entity = authenticated();
+		return new UserDTO(entity);
+	}
+    
 
 }

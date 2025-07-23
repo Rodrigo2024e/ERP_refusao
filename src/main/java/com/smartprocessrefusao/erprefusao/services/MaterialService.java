@@ -15,12 +15,12 @@ import com.smartprocessrefusao.erprefusao.dto.ReportMaterialDTO;
 import com.smartprocessrefusao.erprefusao.entities.Material;
 import com.smartprocessrefusao.erprefusao.entities.ProductGroup;
 import com.smartprocessrefusao.erprefusao.entities.TaxClassification;
-import com.smartprocessrefusao.erprefusao.entities.UnitOfMeasure;
+import com.smartprocessrefusao.erprefusao.entities.Unit;
 import com.smartprocessrefusao.erprefusao.projections.ReportMaterialProjection;
 import com.smartprocessrefusao.erprefusao.repositories.MaterialRepository;
 import com.smartprocessrefusao.erprefusao.repositories.ProductGroupRepository;
 import com.smartprocessrefusao.erprefusao.repositories.TaxClassificationRepository;
-import com.smartprocessrefusao.erprefusao.repositories.UnitOfMeasureRepository;
+import com.smartprocessrefusao.erprefusao.repositories.UnitRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
 
@@ -33,19 +33,17 @@ public class MaterialService {
 	private MaterialRepository materialRepository;
 	
 	@Autowired
-	private UnitOfMeasureRepository unitOfMeasureRepository;
+	private UnitRepository unitRepository;
 	
 	@Autowired
-	private TaxClassificationRepository taxClassificationRepository;
+	private TaxClassificationRepository taxRepository;
 	
 	@Autowired
 	private ProductGroupRepository productGroupRepository;
 
 	   @Transactional(readOnly = true) 
 	    public Page<ReportMaterialDTO> reportMaterial(String description, Long materialId, Pageable pageable) {
-
 	        Page<ReportMaterialProjection> page = materialRepository.searchMaterialByNameOrId(description, materialId, pageable);
-
 	        return page.map(ReportMaterialDTO::new);
 	    }
 	
@@ -99,23 +97,26 @@ public class MaterialService {
 	public void copyDtoToEntity(MaterialDTO dto, Material entity) {
 	    entity.setDescription(dto.getDescription());
 	  
-	    if (dto.getUom_id() != null) {
-	    UnitOfMeasure unit = unitOfMeasureRepository.findById(dto.getUom_id())
-	        .orElseThrow(() -> new ResourceNotFoundException("Unidade de medida não encontrada"));
-	    entity.setUom(unit);
-	    }
-	
-			  if (dto.getTaxclass_id() != null) {
-				    TaxClassification taxClass = taxClassificationRepository.findById(dto.getTaxclass_id())
-				        .orElseThrow(() -> new ResourceNotFoundException("Classificação Fiscal não encontrada"));
-				    entity.setTaxclass(taxClass);
-			  }
-	  
-					  if (dto.getProdGroup_id() != null) {
-						    ProductGroup prodGroup = productGroupRepository.findById(dto.getProdGroup_id())
-						        .orElseThrow(() -> new ResourceNotFoundException("Grupo de Mercadoria não encontrada"));
-						    entity.setProdGroup(prodGroup);
-					  }
+	    Optional.ofNullable(dto.getUomId())
+	    .ifPresent(id -> {
+	        Unit unit = unitRepository.findById(id)
+	            .orElseThrow(() -> new ResourceNotFoundException("Unidade de medida não encontrada"));
+	        entity.setUom(unit);
+	    });
+	    
+	    Optional.ofNullable(dto.getTaxclassId())
+	    .ifPresent(id -> {
+	        TaxClassification taxClass = taxRepository.findById(id)
+	            .orElseThrow(() -> new ResourceNotFoundException("Classificação Fiscal não encontrada"));
+	        entity.setTaxclass(taxClass);
+	    });
+
+	    Optional.ofNullable(dto.getProdGroupId())
+	    .ifPresent(id -> {
+	        ProductGroup prodGroup = productGroupRepository.findById(id)
+	            .orElseThrow(() -> new ResourceNotFoundException("Grupo de Mercadoria não encontrada"));
+	        entity.setProdGroup(prodGroup);
+	    });
 					  
 	  
 	}

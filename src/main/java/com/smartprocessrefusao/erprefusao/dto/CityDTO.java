@@ -47,48 +47,24 @@ public class CityDTO {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getNameCity() {
 		return nameCity;
-	}
-
-	public void setNameCity(String nameCity) {
-		this.nameCity = nameCity;
 	}
 
 	public String getUfState() {
 		return ufState;
 	}
 
-	public void setUfState(String ufState) {
-		this.ufState = ufState;
-	}
-
 	public Long getIdState() {
 		return idState;
-	}
-
-	public void setIdState(Long idState) {
-		this.idState = idState;
 	}
 
 	public String getNameState() {
 		return nameState;
 	}
 
-	public void setNameState(String nameState) {
-		this.nameState = nameState;
-	}
-
 	public String getCountry() {
 		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
 	}
 
 	

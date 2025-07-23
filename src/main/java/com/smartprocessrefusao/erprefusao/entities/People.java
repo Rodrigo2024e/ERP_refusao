@@ -59,7 +59,7 @@ public abstract class People implements Serializable {
 		return name;
 	}
 
-	public void setname(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 

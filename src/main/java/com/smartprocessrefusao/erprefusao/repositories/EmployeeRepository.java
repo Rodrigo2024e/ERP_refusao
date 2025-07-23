@@ -9,21 +9,44 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.Employee;
-import com.smartprocessrefusao.erprefusao.entities.Sector;
 import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeProjection;
+import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeSectorProjection;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-	@Query("SELECT obj FROM Employee obj JOIN FETCH obj.sector " +
-		       "WHERE (:sectorId IS NULL OR obj.sector = :sectorId) " +
-		       "AND (:name IS NULL OR LOWER(obj.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
-		       "ORDER BY obj.name")
-		Page<Employee> searchBySector(Sector sectorId, String name, Pageable pageable);
-	
 	@Query(value = """
             SELECT
-                p.id AS id,
+                p.id AS idPessoa,
+                p.name AS name,
+                e.sector_id AS sectorId,
+                s.name_sector AS nameSector,
+                s.process AS process,
+                e.sys_user 
+              
+            FROM tb_people p
+            INNER JOIN tb_employee e ON e.id = p.id
+            INNER JOIN tb_sector s ON s.id = e.sector_id
+            WHERE (:sectorId IS NULL OR s.id = :sectorId)
+            AND (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
+            ORDER BY p.name
+        """,
+        countQuery = """
+            SELECT COUNT(p.id)
+            FROM tb_people p
+        	INNER JOIN tb_employee e ON e.id = p.id
+            INNER JOIN tb_sector s ON s.id = e.sector_id
+            WHERE (:sectorId IS NULL OR s.id = :sectorId)
+            AND (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
+        """,
+        nativeQuery = true)
+    Page<ReportEmployeeSectorProjection> searchEmployeeBySector(
+            @Param("name") String name, @Param("sectorId") Long sectorId, Pageable pageable);
+
+
+	@Query(value = """
+            SELECT
+                p.id AS idPessoa,
                 p.name AS name,
                 e.cpf AS cpf,
                 e.rg AS rg,
@@ -65,5 +88,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
         nativeQuery = true)
     Page<ReportEmployeeProjection> searchPeopleNameByOrId(
             @Param("name") String name, @Param("peopleId") Long peopleId, Pageable pageable);
-}
 
+}

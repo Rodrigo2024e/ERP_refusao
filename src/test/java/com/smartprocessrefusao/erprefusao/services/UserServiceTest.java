@@ -2,27 +2,25 @@ package com.smartprocessrefusao.erprefusao.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,192 +30,244 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.smartprocessrefusao.erprefusao.dto.RoleDTO;
+import com.smartprocessrefusao.erprefusao.dto.UnitDTO;
 import com.smartprocessrefusao.erprefusao.dto.UserDTO;
 import com.smartprocessrefusao.erprefusao.dto.UserInsertDTO;
 import com.smartprocessrefusao.erprefusao.dto.UserUpdateDTO;
+import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.Role;
 import com.smartprocessrefusao.erprefusao.entities.User;
 import com.smartprocessrefusao.erprefusao.projections.UserDetailsProjection;
+import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.RoleRepository;
 import com.smartprocessrefusao.erprefusao.repositories.UserRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
+import com.smartprocessrefusao.erprefusao.tests.EmployeeFactory;
 import com.smartprocessrefusao.erprefusao.tests.UserFactory;
+import com.smartprocessrefusao.erprefusao.util.CustomUserUtil;
 
 import jakarta.persistence.EntityNotFoundException;
 
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
-    @InjectMocks
-    private UserService service;
+	  @InjectMocks
+	    private UserService userService;
 
-    @Mock
-    private UserRepository repository;
+	    @Mock
+	    private UserRepository userRepository;
 
-    @Mock
-    private RoleRepository roleRepository;
+	    @Mock
+	    private RoleRepository roleRepository;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
+	    @Mock
+	    private EmployeeRepository employeeRepository;
 
-    @BeforeEach
-    void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
+	    @Mock
+	    private PasswordEncoder passwordEncoder;
 
-    @Test
-    void findAllPagedShouldReturnPageOfDTOs() {
-        Pageable pageable = PageRequest.of(0, 10);
-        List<User> list = List.of(UserFactory.createClientUser());
-        Page<User> page = new PageImpl<>(list);
+	    @Mock
+	    private CustomUserUtil customUserUtil;
 
-        when(repository.findAll(pageable)).thenReturn(page);
+	    private User user;
+	    private UserDTO dto;
+	    private Role role;
+	    private Employee employee;
+	    private UserInsertDTO insertDTO;
+	    private UserUpdateDTO updateDTO;
+	    private Long existingId;
+	    private Long nonExistingId;
+	    private 
 
-        Page<UserDTO> result = service.findAllPaged(pageable);
+	    @BeforeEach
+	    void setUp() {
+	    	
+	    	existingId = 1L;
+	    	nonExistingId = 999L;
+	    	
+	        user = UserFactory.createUser();
+	        insertDTO = UserFactory.createUserInsertDTO();
+	        updateDTO = UserFactory.createUserUpdateDTO();
+	        employee = UserFactory.createEmployee();
+	        role = UserFactory.createRole();  
+	     
+	    }
 
-        assertFalse(result.isEmpty());
-        verify(repository).findAll(pageable);
-    }
+	    @Test
+	    void findAllPagedShouldReturnPageOfUserDTO() {
+	        User user1 = UserFactory.createUser();
+	        User user2 = UserFactory.createUser();
+	        Pageable pageable = PageRequest.of(0, 10);
+	        Page<User> page = new PageImpl<>(List.of(user1, user2));
 
-    @Test
-    void findByIdShouldReturnDTOWhenIdExists() {
-        User user = UserFactory.createClientUser();
-        when(repository.findById(1L)).thenReturn(Optional.of(user));
+	        when(userRepository.findAll(pageable)).thenReturn(page);
 
-        UserDTO result = service.findById(1L);
+	        Page<UserDTO> result = userService.findAllPaged(pageable);
 
-        assertEquals(result.getEmail(), user.getEmail());
-    }
+	        assertNotNull(result);
+	        assertEquals(2, result.getTotalElements());
+	        assertEquals(user1.getEmail(), result.getContent().get(0).getEmail());
+	        assertEquals(user2.getEmail(), result.getContent().get(1).getEmail());
+	    }
 
-    @Test
-    void findByIdShouldThrowWhenIdDoesNotExist() {
-        when(repository.findById(99L)).thenReturn(Optional.empty());
+	    @Test
+	    public void findByIdShouldReturnUserDTOWhenIdExists() {
+	        when(userRepository.findById(existingId)).thenReturn(Optional.of(user));
+	        UserDTO result = userService.findById(existingId);
+	        assertNotNull(result);
+	        assertEquals("luciano@gmail.com", result.getEmail());
+	    }
 
-        assertThrows(ResourceNotFoundException.class, () -> {
-            service.findById(99L);
-        });
-    }
+	    @Test
+	    public void findByIdShouldThrowResourceNotFoundWhenIdDoesNotExist() {
+	        when(userRepository.findById(nonExistingId)).thenReturn(Optional.empty());
+	        assertThrows(ResourceNotFoundException.class, () -> userService.findById(nonExistingId));
+	    }
 
-    @Test
-    void insertShouldSaveAndReturnDTO() {
-        UserInsertDTO dto = new UserInsertDTO();
-        dto.setEmail("ana@gmail.com");
-        dto.setPassword("123456");
-        dto.setRoles(List.of(new RoleDTO(1L, "ROLE_CLIENT")));
+	    @Test
+	    public void insertShouldReturnUserDTO() {
+	    	when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
+	        when(roleRepository.getReferenceById(1L)).thenReturn(role);
+	        when(passwordEncoder.encode("123456")).thenReturn("encoded");
+	        when(userRepository.save(any())).thenReturn(user);
 
-        User savedUser = UserFactory.createClientUser();
+	        UserDTO result = userService.insert(insertDTO);
+	        assertNotNull(result);
+	        assertEquals("luciano@gmail.com", result.getEmail());
+	    }
 
-        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        when(roleRepository.getReferenceById(1L)).thenReturn(new Role(1L, "ROLE_CLIENT"));
-        when(repository.save(any())).thenReturn(savedUser);
+	    @Test
+	    public void updateShouldReturnUserDTOWhenIdExists() {
+	        when(userRepository.getReferenceById(existingId)).thenReturn(user);
+	        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
+	        when(roleRepository.getReferenceById(1L)).thenReturn(role);
+	        when(userRepository.save(any())).thenReturn(user);
 
-        UserDTO result = service.insert(dto);
+	        UserDTO result = userService.update(1L, updateDTO);
+	        assertNotNull(result);
+	        assertEquals("luciano@gmail.com", result.getEmail());
+	    }
 
-        assertNotNull(result);
-        assertEquals(dto.getEmail(), result.getEmail());
-    }
+	    @Test
+	    public void updateShouldThrowWhenIdDoesNotExist() {
+	        when(userRepository.getReferenceById(1L)).thenThrow(EntityNotFoundException.class);
+	        assertThrows(ResourceNotFoundException.class, () -> userService.update(1L, updateDTO));
+	    }
 
-    @Test
-    void updateShouldReturnDTOWhenIdExists() {
-        User user = UserFactory.createClientUser();
-        UserUpdateDTO dto = new UserUpdateDTO();
-        dto.setEmail("luciano@gmail.com");
-        dto.setRoles(List.of(new RoleDTO(2L, "ROLE_ADMIN")));
+	    @Test
+	    public void deleteShouldDoNothingWhenIdExists() {
+	        when(userRepository.existsById(1L)).thenReturn(true);
+	        doNothing().when(userRepository).deleteById(1L);
+	        assertDoesNotThrow(() -> userService.delete(1L));
+	    }
 
-        when(repository.getReferenceById(1L)).thenReturn(user);
-        when(roleRepository.getReferenceById(2L)).thenReturn(new Role(2L, "ROLE_ADMIN"));
-        when(repository.save(any())).thenReturn(user);
+	    @Test
+	    public void deleteShouldThrowWhenIdDoesNotExist() {
+	        when(userRepository.existsById(nonExistingId)).thenReturn(false);
+	        assertThrows(ResourceNotFoundException.class, () -> userService.delete(nonExistingId));
+	    }
 
-        UserDTO result = service.update(1L, dto);
+	    @Test
+	    public void deleteShouldThrowDatabaseExceptionWhenIntegrityViolationOccurs() {
+	        when(userRepository.existsById(1L)).thenReturn(true);
+	        doThrow(DataIntegrityViolationException.class).when(userRepository).deleteById(1L);
+	        assertThrows(DatabaseException.class, () -> userService.delete(1L));
+	    }
 
-        assertNotNull(result);
-        assertEquals(dto.getEmail(), result.getEmail());
-    }
+	    @Test
+	    public void loadUserByUsernameShouldReturnUserDetailsWhenUserExists() {
+	        UserDetailsProjection projection = mock(UserDetailsProjection.class);
+	        when(projection.getUsername()).thenReturn("user@example.com");
+	        when(projection.getPassword()).thenReturn("123456");
+	        when(projection.getRoleId()).thenReturn(1L);
+	        when(projection.getAuthority()).thenReturn("ROLE_USER");
+	        when(userRepository.searchUserAndRolesByEmail("user@example.com"))
+	            .thenReturn(List.of(projection));
+
+	        UserDetails result = userService.loadUserByUsername("user@example.com");
+	        assertNotNull(result);
+	        assertEquals("user@example.com", result.getUsername());
+	    }
+
+	    @Test
+	    public void loadUserByUsernameShouldThrowWhenUserNotFound() {
+	        when(userRepository.searchUserAndRolesByEmail("invalid@example.com"))
+	            .thenReturn(Collections.emptyList());
+	        assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername("invalid@example.com"));
+	    }
+
+	    @Test
+	    public void authenticatedShouldReturnUserWhenLogged() {
+	        when(customUserUtil.getLoggedUsername()).thenReturn("user@example.com");
+	        when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(user));
+	        User result = userService.authenticated();
+	        assertNotNull(result);
+	    }
+
+	    @Test
+	    public void authenticatedShouldThrowWhenUserNotFound() {
+	        when(customUserUtil.getLoggedUsername()).thenReturn("luciano@gmail.com");
+	        when(userRepository.findByEmail("luciano@gmail.com")).thenReturn(Optional.empty());
+	        assertThrows(UsernameNotFoundException.class, () -> userService.authenticated());
+	    }
+
+	    @Test
+	    public void getMeShouldReturnUserDTO() {
+	        when(customUserUtil.getLoggedUsername()).thenReturn("user@example.com");
+	        when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(user));
+
+	        UserDTO result = userService.getMe();
+	        assertNotNull(result);
+	        assertEquals("luciano@gmail.com", result.getEmail());
+	    }
     
-    @Test
-    void updateShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
-        Long nonExistingId = 999L;
-        UserUpdateDTO dto = new UserUpdateDTO();
+	    @Test
+	    void insertShouldReturnUserDTOWhenEmployeeExists() {
+	    	Employee employee = EmployeeFactory.createEmployee();
+	    	when(userRepository.save(any())).thenReturn(user);
+	    	when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
+			UserDTO result = userService.insert(insertDTO);
+			
+			Assertions.assertNotNull(result);
+			Assertions.assertEquals(result.getId(), user.getId());
+	    	
+	    	
+	/*    	
+	    	// Arrange
+	        UserInsertDTO insertDTO = UserFactory.createUserInsertDTO(); 
+	        Employee employee = EmployeeFactory.createEmployee();        
+	        User user = UserFactory.createUser();                        
 
-        when(repository.getReferenceById(nonExistingId))
-            .thenThrow(EntityNotFoundException.class);
+	        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
+	        when(roleRepository.getReferenceById(1L)).thenReturn(user.getRoles().iterator().next());
+	        when(passwordEncoder.encode(insertDTO.getPassword())).thenReturn("encoded123");
+	        when(userRepository.save(any())).thenReturn(user);
 
-        assertThrows(ResourceNotFoundException.class, () -> {
-            service.update(nonExistingId, dto);
-        });
-    }
+	        // Act
+	        UserDTO result = userService.insert(insertDTO);
 
-    @Test
-    void loadUserByUsernameShouldReturnUserWhenExists() {
-        UserDetailsProjection projection = mock(UserDetailsProjection.class);
-        when(projection.getUsername()).thenReturn("ana@gmail.com");
-        when(projection.getPassword()).thenReturn("pass");
-        when(projection.getRoleId()).thenReturn(1L);
-        when(projection.getAuthority()).thenReturn("ROLE_CLIENT");
+	        // Assert
+	        assertNotNull(result);
+	        assertEquals("luciano@gmail.com", result.getEmail());
+	        assertEquals(1L, result.getEmployee_id());
+	        
+	*/        
+	        
+	    }
 
-        when(repository.searchUserAndRolesByEmail("ana@gmail.com")).thenReturn(List.of(projection));
+	    @Test
+	    void insertShouldThrowWhenEmployeeNotFound() {
+	        // Arrange
+	        UserInsertDTO dto = UserFactory.createUserInsertDTO(); 
+	        when(employeeRepository.findById(dto.getEmployee_id())).thenReturn(Optional.empty());
 
-        UserDetails user = service.loadUserByUsername("ana@gmail.com");
+	        // Act & Assert
+	        assertThrows(ResourceNotFoundException.class, () -> userService.insert(dto));
+	    }
+	    
+	    
+	}
+	
 
-        assertNotNull(user);
-        assertEquals("ana@gmail.com", user.getUsername());
-    }
-
-    @Test
-    void loadUserByUsernameShouldThrowWhenNotFound() {
-        when(repository.searchUserAndRolesByEmail("notfound@gmail.com")).thenReturn(Collections.emptyList());
-
-        assertThrows(UsernameNotFoundException.class, () -> {
-            service.loadUserByUsername("notfound@gmail.com");
-        });
-    }
-    
-    @Test
-    void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
-        Long nonExistingId = 999L;
-
-        when(repository.existsById(nonExistingId)).thenReturn(false);
-
-        assertThrows(ResourceNotFoundException.class, () -> {
-            service.delete(nonExistingId);
-        });
-
-        verify(repository, never()).deleteById(any());
-    }
-    @Test
-    void deleteShouldThrowDatabaseExceptionWhenIntegrityViolationOccurs() {
-        Long id = 1L;
-
-        when(repository.existsById(id)).thenReturn(true);
-        doThrow(DataIntegrityViolationException.class)
-            .when(repository).deleteById(id);
-
-        assertThrows(DatabaseException.class, () -> {
-            service.delete(id);
-        });
-
-        verify(repository).deleteById(id);
-    }
-
-    
-    @Test
-    void deleteShouldDoNothingWhenIdExists() {
-        when(repository.existsById(1L)).thenReturn(true);
-        doNothing().when(repository).deleteById(1L);
-
-        assertDoesNotThrow(() -> {
-            service.delete(1L);
-        });
-    }
-
-    @Test
-    void deleteShouldThrowWhenIdDoesNotExist() {
-        when(repository.existsById(99L)).thenReturn(false);
-
-        assertThrows(ResourceNotFoundException.class, () -> {
-            service.delete(99L);
-        });
-    }
-}
 

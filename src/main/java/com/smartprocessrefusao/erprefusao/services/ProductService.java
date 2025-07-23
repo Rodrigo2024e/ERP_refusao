@@ -15,12 +15,12 @@ import com.smartprocessrefusao.erprefusao.dto.ReportProductDTO;
 import com.smartprocessrefusao.erprefusao.entities.Product;
 import com.smartprocessrefusao.erprefusao.entities.ProductGroup;
 import com.smartprocessrefusao.erprefusao.entities.TaxClassification;
-import com.smartprocessrefusao.erprefusao.entities.UnitOfMeasure;
+import com.smartprocessrefusao.erprefusao.entities.Unit;
 import com.smartprocessrefusao.erprefusao.projections.ReportProductProjection;
 import com.smartprocessrefusao.erprefusao.repositories.ProductGroupRepository;
 import com.smartprocessrefusao.erprefusao.repositories.ProductRepository;
 import com.smartprocessrefusao.erprefusao.repositories.TaxClassificationRepository;
-import com.smartprocessrefusao.erprefusao.repositories.UnitOfMeasureRepository;
+import com.smartprocessrefusao.erprefusao.repositories.UnitRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
 
@@ -33,10 +33,10 @@ public class ProductService {
 	private ProductRepository ProductRepository;
 	
 	@Autowired
-	private UnitOfMeasureRepository unitOfMeasureRepository;
+	private UnitRepository unitRepository;
 	
 	@Autowired
-	private TaxClassificationRepository taxClassificationRepository;
+	private TaxClassificationRepository taxRepository;
 	
 	@Autowired
 	private ProductGroupRepository productGroupRepository;
@@ -95,35 +95,36 @@ public class ProductService {
 			throw new DatabaseException("Integrity violation");
 		}
 	}
-	
+
 	public void copyDtoToEntity(ProductDTO dto, Product entity) {
 	    entity.setDescription(dto.getDescription());
 	    entity.setAlloy(dto.getAlloy());
 	    entity.setInch(dto.getInch());
 	    entity.setLength(dto.getLength());
+	   	    
+	    Optional.ofNullable(dto.getUomId())
+	    .ifPresent(id -> {
+	        Unit unit = unitRepository.findById(id)
+	            .orElseThrow(() -> new ResourceNotFoundException("Unidade de medida não encontrada"));
+	        entity.setUom(unit);
+	    });
 	    
-	  
-	    if (dto.getUom_id() != null) {
-	    UnitOfMeasure unit = unitOfMeasureRepository.findById(dto.getUom_id())
-	        .orElseThrow(() -> new ResourceNotFoundException("Unidade de medida não encontrada"));
-	    entity.setUom(unit);
-	    }
-	
-			  if (dto.getTaxClass_id() != null) {
-				    TaxClassification taxClass = taxClassificationRepository.findById(dto.getTaxClass_id())
-				        .orElseThrow(() -> new ResourceNotFoundException("Classificação Fiscal não encontrada"));
-				    entity.setTaxclass(taxClass);
-			  }
-	  
-					  if (dto.getProdGroup_id() != null) {
-						    ProductGroup prodGroup = productGroupRepository.findById(dto.getProdGroup_id())
-						        .orElseThrow(() -> new ResourceNotFoundException("Grupo de Mercadoria não encontrada"));
-						    entity.setProdGroup(prodGroup);
-					  }
-					  
-	  
+	    Optional.ofNullable(dto.getTaxClassId())
+	    .ifPresent(id -> {
+	        TaxClassification taxClass = taxRepository.findById(id)
+	            .orElseThrow(() -> new ResourceNotFoundException("Classificação Fiscal não encontrada"));
+	        entity.setTaxclass(taxClass);
+	    });
+
+	    Optional.ofNullable(dto.getProdGroupId())
+	    .ifPresent(id -> {
+	        ProductGroup prodGroup = productGroupRepository.findById(id)
+	            .orElseThrow(() -> new ResourceNotFoundException("Grupo de Mercadoria não encontrada"));
+	        entity.setProdGroup(prodGroup);
+	    });
+
 	}
-	
+
 }
 	
 

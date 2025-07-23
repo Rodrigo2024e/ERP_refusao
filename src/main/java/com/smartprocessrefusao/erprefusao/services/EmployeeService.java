@@ -11,11 +11,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.dto.EmployeeDTO;
-import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
 import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeSectorDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.Sector;
 import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeProjection;
+import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeSectorProjection;
 import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.SectorRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
@@ -34,24 +35,16 @@ public class EmployeeService {
 	 
 	   @Transactional(readOnly = true) 
 	    public Page<ReportEmployeeDTO> reportEmployee(String name, Long peopleId, Pageable pageable) {
-
 	        Page<ReportEmployeeProjection> page = employeeRepository.searchPeopleNameByOrId(name, peopleId, pageable);
-
 	        return page.map(ReportEmployeeDTO::new);
-	    }
-	 
-	@Transactional(readOnly = true)
-	public Page<EmployeeSectorDTO> EmployeesBySector(Long sectorId, String name, Pageable pageable) {
-		
-		Sector sector = (sectorId == 0)
-			    ? null
-			    : sectorRepository.getReferenceById(sectorId);
-			sectorRepository.getReferenceById(sectorId);
-		Page<Employee> page = employeeRepository.searchBySector(sector, name, pageable);
-		
-		return page.map(x ->  new EmployeeSectorDTO(x));
-	}
-	
+	    }   
+	   
+	   @Transactional(readOnly = true) 
+	    public Page<ReportEmployeeSectorDTO> reportEmployeeBySector(String name, Long sectorId, Pageable pageable) {
+	        Page<ReportEmployeeSectorProjection> page = employeeRepository.searchEmployeeBySector(name, sectorId, pageable);
+	        return page.map(ReportEmployeeSectorDTO::new);
+	    }   
+	   
 	@Transactional(readOnly = true)
 	public EmployeeDTO findById(Long id) {
 		try {
@@ -100,7 +93,7 @@ public class EmployeeService {
 	}
 	
 	public void copyDtoToEntity(EmployeeDTO dto, Employee entity) {
-	    entity.setname(dto.getName());
+	    entity.setName(dto.getName());
 	    entity.setEmail(dto.getEmail());
 	    entity.setCellPhone(dto.getCellPhone());
 	    entity.setTelephone(dto.getTelephone());
@@ -108,12 +101,14 @@ public class EmployeeService {
 	    entity.setRg(dto.getRg());
 	    entity.setSysUser(dto.getSysUser());
 	    
-	  //SEM LISTA - 1 FUNCIONARIO PARA 1 SETOR
-	    if (dto.getSectorId() != null) {
-	    Sector setor = sectorRepository.findById(dto.getSectorId())
-	        .orElseThrow(() -> new ResourceNotFoundException("Setor não encontrado"));
-	    entity.setSector(setor);
-	    } 
+	    Optional.ofNullable(dto.getSectorId())
+	    .ifPresent(id -> {
+	    	Sector sector = sectorRepository.findById(id)
+	            .orElseThrow(() -> new ResourceNotFoundException("Setor não encontrado"));
+	        entity.setSector(sector);
+	    });
+	    
+	    
 	}
 }
 	

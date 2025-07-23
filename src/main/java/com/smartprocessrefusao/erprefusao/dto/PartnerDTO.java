@@ -82,81 +82,42 @@ public class PartnerDTO {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getCellPhone() {
 		return cellPhone;
-	}
-
-	public void setCellPhone(String cellPhone) {
-		this.cellPhone = cellPhone;
 	}
 
 	public String getTelephone() {
 		return telephone;
 	}
 
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
-	}
-
 	public String getCnpj() {
 		return cnpj;
-	}
-
-	public void setCnpj(String cnpj) {
-		this.cnpj = cnpj;
 	}
 
 	public String getIe() {
 		return ie;
 	}
 
-	public void setIe(String ie) {
-		this.ie = ie;
-	}
-
 	public Boolean getSupplier() {
 		return supplier;
-	}
-
-	public void setSupplier(Boolean supplier) {
-		this.supplier = supplier;
 	}
 
 	public Boolean getClient() {
 		return client;
 	}
 
-	public void setClient(Boolean client) {
-		this.client = client;
-	}
-
 	public Boolean getActive() {
 		return active;
 	}
 
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-
+	
 
 }

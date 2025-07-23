@@ -29,13 +29,6 @@ public class AddressResource {
 
     @Autowired
     private AddressService addressService;
-    
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-    @GetMapping
-    public ResponseEntity<Page<AddressDTO>> findAll(Pageable pageable) {
-        Page<AddressDTO> page = addressService.findAll(pageable);
-        return ResponseEntity.ok(page);
-    }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping(value = "/search")

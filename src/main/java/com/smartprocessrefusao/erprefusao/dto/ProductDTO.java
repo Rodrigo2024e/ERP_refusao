@@ -9,35 +9,33 @@ public class ProductDTO {
 	private Integer alloy;
 	private Integer inch;
 	private Integer length;
-	private Long uom_id;
+	private Long uomId;
 	private String acronym;
-	private Long taxClass_id;
+	private Long taxClassId;
 	private String taxClass;
 	private String number;
-	private Long prodGroup_id;
+	private Long prodGroupId;
 	private String prodGroup;
 	
 	public ProductDTO() {
 		
 	}
 
-	public ProductDTO(Long id, String description, Integer alloy, Integer inch, Integer length, Long uom_id,
-			String acronym, Long taxClass_id, String taxClass, String number, Long prodGroup_id, String prodGroup) {
+	public ProductDTO(Long id, String description, Integer alloy, Integer inch, Integer length, Long uomId,
+			String acronym, Long taxClassId, String taxClass, String number, Long prodGroupId, String prodGroup) {
 		this.id = id;
 		this.description = description;
 		this.alloy = alloy;
 		this.inch = inch;
 		this.length = length;
-		this.uom_id = uom_id;
+		this.uomId = uomId;
 		this.acronym = acronym;
-		this.taxClass_id = taxClass_id;
+		this.taxClassId = taxClassId;
 		this.taxClass = taxClass;
 		this.number = number;
-		this.prodGroup_id = prodGroup_id;
+		this.prodGroupId = prodGroupId;
 		this.prodGroup = prodGroup;
 	}
-
-
 
 	public ProductDTO(Product entity) {
 		id = entity.getId();
@@ -45,12 +43,12 @@ public class ProductDTO {
 		alloy = entity.getAlloy();
 		inch = entity.getInch();
 		length = entity.getLength();
-		uom_id = entity.getUom().getId();
+		uomId = entity.getUom().getId();
 		acronym = entity.getUom().getAcronym();
-		taxClass_id = entity.getTaxclass().getId();
+		taxClassId = entity.getTaxclass().getId();
 		taxClass = entity.getTaxclass().getDescription();
 		number = entity.getTaxclass().getNumber();
-		prodGroup_id = entity.getProdGroup().getId();
+		prodGroupId = entity.getProdGroup().getId();
 		prodGroup = entity.getProdGroup().getDescription();
 	}
 
@@ -74,16 +72,16 @@ public class ProductDTO {
 		return length;
 	}
 
-	public Long getUom_id() {
-		return uom_id;
+	public Long getUomId() {
+		return uomId;
 	}
 
 	public String getAcronym() {
 		return acronym;
 	}
 
-	public Long getTaxClass_id() {
-		return taxClass_id;
+	public Long getTaxClassId() {
+		return taxClassId;
 	}
 
 	public String getTaxClass() {
@@ -94,8 +92,8 @@ public class ProductDTO {
 		return number;
 	}
 
-	public Long getProdGroup_id() {
-		return prodGroup_id;
+	public Long getProdGroupId() {
+		return prodGroupId;
 	}
 
 	public String getProdGroup() {

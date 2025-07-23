@@ -6,10 +6,10 @@ public class EmployeeSectorDTO {
 	
 	private Long id;
 	private String name;
-	private Boolean sysUser;
 	private Long sectorId;
 	private String nameSector;
 	private String process;
+	private boolean sysUser;
 	
 	public EmployeeSectorDTO() {
 		
@@ -18,13 +18,13 @@ public class EmployeeSectorDTO {
 	public EmployeeSectorDTO(Employee entity) {
 		id = entity.getId();
 		name = entity.getName();
-		sysUser = entity.getSysUser();
 		sectorId = entity.getSector().getId();
 		nameSector = entity.getSector().getNameSector();
 		process = entity.getSector().getProcess();
+		sysUser = entity.getSysUser();
 		
 	}
-
+	
 	public Long getId() {
 		return id;
 	}

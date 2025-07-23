@@ -1,50 +1,46 @@
 package com.smartprocessrefusao.erprefusao.tests;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import com.smartprocessrefusao.erprefusao.dto.AddressDTO;
 import com.smartprocessrefusao.erprefusao.entities.Address;
-import com.smartprocessrefusao.erprefusao.entities.City;
-import com.smartprocessrefusao.erprefusao.entities.Employee;
-import com.smartprocessrefusao.erprefusao.enumerados.StateBrazil;
 
-public class AddressFactory {
-
-	  public static City createCity() {
-	        City city = new City();
-	        city.setId(1L);
-	        city.setNameCity("São Paulo");
-	        city.setUfState(StateBrazil.SP);
-	        return city;
-	    }
-
-	    public static Employee createPeople() {
-	        Employee employee = new Employee();
-	        employee.setId(10L);
-	        return employee;
-	    }
+	public class AddressFactory {
 
 	    public static Address createAddress() {
 	        Address address = new Address();
-	        address.setIdAddress(100L);
-	        address.setStreet("Rua das Flores");
+	        address.setIdAddress(1L);
+	        address.setStreet("Rua A");
 	        address.setNumberAddress(123);
-	        address.setComplement("Apto 202");
+	        address.setComplement("Casa");
 	        address.setNeighborhood("Centro");
-	        address.setZipCode("12.345-678");
-	        address.setCity(createCity());
-	        address.setPeople(createPeople());
+	        address.setZipCode("12345-678");
+	        address.setCity(CityFactory.createCity());
+	        address.setPeople(PeopleFactory.createPeople());
 	        return address;
 	    }
-
+	    
 	    public static AddressDTO createAddressDTO() {
-	        AddressDTO dto = new AddressDTO();
-	        dto.setStreet("Rua das Flores");
-	        dto.setNumberAddress(123);
-	        dto.setComplement("Apto 202");
-	        dto.setNeighborhood("Centro");
-	        dto.setZipCode("12.345-678");
-	        dto.setCityId(1L);
-	        dto.setPeople_id(10L);
-	        return dto;
+	        return new AddressDTO(
+	            1L, // idAddress
+	            "Rua Teste", 
+	            123, 
+	            "Complemento", 
+	            "Bairro", 
+	            "12345-678",
+	            1L, // cityId
+	            "São Paulo",
+	            "StateBrazil.SP",
+	            "São Paulo",
+	            "Brasil",
+	            1L //peopleId
+	        );
 	    }
-	
-}
+	    
+	    public static Pageable createPageable() {
+	        return PageRequest.of(0, 10);
+	    }
+
+	}
+

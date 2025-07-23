@@ -4,40 +4,33 @@ import com.smartprocessrefusao.erprefusao.dto.CityDTO;
 import com.smartprocessrefusao.erprefusao.entities.City;
 import com.smartprocessrefusao.erprefusao.enumerados.StateBrazil;
 
-	public class CityFactory {
+public class CityFactory {
 
-	    public static City createCity(Long id, String nameCity, StateBrazil ufState) {
-	        return new City(id, nameCity, ufState);
-	    }
+	public static City createCity() {
+		City city = new City();
+		city.setId(1L);
+		city.setNameCity("São Paulo");
+		city.setUfState(StateBrazil.SP);
+		return city;
+	}
 
-	    // Overload for when ID is not yet known (for insertion)
-	    public static City createCity(String nameCity, StateBrazil ufState) {
-	        return new City(null, nameCity, ufState);
-	    }
+	public static City createUpdatedCity() {
+		City city = new City();
+		city.setId(1L);
+		city.setNameCity("Campinas");
+		city.setUfState(StateBrazil.SP);
+		return city;
+	}
 
-	    public static CityDTO createCityDTO(Long id, String nameCity, String ufState) {
-	        CityDTO dto = new CityDTO();
-	        dto.setId(id);
-	        dto.setNameCity(nameCity);
-	        dto.setUfState(ufState);
-	        return dto;
-	    }
+	public static CityDTO createCityDTO() {
+		return new CityDTO(1L, "São Paulo", "SP", 26L, "São Paulo", "Brasil");
+	}
 
-	    // Overload for when ID is not yet known (for insertion)
-	    public static CityDTO createCityDTO(String nameCity, String ufState) {
-	        CityDTO dto = new CityDTO();
-	        dto.setNameCity(nameCity);
-	        dto.setUfState(ufState);
-	        return dto;
-	    }
+	public static CityDTO createUpdatedCityDTO() {
+		return new CityDTO(1L, "São Paulo", "SP", 26L, "São Paulo", "Brasil");
+	}
 
-	    // Constructor in CityDTO to create from Entity
-	    public static CityDTO createCityDTO(City entity) {
-	        CityDTO dto = new CityDTO();
-	        dto.setId(entity.getId());
-	        dto.setNameCity(entity.getNameCity());
-	        dto.setUfState(entity.getUfState() != null ? entity.getUfState().name() : null);
-	        return dto;
-	    }
-	
+	public static CityDTO createInvalidUfDTO() {
+		return new CityDTO(999L, "São Paulo", "XX", 26L, "São Paulo", "Brasil");
+	}
 }

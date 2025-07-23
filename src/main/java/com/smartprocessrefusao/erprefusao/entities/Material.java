@@ -26,7 +26,7 @@ public class Material implements IdProjection<Long> {
 	
 	@ManyToOne
 	@JoinColumn(name = "uom_id")
-	private UnitOfMeasure uom;
+	private Unit uom;
 	
 	@ManyToOne
 	@JoinColumn(name = "taxclass_id")
@@ -40,7 +40,7 @@ public class Material implements IdProjection<Long> {
 		
 	}
 
-	public Material(Long id, String description, UnitOfMeasure uom, TaxClassification taxclass,
+	public Material(Long id, String description, Unit uom, TaxClassification taxclass,
 			ProductGroup prodGroup) {
 		super();
 		this.id = id;
@@ -66,11 +66,11 @@ public class Material implements IdProjection<Long> {
 		this.description = description;
 	}
 
-	public UnitOfMeasure getUom() {
+	public Unit getUom() {
 		return uom;
 	}
 
-	public void setUom(UnitOfMeasure uom) {
+	public void setUom(Unit uom) {
 		this.uom = uom;
 	}
 

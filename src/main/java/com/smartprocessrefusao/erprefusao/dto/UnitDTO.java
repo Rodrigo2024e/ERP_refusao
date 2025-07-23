@@ -1,11 +1,11 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
-import com.smartprocessrefusao.erprefusao.entities.UnitOfMeasure;
+import com.smartprocessrefusao.erprefusao.entities.Unit;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class UnitOfMeasureDTO {
+public class UnitDTO {
 
 	private Long id;
 	
@@ -17,17 +17,17 @@ public class UnitOfMeasureDTO {
 	@NotBlank(message = "Campo requerido")
 	private String acronym;
 	
-	public UnitOfMeasureDTO () {
+	public UnitDTO () {
 		
 	}
 
-	public UnitOfMeasureDTO(Long id, String description, String acronym) {
+	public UnitDTO(Long id, String description, String acronym) {
 		this.id = id;
 		this.description = description;
 		this.acronym = acronym;
 	}
 	
-	public UnitOfMeasureDTO(UnitOfMeasure entity) {
+	public UnitDTO(Unit entity) {
 		id = entity.getId();
 		description = entity.getDescription();
 		acronym = entity.getAcronym();
@@ -44,6 +44,7 @@ public class UnitOfMeasureDTO {
 	public String getAcronym() {
 		return acronym;
 	}
+
 	
 	
 }

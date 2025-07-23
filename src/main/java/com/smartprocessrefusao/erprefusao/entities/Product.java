@@ -25,22 +25,22 @@ public class Product implements IdProjection<Long> {
 	private Integer length;
 	
 	@ManyToOne
-	@JoinColumn(name = "uom_id")
-	private UnitOfMeasure uom;
+	@JoinColumn(name = "uomId")
+	private Unit uom;
 	
 	@ManyToOne
-	@JoinColumn(name = "taxclass_id")
+	@JoinColumn(name = "taxclassId")
 	private TaxClassification taxclass;
 	
 	@ManyToOne
-	@JoinColumn(name = "prodGroup_id")
+	@JoinColumn(name = "prodGroupId")
 	private ProductGroup prodGroup;
 	
 	public Product () {
 		
 	}
 
-	public Product(Long id, String description, Integer alloy, Integer inch, Integer length, UnitOfMeasure uom,
+	public Product(Long id, String description, Integer alloy, Integer inch, Integer length, Unit uom,
 			TaxClassification taxclass, ProductGroup prodGroup) {
 		this.id = id;
 		this.description = description;
@@ -92,11 +92,11 @@ public class Product implements IdProjection<Long> {
 		this.length = length;
 	}
 
-	public UnitOfMeasure getUom() {
+	public Unit getUom() {
 		return uom;
 	}
 
-	public void setUom(UnitOfMeasure uom) {
+	public void setUom(Unit uom) {
 		this.uom = uom;
 	}
 
@@ -115,6 +115,7 @@ public class Product implements IdProjection<Long> {
 	public void setProdGroup(ProductGroup prodGroup) {
 		this.prodGroup = prodGroup;
 	}
+	
 
 	@Override
 	public int hashCode() {

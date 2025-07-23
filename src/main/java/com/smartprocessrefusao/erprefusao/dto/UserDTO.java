@@ -51,28 +51,14 @@ public class UserDTO {
 		entity.getRoles().forEach(role -> this.roles.add(new RoleDTO(role)));
 	}
 
+
 	public long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	public String getEmail() {
 		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public List<RoleDTO> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<RoleDTO> roles) {
-		this.roles = roles;
 	}
 
 
@@ -81,19 +67,13 @@ public class UserDTO {
 	}
 
 
-	public void setEmployee_id(Long employee_id) {
-		this.employee_id = employee_id;
-	}
-
-
 	public String getNameEmployee() {
 		return nameEmployee;
 	}
 
 
-	public void setNameEmployee(String nameEmployee) {
-		this.nameEmployee = nameEmployee;
+	public List<RoleDTO> getRoles() {
+		return roles;
 	}
-	
 	
 }

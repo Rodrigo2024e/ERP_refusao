@@ -16,36 +16,36 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.smartprocessrefusao.erprefusao.dto.UnitOfMeasureDTO;
-import com.smartprocessrefusao.erprefusao.services.UnitOfMeasureService;
+import com.smartprocessrefusao.erprefusao.dto.UnitDTO;
+import com.smartprocessrefusao.erprefusao.services.UnitService;
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/units")
-public class UnitOfMeasureResource {
+public class UnitResource {
 
 	@Autowired
-	private UnitOfMeasureService UnitOfMeasureService;
+	private UnitService UnitOfMeasureService;
 	
 	
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping
-	public ResponseEntity<List<UnitOfMeasureDTO>> findAll(){
-			List<UnitOfMeasureDTO> list = UnitOfMeasureService.findAll();		
+	public ResponseEntity<List<UnitDTO>> findAll(){
+			List<UnitDTO> list = UnitOfMeasureService.findAll();		
 			return ResponseEntity.ok().body(list);
 		}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<UnitOfMeasureDTO> findById(@PathVariable Long id){
-		UnitOfMeasureDTO dto = UnitOfMeasureService.findById(id);
+	public ResponseEntity<UnitDTO> findById(@PathVariable Long id){
+		UnitDTO dto = UnitOfMeasureService.findById(id);
 		return ResponseEntity.ok().body(dto);
 	}
 	
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PostMapping
-	public ResponseEntity<UnitOfMeasureDTO> insert(@Valid @RequestBody UnitOfMeasureDTO dto) {
+	public ResponseEntity<UnitDTO> insert(@Valid @RequestBody UnitDTO dto) {
 		dto = UnitOfMeasureService.insert(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(dto.getId()).toUri();
@@ -54,7 +54,7 @@ public class UnitOfMeasureResource {
 	
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<UnitOfMeasureDTO> update(@PathVariable Long id, @Valid @RequestBody UnitOfMeasureDTO dto) {
+	public ResponseEntity<UnitDTO> update(@PathVariable Long id, @Valid @RequestBody UnitDTO dto) {
 		dto = UnitOfMeasureService.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}

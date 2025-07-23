@@ -96,54 +96,51 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
+			  <groupId>org.jacoco</groupId>
+			  <artifactId>jacoco-maven-plugin</artifactId>
+			  <version>0.8.11</version>
 			</plugin>
+			
+			<plugin>
+		        <groupId>org.jacoco</groupId>
+		        <artifactId>jacoco-maven-plugin</artifactId>
+		        <version>0.8.11</version>
+			<configuration>
+		    <excludes>
+		      <exclude>com/smartprocessrefusao/erprefusao/resources/exceptions/**</exclude>
+		      <exclude>com/smartprocessrefusao/erprefusao/resources/**</exclude>
+		      <exclude>com/smartprocessrefusao/erprefusao/services/validation/**</exclude>
+		      <exclude>com/smartprocessrefusao/erprefusao/enumerados/**</exclude>
+		      <exclude>com/smartprocessrefusao/erprefusao/util/**</exclude>
+		      <exclude>com/smartprocessrefusao/erprefusao/ErprefusaoApplication.class</exclude>
+		      <exclude>com/smartprocessrefusao/erprefusao/index.html</exclude>
+		      <exclude>com/smartprocessrefusao/erprefusao/index.source.html</exclude>
+		      <exclude>com/smartprocessrefusao/erprefusao/config/**</exclude>
+		      <exclude>com/smartprocessrefusao/erprefusao/entities/**</exclude>
+		      <exclude>com/smartprocessrefusao/erprefusao/dto/**</exclude>
+		      <exclude>com/smartprocessrefusao/erprefusao/controllers/handlers/**</exclude>
+		      <exclude>com/smartprocessrefusao/erprefusao/services/exceptions/**</exclude>
+		    </excludes>
+		  </configuration>
 		
-		
-		<plugin>
-	  		<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.10</version>
-					
-				<configuration>
-					<excludes>
-						<exclude>com/smartprocessrefusao/erprefusao/resources/exceptions/**</exclude>
-						<exclude>com/smartprocessrefusao/erprefusao/resources/**</exclude>
-						<exclude>com/smartprocessrefusao/erprefusao/services/validation/**</exclude>
-						<exclude>com/smartprocessrefusao/erprefusao/enumerados/**</exclude>
-						<exclude>com/smartprocessrefusao/erprefusao/util/**</exclude>
-						<exclude>com/smartprocessrefusao/erprefusao/ErprefusaoApplication.class</exclude>
-						<exclude>com/smartprocessrefusao/erprefusao/index.html</exclude>
-						<exclude>com/smartprocessrefusao/erprefusao/index.source.html</exclude>
-						<exclude>com/smartprocessrefusao/erprefusao/config/**</exclude>
-						<exclude>com/smartprocessrefusao/erprefusao/entities/**</exclude>
-						<exclude>com/smartprocessrefusao/erprefusao/dto/**</exclude>
-						<exclude>com/smartprocessrefusao/erprefusao/controllers/handlers/**</exclude>
-						<exclude>com/smartprocessrefusao/erprefusao/services/exceptions/**</exclude>
-					</excludes>
-				</configuration>	
-				
-					<executions>
-						<execution>
-							<goals>
-								<goal>prepare-agent</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>jacoco-report</id>
-							<phase>prepare-package</phase>
-							<goals>
-								<goal>report</goal>
-							</goals>
-							<configuration>
-								<outputDirectory>target/jacoco-report</outputDirectory>
-							</configuration>
-						</execution>
-					</executions>
-			</plugin>
+		  <executions>
+		    <execution>
+		      <goals>
+		        <goal>prepare-agent</goal>
+		      </goals>
+		    </execution>
+		    <execution>
+		      <id>jacoco-report</id>
+		      <phase>verify</phase>
+		      <goals>
+		        <goal>report</goal>
+		      </goals>
+		      <configuration>
+		        <outputDirectory>target/jacoco-report</outputDirectory>
+		      </configuration>
+		    </execution>
+		  </executions>
+		   </plugin>
 		</plugins>
-		
 	</build>
-
 </project>

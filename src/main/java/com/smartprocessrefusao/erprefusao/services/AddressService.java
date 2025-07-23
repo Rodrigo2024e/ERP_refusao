@@ -1,6 +1,8 @@
 package com.smartprocessrefusao.erprefusao.services;
 
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -31,15 +33,10 @@ public class AddressService {
 
     @Autowired
     private CityRepository cityRepository; 
-
+    
     @Autowired
     private PeopleRepository peopleRepository; 
     
-    @Transactional(readOnly = true)
-    public Page<AddressDTO> findAll(Pageable pageable) {
-        Page<AddressProjection> result = addressRepository.findAllProjections(pageable);
-        return result.map(AddressDTO::new); 
-    }
 
     @Transactional(readOnly = true)
     public Page<AddressDTO> searchAddresses(String nameCity, Long addressId, Pageable pageable) {
@@ -47,6 +44,7 @@ public class AddressService {
         return result.map(AddressDTO::new);
     }
 
+    
     @Transactional
     public AddressDTO insert(AddressDTO dto) {
         Address entity = new Address();
@@ -54,7 +52,7 @@ public class AddressService {
         entity = addressRepository.save(entity); 
         return new AddressDTO(entity); 
     }
-
+ 
     @Transactional
 	public AddressDTO update(Long id, AddressDTO dto) {
 		try {
@@ -87,20 +85,22 @@ public class AddressService {
         entity.setComplement(dto.getComplement());
         entity.setNeighborhood(dto.getNeighborhood());
         entity.setZipCode(dto.getZipCode());
-
-        if (dto.getCityId() != null) {
-    	    City city = cityRepository.findById(dto.getCityId())
-    	        .orElseThrow(() -> new ResourceNotFoundException("Cidade não encontrado"));
-    	    entity.setCity(city);
-    	 
-        }
         
-			      if (dto.getPeople_id() != null) {
-			    	    People people = peopleRepository.findById(dto.getPeople_id())
-			    	        .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrado"));
-			    	    entity.setPeople(people);
-			      } 
-
+        Optional.ofNullable(dto.getCityId())
+	    .ifPresent(id -> {
+	    	City city = cityRepository.findById(id)
+	            .orElseThrow(() -> new ResourceNotFoundException("Cidade não encontrada"));
+	    	entity.setCity(city);
+	    });
+	    
+        Optional.ofNullable(dto.getPeopleId())
+	    .ifPresent(id -> {
+	    	 People people = peopleRepository.findById(id)
+	            .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada"));
+	    	 entity.setPeople(people);
+	    });
+	     
+ 
     	}
-   
+
   }

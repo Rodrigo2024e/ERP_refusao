@@ -36,25 +36,14 @@ public class SectorDTO {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getNameSector() {
 		return nameSector;
-	}
-
-	public void setNameSector(String nameSector) {
-		this.nameSector = nameSector;
 	}
 
 	public String getProcess() {
 		return process;
 	}
 
-	public void setProcess(String process) {
-		this.process = process;
-	}
-	
+
 
 }

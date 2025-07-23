@@ -8,7 +8,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import com.smartprocessrefusao.erprefusao.dto.CityDTO;
 import com.smartprocessrefusao.erprefusao.entities.City;
@@ -21,29 +20,23 @@ import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class CityService {
-	
+
 	@Autowired
 	private CityRepository cityRepository;
-	
+
 	@Transactional(readOnly = true)
 	public List<CityDTO> findAll() {
-	    List<City> list = cityRepository.findAllByOrderByNameCityAsc();
-	    return list.stream().map(CityDTO::new).toList();
+		List<City> list = cityRepository.findAllByOrderByNameCityAsc();
+		return list.stream().map(CityDTO::new).toList();
 	}
 	
 	@Transactional(readOnly = true)
 	public CityDTO findById(Long id) {
-		try {
 		Optional<City> obj = cityRepository.findById(id);
-		City entity = obj.orElseThrow(()-> new EntityNotFoundException("Entity not found"));
+		City entity = obj.orElseThrow(() -> new ResourceNotFoundException("Id not found " + id));
 		return new CityDTO(entity);
-		}
-		catch (EntityNotFoundException e) {
-			throw new ResourceNotFoundException("Id not found " + id);
-		}	
-		
 	}
-	
+
 	@Transactional
 	public CityDTO insert(CityDTO dto) {
 		City entity = new City();
@@ -51,7 +44,7 @@ public class CityService {
 		entity = cityRepository.save(entity);
 		return new CityDTO(entity);
 	}
-	
+
 	@Transactional
 	public CityDTO update(Long id, CityDTO dto) {
 		try {
@@ -59,12 +52,11 @@ public class CityService {
 			copyDtoToEntity(dto, entity);
 			entity = cityRepository.save(entity);
 			return new CityDTO(entity);
-		}
-		catch (EntityNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
-		}		
+		}
 	}
-	
+
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public void delete(Long id) {
 		if (!cityRepository.existsById(id)) {
@@ -72,25 +64,20 @@ public class CityService {
 		}
 		try {
 			cityRepository.deleteById(id);
-		}
-		catch (DataIntegrityViolationException e) {
+		} catch (DataIntegrityViolationException e) {
 			throw new DatabaseException("Integrity violation");
 		}
 	}
 
 	public void copyDtoToEntity(CityDTO dto, City entity) {
 		entity.setNameCity(dto.getNameCity());
-		
-			if (StringUtils.hasText(dto.getUfState())) {
-		            try {
-		                StateBrazil state = StateBrazil.fromUf(dto.getUfState());
-		                entity.setUfState(state);
-		            } catch (IllegalArgumentException e) {
-		                throw new ResourceNotFoundException("UF inválida: " + dto.getUfState());
-		            }
-		        } else {
-		            throw new ResourceNotFoundException("UF não pode ser vazia");
-		        }
-		    }
-	}
 
+			try {
+				StateBrazil state = StateBrazil.fromUf(dto.getUfState());
+				entity.setUfState(state);
+			} catch (IllegalArgumentException e) {
+				throw new ResourceNotFoundException("UF inválida: " + dto.getUfState());
+			}
+		}
+
+}

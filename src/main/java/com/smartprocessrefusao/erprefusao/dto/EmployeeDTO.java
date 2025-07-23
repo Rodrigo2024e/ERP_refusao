@@ -79,93 +79,50 @@ public class EmployeeDTO {
 		nameSector = entity.getSector().getNameSector();
 		process = entity.getSector().getProcess();
 	}
-	
+
 	public Long getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getEmail() {
 		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public String getCellPhone() {
 		return cellPhone;
 	}
 
-	public void setCellPhone(String cellPhone) {
-		this.cellPhone = cellPhone;
-	}
-
 	public String getTelephone() {
 		return telephone;
-	}
-
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
 	}
 
 	public String getCpf() {
 		return cpf;
 	}
 
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
-
 	public String getRg() {
 		return rg;
-	}
-
-	public void setRg(String rg) {
-		this.rg = rg;
 	}
 
 	public Boolean getSysUser() {
 		return sysUser;
 	}
 
-	public void setSysUser(Boolean sysUser) {
-		this.sysUser = sysUser;
-	}
-
 	public Long getSectorId() {
 		return sectorId;
-	}
-
-	public void setSectorId(Long sectorId) {
-		this.sectorId = sectorId;
 	}
 
 	public String getNameSector() {
 		return nameSector;
 	}
 
-	public void setNameSector(String nameSector) {
-		this.nameSector = nameSector;
-	}
-
 	public String getProcess() {
 		return process;
 	}
-
-	public void setProcess(String process) {
-		this.process = process;
-	}
-
+	
+	
 }

@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_uom")
-public class UnitOfMeasure {
+public class Unit {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +24,11 @@ public class UnitOfMeasure {
 	@OneToMany(mappedBy = "uom")
 	private List<Material> materials = new ArrayList<>();
 	
-	public UnitOfMeasure (){
+	public Unit (){
 		
 	}
 
-	public UnitOfMeasure(Long id, String description, String acronym) {
+	public Unit(Long id, String description, String acronym) {
 		super();
 		this.id = id;
 		this.description = description;
@@ -76,7 +76,7 @@ public class UnitOfMeasure {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UnitOfMeasure other = (UnitOfMeasure) obj;
+		Unit other = (Unit) obj;
 		return Objects.equals(id, other.id);
 	}
 	

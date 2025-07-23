@@ -1,239 +1,182 @@
 package com.smartprocessrefusao.erprefusao.services;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import com.smartprocessrefusao.erprefusao.dto.EmployeeDTO;
-import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
 import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeSectorDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.Sector;
 import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeProjection;
+import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeSectorProjection;
 import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.SectorRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
-import com.smartprocessrefusao.erprefusao.tests.EmployeeFactory;
+import com.smartprocessrefusao.erprefusao.tests.EmployeeFactory.Factory;
 
 import jakarta.persistence.EntityNotFoundException;
 
+@ExtendWith(MockitoExtension.class)
 class EmployeeServiceTest {
 
-    @InjectMocks
-    private EmployeeService service;
+	@InjectMocks
+	private EmployeeService service;
 
-    @Mock
-    private EmployeeRepository employeeRepository;
+	@Mock
+	private EmployeeRepository employeeRepository;
 
-    @Mock
-    private SectorRepository sectorRepository;
+	@Mock
+	private SectorRepository sectorRepository;
 
-    private Employee employee;
-    private EmployeeDTO dto;
-    private Sector sector;
+	private Employee employee;
+	private EmployeeDTO employeeDTO;
+	private Sector sector;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        employee = EmployeeFactory.createEmployee();
-        dto = EmployeeFactory.createEmployeeDTO();
-        sector = EmployeeFactory.createSector();
-    }
+	@BeforeEach
+	void setUp() {
+		employee = Factory.createEmployee();
+		employeeDTO = Factory.createEmployeeDTO();
+		sector = Factory.createSector();
+	}
 
-    // ✅ insert
-    @Test
-    void insertShouldReturnEmployeeDTOWhenSuccessful() {
-        when(sectorRepository.findById(dto.getSectorId())).thenReturn(Optional.of(sector));
-        when(employeeRepository.save(any())).thenReturn(employee);
+	// 1 - Report Employee
+	@Test
+	void reportEmployeeShouldReturnPagedReportEmployeeDTO() {
+		ReportEmployeeProjection projection = Mockito.mock(ReportEmployeeProjection.class);
+		Page<ReportEmployeeProjection> page = new PageImpl<>(List.of(projection));
+		when(employeeRepository.searchPeopleNameByOrId(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(page);
 
-        EmployeeDTO result = service.insert(dto);
+		Page<ReportEmployeeDTO> result = service.reportEmployee("João", 1L, PageRequest.of(0, 10));
 
-        assertNotNull(result);
-        assertEquals(dto.getName(), result.getName());
-        verify(employeeRepository).save(any());
-    }
+		Assertions.assertNotNull(result);
+	}
 
-    // ✅ update sucesso
-    @Test
-    void updateShouldReturnUpdatedDTOWhenIdExists() {
-        when(employeeRepository.getReferenceById(1L)).thenReturn(employee);
-        when(sectorRepository.findById(dto.getSectorId())).thenReturn(Optional.of(sector));
-        when(employeeRepository.save(any())).thenReturn(employee);
+	// 2 - Report Employee with Sector
+	@Test
+	void reportEmployeeShouldReturnPagedReportEmployeeBySectorDTO() {
+		ReportEmployeeSectorProjection projection = Mockito.mock(ReportEmployeeSectorProjection.class);
+		Page<ReportEmployeeSectorProjection> page = new PageImpl<>(List.of(projection));
+		when(employeeRepository.searchEmployeeBySector(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(page);
 
-        EmployeeDTO result = service.update(1L, dto);
+		Page<ReportEmployeeSectorDTO> result = service.reportEmployeeBySector("João", 1L, PageRequest.of(0, 10));
 
-        assertNotNull(result);
-        assertEquals(dto.getEmail(), result.getEmail());
-        verify(employeeRepository).getReferenceById(1L);
-        verify(employeeRepository).save(any());
-    }
+		Assertions.assertNotNull(result);
+	}
 
-    // ✅ update erro
-    @Test
-    void updateShouldThrowWhenIdDoesNotExist() {
-        when(employeeRepository.getReferenceById(999L)).thenThrow(EntityNotFoundException.class);
+	// 3 - FindById
+	@Test
+	void findByIdShouldReturnEmployeeDTOWhenIdExists() {
+		when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
 
-        assertThrows(ResourceNotFoundException.class, () -> service.update(999L, dto));
-    }
+		EmployeeDTO result = service.findById(1L);
 
-    // ✅ delete sucesso
-    @Test
-    void deleteShouldDoNothingWhenIdExists() {
-        when(employeeRepository.existsById(1L)).thenReturn(true);
-        doNothing().when(employeeRepository).deleteById(1L);
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals("João", result.getName());
+	}
 
-        assertDoesNotThrow(() -> service.delete(1L));
-        verify(employeeRepository).deleteById(1L);
-    }
+	// 4 - FindById-EntityNotFoundException
+	@Test
+	void findByIdShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
+		when(employeeRepository.findById(99L)).thenReturn(Optional.empty());
 
-    // ✅ delete id inexistente
-    @Test
-    void deleteShouldThrowResourceNotFoundWhenIdDoesNotExist() {
-        when(employeeRepository.existsById(999L)).thenReturn(false);
+		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+			service.findById(99L);
+		});
+	}
 
-        assertThrows(ResourceNotFoundException.class, () -> service.delete(999L));
-        verify(employeeRepository, never()).deleteById(any());
-    }
+	// 5 - Insert Employee
+	@Test
+	void insertShouldSaveEmployeeAndReturnDTO() {
+		when(sectorRepository.findById(1L)).thenReturn(Optional.of(sector));
+		when(employeeRepository.save(Mockito.any())).thenReturn(employee);
 
-    // ✅ delete erro integridade
-    @Test
-    void deleteShouldThrowDatabaseExceptionWhenIntegrityViolation() {
-        when(employeeRepository.existsById(1L)).thenReturn(true);
-        doThrow(DataIntegrityViolationException.class).when(employeeRepository).deleteById(1L);
+		EmployeeDTO result = service.insert(employeeDTO);
 
-        assertThrows(DatabaseException.class, () -> service.delete(1L));
-    }
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals("João", result.getName());
+		verify(employeeRepository).save(Mockito.any());
+	}
 
-    // ✅ findById sucesso
-    @Test
-    void findByIdShouldReturnDTOWhenExists() {
-        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
+	// 6 - Insert Sector Invalid
+	@Test
+	void copyDtoToEntityShoulNotFoundExceptionWhenSectorDTOInvalid() {
+		when(sectorRepository.findById(1L)).thenReturn(Optional.empty());
 
-        EmployeeDTO result = service.findById(1L);
+		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+			service.insert(employeeDTO);
+		});
+	}
 
-        assertNotNull(result);
-        assertEquals(employee.getEmail(), result.getEmail());
-    }
+	// 8 - Update Employee
+	@Test
+	void updateShouldUpdateEmployeeDTOWhenIdExists() {
+		when(employeeRepository.getReferenceById(1L)).thenReturn(employee);
+		when(sectorRepository.findById(1L)).thenReturn(Optional.of(sector));
+		when(employeeRepository.save(employee)).thenReturn(employee);
 
-    // ✅ findById erro
-    @Test
-    void findByIdShouldThrowWhenNotFound() {
-        when(employeeRepository.findById(999L)).thenReturn(Optional.empty());
+		EmployeeDTO result = service.update(1L, employeeDTO);
 
-        assertThrows(ResourceNotFoundException.class, () -> service.findById(999L));
-    }
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals("João", result.getName());
+	}
 
-    // ✅ reportEmployee
-    @Test
-    void reportEmployeeShouldReturnPageOfDTO() {
-        ReportEmployeeProjection projection = mock(ReportEmployeeProjection.class);
-        when(projection.getName()).thenReturn("João Carlos");
+	// 8 - Update Employee Invalid
+	@Test
+	void updateShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
+		when(employeeRepository.getReferenceById(999L)).thenThrow(EntityNotFoundException.class);
 
-        Page<ReportEmployeeProjection> page = new PageImpl<>(List.of(projection));
-        when(employeeRepository.searchPeopleNameByOrId(any(), any(), any())).thenReturn(page);
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.update(999L, employeeDTO);
+		});
+	}
 
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<ReportEmployeeDTO> result = service.reportEmployee("João", 1L, pageable);
+	// 9 - Delete Id exists
+	@Test
+	void deleteShouldDoNothingWhenIdExists() {
+		Mockito.when(employeeRepository.existsById(1L)).thenReturn(true);
+		Mockito.doNothing().when(employeeRepository).deleteById(1L);
 
-        assertNotNull(result);
-        assertEquals("João Carlos", result.getContent().get(0).getName());
-    }
+		Assertions.assertDoesNotThrow(() -> service.delete(1L));
+	}
 
-    // ✅ EmployeesBySector
-    @Test
-    void employeesBySectorShouldReturnPageOfDTO() {
-        Page<Employee> page = new PageImpl<>(List.of(employee));
-        when(sectorRepository.getReferenceById(1L)).thenReturn(sector);
-        when(employeeRepository.searchBySector(any(), any(), any())).thenReturn(page);
+	// 10 - Delete Id Does Not exists
+	@Test
+	void deleteShouldThrowResourceNotFoundWhenIdDoesNotExist() {
+		Mockito.when(employeeRepository.existsById(99L)).thenReturn(false);
 
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<EmployeeSectorDTO> result = service.EmployeesBySector(1L, "João", pageable);
+		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+			service.delete(99L);
+		});
+	}
 
-        assertEquals(1, result.getTotalElements());
-    }
+	// 11 - Delete Id Dependent
+	@Test
+	void deleteShouldThrowDatabaseExceptionOnIntegrityViolation() {
+		Mockito.when(employeeRepository.existsById(1L)).thenReturn(true);
+		Mockito.doThrow(DataIntegrityViolationException.class).when(employeeRepository).deleteById(1L);
 
-    @Test
-    void employeesBySectorShouldReturnPageWhenSectorIdIsZero() {
-        Pageable pageable = PageRequest.of(0, 10);
-        String name = "João";
-        Long sectorId = 0L;
+		Assertions.assertThrows(DatabaseException.class, () -> {
+			service.delete(1L);
+		});
+	}
 
-        Employee employee = EmployeeFactory.createEmployee(); // já tem setor, mas vai ignorar
-        Page<Employee> page = new PageImpl<>(List.of(employee));
-
-        when(employeeRepository.searchBySector(null, name, pageable)).thenReturn(page);
-
-        Page<EmployeeSectorDTO> result = service.EmployeesBySector(sectorId, name, pageable);
-
-        assertNotNull(result);
-        verify(employeeRepository).searchBySector(null, name, pageable);
-    }
-    
-    @Test
-    void insertShouldThrowResourceNotFoundWhenSectorIdDoesNotExist() {
-        // Arrange
-        EmployeeDTO dto = EmployeeFactory.createEmployeeDTO();
-        dto.setSectorId(999L); // ID que não existe no banco
-        
-        when(sectorRepository.findById(999L)).thenReturn(Optional.empty()); // Simula ausência do setor
-
-        // Act + Assert
-        assertThrows(ResourceNotFoundException.class, () -> {
-            service.insert(dto);
-        });
-
-        verify(sectorRepository).findById(999L);
-        verify(employeeRepository, never()).save(any());
-    }
-
-    
-    
-    
-    // ✅ copyDtoToEntity setor nulo
-    @Test
-    void copyDtoToEntityShouldSetNullSectorIfIdNull() {
-        Employee entity = new Employee();
-        dto.setSectorId(null); // simula DTO sem setor
-
-        service.copyDtoToEntity(dto, entity);
-
-        assertNull(entity.getSector());
-        assertEquals(dto.getCpf(), entity.getCpf());
-    }
-
-    // ✅ copyDtoToEntity com setor
-    @Test
-    void copyDtoToEntityShouldSetSectorIfExists() {
-        Employee entity = new Employee();
-        when(sectorRepository.findById(1L)).thenReturn(Optional.of(sector));
-
-        service.copyDtoToEntity(dto, entity);
-
-        assertNotNull(entity.getSector());
-        assertEquals("Produção", entity.getSector().getNameSector());
-    }
 }

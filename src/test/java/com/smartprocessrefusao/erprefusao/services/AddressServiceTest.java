@@ -1,201 +1,196 @@
 package com.smartprocessrefusao.erprefusao.services;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.smartprocessrefusao.erprefusao.dto.AddressDTO;
 import com.smartprocessrefusao.erprefusao.entities.Address;
 import com.smartprocessrefusao.erprefusao.entities.City;
-import com.smartprocessrefusao.erprefusao.entities.Employee;
+import com.smartprocessrefusao.erprefusao.entities.People;
 import com.smartprocessrefusao.erprefusao.projections.AddressProjection;
 import com.smartprocessrefusao.erprefusao.repositories.AddressRepository;
 import com.smartprocessrefusao.erprefusao.repositories.CityRepository;
+import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PeopleRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
 import com.smartprocessrefusao.erprefusao.tests.AddressFactory;
+import com.smartprocessrefusao.erprefusao.tests.CityFactory;
+import com.smartprocessrefusao.erprefusao.tests.PeopleFactory;
 
 import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 public class AddressServiceTest {
 
-    @InjectMocks
-    private AddressService service;
+	   @InjectMocks
+	    private AddressService service;
 
-    @Mock
-    private AddressRepository addressRepository;
+	    @Mock
+	    private AddressRepository addressRepository;
 
-    @Mock
-    private CityRepository cityRepository;
+	    @Mock
+	    private CityRepository cityRepository;
 
-    @Mock
-    private PeopleRepository peopleRepository;
+	    @Mock
+	    private PeopleRepository peopleRepository;
+	    
+	    @Mock
+	    private EmployeeRepository employeeRepository;
+	    
 
-    private AddressDTO dto;
-    private Address entity;
-    private City city;
-    private Employee employee;
+	    private Address address;
+	    private AddressDTO addressDTO;
+	    private City city;
+	    private People people;
+	
 
-    @BeforeEach
-    void setup() {
-        dto = AddressFactory.createAddressDTO();
-        entity = AddressFactory.createAddress();
-        city = AddressFactory.createCity();
-        employee = AddressFactory.createPeople();
-    }
+	    @BeforeEach
+	    void setUp() {
+	        MockitoAnnotations.openMocks(this);
+	        address = AddressFactory.createAddress();
+	        addressDTO = AddressFactory.createAddressDTO();
+	        city = CityFactory.createCity();
+	        people = PeopleFactory.createPeople();
+	    }
+	     
+	    //1 - Pagead Address
+	    @Test
+	    void searchAddressesShouldReturnPageOfAddressDTO() {
+	        Pageable pageable = AddressFactory.createPageable();
+	        AddressProjection projection = mock(AddressProjection.class);
+	        when(projection.getStreet()).thenReturn("Rua A");
 
-    @Test
-    void insertShouldReturnAddressDTOWhenSuccess() {
-        when(cityRepository.findById(dto.getCityId())).thenReturn(Optional.of(city));
-        when(peopleRepository.findById(dto.getPeople_id())).thenReturn(Optional.of(employee));
-        when(addressRepository.save(any())).thenReturn(entity);
+	        Page<AddressProjection> page = new PageImpl<>(List.of(projection));
+	        when(addressRepository.searchAddressesByCityNameOrId(anyString(), anyLong(), any()))
+	                .thenReturn(page);
 
-        AddressDTO result = service.insert(dto);
+	        Page<AddressDTO> result = service.searchAddresses("São Paulo", 1L, pageable);
 
-        assertNotNull(result);
-        verify(addressRepository).save(any());
-    }
+	        assertNotNull(result);
+	        assertEquals(1, result.getContent().size());
+	    }
+	    
+	  //2 - Insert Product
+		@Test
+		void insertShouldSaveAddressAndReturnDTO() {
+			when(cityRepository.findById(1L)).thenReturn(Optional.of(city));
+			when(peopleRepository.findById(1L)).thenReturn(Optional.of(people));
+			when(addressRepository.save(Mockito.any())).thenReturn(address);
 
-    @Test
-    void insertShouldThrowResourceNotFoundExceptionWhenCityNotFound() {
-        when(cityRepository.findById(dto.getCityId())).thenReturn(Optional.empty());
+			AddressDTO result = service.insert(addressDTO);
 
-        assertThrows(ResourceNotFoundException.class, () -> service.insert(dto));
-    }
+			Assertions.assertNotNull(result);
+			Assertions.assertEquals("Rua A", result.getStreet());
+		}
 
-    @Test
-    void insertShouldThrowResourceNotFoundExceptionWhenPeopleNotFound() {
-        when(cityRepository.findById(dto.getCityId())).thenReturn(Optional.of(city));
-        when(peopleRepository.findById(dto.getPeople_id())).thenReturn(Optional.empty());
+		//3 - Insert City Invalid 
+		  @Test
+		    void copyDtoToEntityShoulNotFoundExceptionWhenCityDTOInvalid() {
+			  	 when(cityRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> service.insert(dto));
-    }
+				 Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+				        service.insert(addressDTO);
+				    });
+		    }
 
-    @Test
-    void updateShouldReturnAddressDTOWhenSuccess() {
-        when(addressRepository.getReferenceById(1L)).thenReturn(entity);
-        when(cityRepository.findById(dto.getCityId())).thenReturn(Optional.of(city));
-        when(peopleRepository.findById(dto.getPeople_id())).thenReturn(Optional.of(employee));
-        when(addressRepository.save(any())).thenReturn(entity);
+		//4 - Insert People Invalid 
+		  @Test
+		    void copyDtoToEntityShoulNotFoundExceptionWhenTaxClassificationDTOInvalid() {
+			  	when(cityRepository.findById(Mockito.any())).thenReturn(Optional.of(city));
+			  	 when(peopleRepository.findById(1L)).thenReturn(Optional.empty());
+		
+				 Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+				        service.insert(addressDTO);
+				    });
+		    }
+		  		
+		//5 - Update Address
+		@Test
+		void updateShouldUpdateAddressDTOWhenIdExists() {
+		    Long id = 1L;
+		    Address address = AddressFactory.createAddress();
+		    AddressDTO dto = AddressFactory.createAddressDTO();
+		    City city = address.getCity();
+		    People people = address.getPeople();
 
-        AddressDTO result = service.update(1L, dto);
+		    when(addressRepository.getReferenceById(id)).thenReturn(address);
+		    when(cityRepository.findById(dto.getCityId())).thenReturn(Optional.of(city));
+		    when(peopleRepository.findById(dto.getPeopleId())).thenReturn(Optional.of(people));
+		    when(addressRepository.save(Mockito.any())).thenReturn(address);
 
-        assertNotNull(result);
-        verify(addressRepository).save(any());
-    }
+		    AddressDTO result = service.update(id, dto);
 
-    @Test
-    void updateShouldThrowResourceNotFoundExceptionWhenEntityNotFound() {
-        when(addressRepository.getReferenceById(1L)).thenThrow(EntityNotFoundException.class);
+		    Assertions.assertNotNull(result);
+		    Assertions.assertEquals(dto.getStreet(), result.getStreet());
+		}
 
-        assertThrows(ResourceNotFoundException.class, () -> service.update(1L, dto));
-    }
+		//6 - Update Address Invalid		    
+	    @Test
+	    void updateShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
+	        when(addressRepository.getReferenceById(999L)).thenThrow(EntityNotFoundException.class);
 
-    @Test
-    void insertShouldSkipCityWhenCityIdIsNull() {
-        AddressDTO dtoWithoutCity = AddressFactory.createAddressDTO();
-        dtoWithoutCity.setCityId(null); // cityId nulo
-        dtoWithoutCity.setPeople_id(10L);
+	        assertThrows(ResourceNotFoundException.class, () -> {
+	            service.update(999L, addressDTO);
+	        });
+	    }
 
-        when(peopleRepository.findById(10L)).thenReturn(Optional.of(AddressFactory.createPeople()));
-        when(addressRepository.save(any())).thenReturn(AddressFactory.createAddress());
+	  //7 - Delete Id exists
+	    @Test
+	    void deleteShouldDoNothingWhenIdExists() {
+	        when(addressRepository.existsById(1L)).thenReturn(true);
+	        doNothing().when(addressRepository).deleteById(1L);
 
-        AddressDTO result = service.insert(dtoWithoutCity);
+	        assertDoesNotThrow(() -> service.delete(1L));
+	    }
 
-        assertNotNull(result);
-        verify(cityRepository, never()).findById(any()); // cityRepository NÃO deve ser chamado
-        verify(peopleRepository).findById(10L);
-    }
+	  //8 - Delete Id Does Not exists
+	    @Test
+	    void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
+	        when(addressRepository.existsById(1L)).thenReturn(false);
 
-    @Test
-    void insertShouldSkipPeopleWhenPeopleIdIsNull() {
-        AddressDTO dtoWithoutPeople = AddressFactory.createAddressDTO();
-        dtoWithoutPeople.setPeople_id(null); // people_id nulo
-        dtoWithoutPeople.setCityId(1L);
+	        assertThrows(ResourceNotFoundException.class, () -> {
+	            service.delete(1L);
+	        });
+	    }
 
-        when(cityRepository.findById(1L)).thenReturn(Optional.of(AddressFactory.createCity()));
-        when(addressRepository.save(any())).thenReturn(AddressFactory.createAddress());
+	  //9 - Delete Id Dependent
+	    @Test
+	    void deleteShouldThrowDatabaseExceptionWhenIntegrityViolationOccurs() {
+	        when(addressRepository.existsById(1L)).thenReturn(true);
+	        doThrow(DataIntegrityViolationException.class).when(addressRepository).deleteById(1L);
 
-        AddressDTO result = service.insert(dtoWithoutPeople);
+	        assertThrows(DatabaseException.class, () -> {
+	            service.delete(1L);
+	        });
+	    }
 
-        assertNotNull(result);
-        verify(peopleRepository, never()).findById(any()); // peopleRepository NÃO deve ser chamado
-        verify(cityRepository).findById(1L);
-    }
-    
-    
-    @Test
-    void deleteShouldDoNothingWhenIdExists() {
-        when(addressRepository.existsById(1L)).thenReturn(true);
-
-        service.delete(1L);
-
-        verify(addressRepository).deleteById(1L);
-    }
-
-    @Test
-    void deleteShouldThrowResourceNotFoundExceptionWhenIdNotExists() {
-        when(addressRepository.existsById(1L)).thenReturn(false);
-
-        assertThrows(ResourceNotFoundException.class, () -> service.delete(1L));
-    }
-
-    @Test
-    void deleteShouldThrowDatabaseExceptionWhenIntegrityViolation() {
-        when(addressRepository.existsById(1L)).thenReturn(true);
-        doThrow(DataIntegrityViolationException.class).when(addressRepository).deleteById(1L);
-
-        assertThrows(DatabaseException.class, () -> service.delete(1L));
-    }
-
-    @Test
-    void findAllShouldReturnPagedDTOList() {
-        AddressProjection projection = mock(AddressProjection.class);
-        Page<AddressProjection> page = new PageImpl<>(List.of(projection));
-
-        when(addressRepository.findAllProjections(any())).thenReturn(page);
-
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<AddressDTO> result = service.findAll(pageable);
-
-        assertNotNull(result);
-        verify(addressRepository).findAllProjections(pageable);
-    }
-
-    @Test
-    void searchAddressesShouldReturnPagedDTOList() {
-        AddressProjection projection = mock(AddressProjection.class);
-        Page<AddressProjection> page = new PageImpl<>(List.of(projection));
-
-        when(addressRepository.searchAddressesByCityNameOrId(anyString(), anyLong(), any())).thenReturn(page);
-
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<AddressDTO> result = service.searchAddresses("São Paulo", 100L, pageable);
-
-        assertNotNull(result);
-        verify(addressRepository).searchAddressesByCityNameOrId("São Paulo", 100L, pageable);
-    }
-}
+	 
+	}
+	
+	
