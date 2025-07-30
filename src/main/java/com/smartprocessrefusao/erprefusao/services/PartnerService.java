@@ -1,5 +1,8 @@
 package com.smartprocessrefusao.erprefusao.services;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -24,15 +27,32 @@ public class PartnerService {
 	@Autowired
 	private PartnerRepository partnerRepository;
 
-	  @Transactional(readOnly = true) 
-	    public Page<ReportPartnerDTO> reportPartner(String name, Long partnerId, Pageable pageable) {
+	@Transactional(readOnly = true)
+	public List<PartnerDTO> findAll() {
+		List<Partner> list = partnerRepository.findAll();
+		return list.stream().map(PartnerDTO::new).toList();
+	}
 
-	        Page<ReportPartnerProjection> page = partnerRepository.searchPeopleNameByOrId(name, partnerId, pageable);
+	@Transactional(readOnly = true)
+	public Page<ReportPartnerDTO> reportPartner(String name, Long partnerId, Pageable pageable) {
 
-	        return page.map(ReportPartnerDTO::new);
-	    }
-	
-	
+		Page<ReportPartnerProjection> page = partnerRepository.searchPeopleNameByOrId(name, partnerId, pageable);
+
+		return page.map(ReportPartnerDTO::new);
+	}
+
+	@Transactional(readOnly = true)
+	public PartnerDTO findById(Long id) {
+		try {
+			Optional<Partner> obj = partnerRepository.findById(id);
+			Partner entity = obj.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
+			return new PartnerDTO(entity);
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException("Id not found " + id);
+		}
+
+	}
+
 	@Transactional
 	public PartnerDTO insert(PartnerDTO dto) {
 		Partner entity = new Partner();
@@ -40,7 +60,7 @@ public class PartnerService {
 		entity = partnerRepository.save(entity);
 		return new PartnerDTO(entity);
 	}
-	
+
 	@Transactional
 	public PartnerDTO update(Long id, PartnerDTO dto) {
 		try {
@@ -48,12 +68,11 @@ public class PartnerService {
 			copyDtoToEntity(dto, entity);
 			entity = partnerRepository.save(entity);
 			return new PartnerDTO(entity);
-		}
-		catch (EntityNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
-		}		
+		}
 	}
-	
+
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public void delete(Long id) {
 		if (!partnerRepository.existsById(id)) {
@@ -61,23 +80,22 @@ public class PartnerService {
 		}
 		try {
 			partnerRepository.deleteById(id);
-		}
-		catch (DataIntegrityViolationException e) {
+		} catch (DataIntegrityViolationException e) {
 			throw new DatabaseException("Integrity violation");
 		}
 	}
-	
+
 	public void copyDtoToEntity(PartnerDTO dto, Partner entity) {
 		entity.setName(dto.getName());
 		entity.setEmail(dto.getEmail());
 		entity.setCellPhone(dto.getCellPhone());
 		entity.setTelephone(dto.getTelephone());
 		entity.setCnpj(dto.getCnpj());
-	    entity.setIe(dto.getIe());
-	    entity.setSupplier(dto.getSupplier());
-	    entity.setClient(dto.getClient());
-	    entity.setActive(dto.getActive());
-	    
+		entity.setIe(dto.getIe());
+		entity.setSupplier(dto.getSupplier());
+		entity.setClient(dto.getClient());
+		entity.setActive(dto.getActive());
+
 	}
-	
+
 }

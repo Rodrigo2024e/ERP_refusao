@@ -111,7 +111,7 @@ public class UserService implements UserDetailsService {
         Optional.ofNullable(dto.getEmployee_id())
 	    .ifPresent(id -> {
 	    	Employee employee = employeeRepository.findById(id)
-	            .orElseThrow(() -> new ResourceNotFoundException("Unidade de medida não encontrada"));
+	            .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 	        entity.setEmployee(employee);
 	    });
         

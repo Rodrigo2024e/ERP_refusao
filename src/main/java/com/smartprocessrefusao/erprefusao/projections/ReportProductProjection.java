@@ -9,6 +9,6 @@ public interface ReportProductProjection {
 	Integer getLength();
 	String getUnit();
 	String getTax_Classification();
-	String getNumber();
+	Integer getNumber();
 	String getProduct_Group();
 }

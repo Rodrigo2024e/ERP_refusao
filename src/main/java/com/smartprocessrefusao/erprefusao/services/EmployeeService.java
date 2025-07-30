@@ -10,13 +10,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.smartprocessrefusao.erprefusao.dto.EmployeeDTO;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
 import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeSectorDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.Sector;
+import com.smartprocessrefusao.erprefusao.projections.EmployeeSectorProjection;
 import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeProjection;
-import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeSectorProjection;
 import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.SectorRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
@@ -29,56 +28,54 @@ public class EmployeeService {
 
 	@Autowired
 	private EmployeeRepository employeeRepository;
-	
+
 	@Autowired
 	private SectorRepository sectorRepository;
-	 
-	   @Transactional(readOnly = true) 
-	    public Page<ReportEmployeeDTO> reportEmployee(String name, Long peopleId, Pageable pageable) {
-	        Page<ReportEmployeeProjection> page = employeeRepository.searchPeopleNameByOrId(name, peopleId, pageable);
-	        return page.map(ReportEmployeeDTO::new);
-	    }   
-	   
-	   @Transactional(readOnly = true) 
-	    public Page<ReportEmployeeSectorDTO> reportEmployeeBySector(String name, Long sectorId, Pageable pageable) {
-	        Page<ReportEmployeeSectorProjection> page = employeeRepository.searchEmployeeBySector(name, sectorId, pageable);
-	        return page.map(ReportEmployeeSectorDTO::new);
-	    }   
-	   
+
 	@Transactional(readOnly = true)
-	public EmployeeDTO findById(Long id) {
-		try {
-		Optional<Employee> obj = employeeRepository.findById(id);
-		Employee entity = obj.orElseThrow(()-> new EntityNotFoundException("Entity not found"));
-		return new EmployeeDTO(entity);
-		}
-		catch (EntityNotFoundException e) {
-			throw new ResourceNotFoundException("Id not found " + id);
-		}	
-		
+	public Page<EmployeeSectorDTO> reportEmployeeBySector(String name, Long sectorId, Pageable pageable) {
+		Page<EmployeeSectorProjection> page = employeeRepository.searchEmployeeBySector(name, sectorId, pageable);
+		return page.map(EmployeeSectorDTO::new);
 	}
-	
+
+	@Transactional(readOnly = true)
+	public Page<ReportEmployeeDTO> reportEmployee(String name, Long peopleId, Pageable pageable) {
+		Page<ReportEmployeeProjection> page = employeeRepository.searchPeopleNameByOrId(name, peopleId, pageable);
+		return page.map(ReportEmployeeDTO::new);
+	}
+
+	@Transactional(readOnly = true)
+	public EmployeeSectorDTO findById(Long id) {
+		try {
+			Optional<Employee> obj = employeeRepository.findById(id);
+			Employee entity = obj.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
+			return new EmployeeSectorDTO(entity);
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException("Id not found " + id);
+		}
+
+	}
+
 	@Transactional
-	public EmployeeDTO insert(EmployeeDTO dto) {
+	public EmployeeSectorDTO insert(EmployeeSectorDTO dto) {
 		Employee entity = new Employee();
 		copyDtoToEntity(dto, entity);
 		entity = employeeRepository.save(entity);
-		return new EmployeeDTO(entity);
+		return new EmployeeSectorDTO(entity);
 	}
-	
+
 	@Transactional
-	public EmployeeDTO update(Long id, EmployeeDTO dto) {
+	public EmployeeSectorDTO update(Long id, EmployeeSectorDTO dto) {
 		try {
 			Employee entity = employeeRepository.getReferenceById(id);
 			copyDtoToEntity(dto, entity);
 			entity = employeeRepository.save(entity);
-			return new EmployeeDTO(entity);
-		}
-		catch (EntityNotFoundException e) {
+			return new EmployeeSectorDTO(entity);
+		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
-		}		
+		}
 	}
-	
+
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public void delete(Long id) {
 		if (!employeeRepository.existsById(id)) {
@@ -86,30 +83,25 @@ public class EmployeeService {
 		}
 		try {
 			employeeRepository.deleteById(id);
-		}
-		catch (DataIntegrityViolationException e) {
+		} catch (DataIntegrityViolationException e) {
 			throw new DatabaseException("Integrity violation");
 		}
 	}
-	
-	public void copyDtoToEntity(EmployeeDTO dto, Employee entity) {
-	    entity.setName(dto.getName());
-	    entity.setEmail(dto.getEmail());
-	    entity.setCellPhone(dto.getCellPhone());
-	    entity.setTelephone(dto.getTelephone());
-	    entity.setCpf(dto.getCpf());
-	    entity.setRg(dto.getRg());
-	    entity.setSysUser(dto.getSysUser());
-	    
-	    Optional.ofNullable(dto.getSectorId())
-	    .ifPresent(id -> {
-	    	Sector sector = sectorRepository.findById(id)
-	            .orElseThrow(() -> new ResourceNotFoundException("Setor não encontrado"));
-	        entity.setSector(sector);
-	    });
-	    
-	    
+
+	public void copyDtoToEntity(EmployeeSectorDTO dto, Employee entity) {
+		entity.setName(dto.getName());
+		entity.setEmail(dto.getEmail());
+		entity.setCellPhone(dto.getCellPhone());
+		entity.setTelephone(dto.getTelephone());
+		entity.setCpf(dto.getCpf());
+		entity.setRg(dto.getRg());
+		entity.setSysUser(dto.getSysUser());
+
+		Optional.ofNullable(dto.getSectorId()).ifPresent(id -> {
+			Sector sector = sectorRepository.findById(id)
+					.orElseThrow(() -> new ResourceNotFoundException("Setor não encontrado"));
+			entity.setSector(sector);
+		});
+
 	}
 }
-	
-

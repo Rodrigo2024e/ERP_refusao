@@ -19,16 +19,16 @@ public class TaxClassification {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String description;
-	private String number;
+	private Integer number;
 	
-	@OneToMany(mappedBy = "taxclass")
+	@OneToMany(mappedBy = "taxClass")
 	private List<Material> materials = new ArrayList<>();
 	
 	public TaxClassification () {
 		
 	}
 
-	public TaxClassification(Long id, String description, String number) {
+	public TaxClassification(Long id, String description, Integer number) {
 		super();
 		this.id = id;
 		this.description = description;
@@ -51,11 +51,11 @@ public class TaxClassification {
 		this.description = description;
 	}
 
-	public String getNumber() {
+	public Integer getNumber() {
 		return number;
 	}
 
-	public void setNumber(String number) {
+	public void setNumber(Integer number) {
 		this.number = number;
 	}
 

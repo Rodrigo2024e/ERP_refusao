@@ -27,44 +27,41 @@ public class ProductGroupResource {
 
 	@Autowired
 	private ProductGroupService productGroupService;
-	
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping
-	public ResponseEntity<List<ProductGroupDTO>> findAll(){
-			List<ProductGroupDTO> list = productGroupService.findAll();		
-			return ResponseEntity.ok().body(list);
-		}
+	public ResponseEntity<List<ProductGroupDTO>> findAll() {
+		List<ProductGroupDTO> list = productGroupService.findAll();
+		return ResponseEntity.ok().body(list);
+	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<ProductGroupDTO> findById(@PathVariable Long id){
+	public ResponseEntity<ProductGroupDTO> findById(@PathVariable Long id) {
 		ProductGroupDTO dto = productGroupService.findById(id);
 		return ResponseEntity.ok().body(dto);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PostMapping
 	public ResponseEntity<ProductGroupDTO> insert(@Valid @RequestBody ProductGroupDTO dto) {
 		dto = productGroupService.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(dto.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<ProductGroupDTO> update(@PathVariable Long id, @Valid @RequestBody ProductGroupDTO dto) {
 		dto = productGroupService.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		productGroupService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-	
-	
+
 }

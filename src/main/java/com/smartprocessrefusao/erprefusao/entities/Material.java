@@ -23,30 +23,29 @@ public class Material implements IdProjection<Long> {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String description;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "uom_id")
 	private Unit uom;
-	
+
 	@ManyToOne
-	@JoinColumn(name = "taxclass_id")
-	private TaxClassification taxclass;
-	
+	@JoinColumn(name = "taxClass_id")
+	private TaxClassification taxClass;
+
 	@ManyToOne
 	@JoinColumn(name = "prodGroup_id")
 	private ProductGroup prodGroup;
-	
-	public Material () {
-		
+
+	public Material() {
+
 	}
 
-	public Material(Long id, String description, Unit uom, TaxClassification taxclass,
-			ProductGroup prodGroup) {
+	public Material(Long id, String description, Unit uom, TaxClassification taxClass, ProductGroup prodGroup) {
 		super();
 		this.id = id;
 		this.description = description;
 		this.uom = uom;
-		this.taxclass = taxclass;
+		this.taxClass = taxClass;
 		this.prodGroup = prodGroup;
 	}
 
@@ -74,12 +73,12 @@ public class Material implements IdProjection<Long> {
 		this.uom = uom;
 	}
 
-	public TaxClassification getTaxclass() {
-		return taxclass;
+	public TaxClassification getTaxClass() {
+		return taxClass;
 	}
 
-	public void setTaxclass(TaxClassification taxclass) {
-		this.taxclass = taxclass;
+	public void setTaxClass(TaxClassification taxClass) {
+		this.taxClass = taxClass;
 	}
 
 	public ProductGroup getProdGroup() {
@@ -107,6 +106,4 @@ public class Material implements IdProjection<Long> {
 		return Objects.equals(id, other.id);
 	}
 
-
-	
 }

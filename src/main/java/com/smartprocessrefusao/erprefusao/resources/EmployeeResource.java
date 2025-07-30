@@ -18,9 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.smartprocessrefusao.erprefusao.dto.EmployeeDTO;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
 import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeSectorDTO;
 import com.smartprocessrefusao.erprefusao.services.EmployeeService;
 
 import jakarta.validation.Valid;
@@ -31,59 +30,55 @@ public class EmployeeResource {
 
 	@Autowired
 	private EmployeeService employeeService;
-	
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-	@GetMapping(value = "/report")
-	 public ResponseEntity<Page<ReportEmployeeDTO>> getReportEmployee(
-			 @RequestParam(name = "name", required = false) String name,
-	            @RequestParam(name = "peopleId", required = false) Long peopleId,
-	            Pageable pageable) {
-	        
-	        Page<ReportEmployeeDTO> result = employeeService.reportEmployee(name, peopleId, pageable);
-	        return ResponseEntity.ok(result);
-	    
-	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-	@GetMapping(value = "/report2")
-	public ResponseEntity<Page<ReportEmployeeSectorDTO>>findEmployeeBySetor(
-			 @RequestParam(name = "name", required = false) String name,
-			 @RequestParam(name = "sectorId", required = false) Long sectorId, Pageable pageable){
-		
-		Page<ReportEmployeeSectorDTO> list = employeeService.reportEmployeeBySector(name, sectorId, pageable);
-		
+	@GetMapping
+	public ResponseEntity<Page<EmployeeSectorDTO>> findEmployeeBySetor(@RequestParam(required = false) String name,
+			@RequestParam(required = false) Long sectorId, Pageable pageable) {
+
+		Page<EmployeeSectorDTO> list = employeeService.reportEmployeeBySector(name, sectorId, pageable);
+
 		return ResponseEntity.ok(list);
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+	@GetMapping(value = "/report")
+	public ResponseEntity<Page<ReportEmployeeDTO>> getReportEmployee(@RequestParam(required = false) String name,
+			@RequestParam(required = false) Long peopleId, Pageable pageable) {
+
+		Page<ReportEmployeeDTO> result = employeeService.reportEmployee(name, peopleId, pageable);
+		return ResponseEntity.ok(result);
+
+	}
+
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<EmployeeDTO> findById(@PathVariable Long id){
-		EmployeeDTO dto = employeeService.findById(id);
+	public ResponseEntity<EmployeeSectorDTO> findById(@PathVariable Long id) {
+		EmployeeSectorDTO dto = employeeService.findById(id);
 		return ResponseEntity.ok().body(dto);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PostMapping
-	public ResponseEntity<EmployeeDTO> insert(@Valid @RequestBody EmployeeDTO dto) {
+	public ResponseEntity<EmployeeSectorDTO> insert(@Valid @RequestBody EmployeeSectorDTO dto) {
 		dto = employeeService.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(dto.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getIdPessoa())
+				.toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<EmployeeDTO> update(@PathVariable Long id, @Valid @RequestBody EmployeeDTO dto) {
+	public ResponseEntity<EmployeeSectorDTO> update(@PathVariable Long id, @Valid @RequestBody EmployeeSectorDTO dto) {
 		dto = employeeService.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		employeeService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-	
-	
+
 }

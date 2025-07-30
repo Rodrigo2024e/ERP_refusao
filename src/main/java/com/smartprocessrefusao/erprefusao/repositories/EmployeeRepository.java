@@ -9,8 +9,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.Employee;
+import com.smartprocessrefusao.erprefusao.projections.EmployeeSectorProjection;
 import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeProjection;
-import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeSectorProjection;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
@@ -19,11 +19,16 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             SELECT
                 p.id AS idPessoa,
                 p.name AS name,
+                p.email As email,
+                p.cell_phone As cellPhone,
+                p.telephone As telephone,
+                e.cpf As cpf,
+                e.rg As rg,
+                e.sys_user,
                 e.sector_id AS sectorId,
                 s.name_sector AS nameSector,
-                s.process AS process,
-                e.sys_user 
-              
+                s.process AS process
+                        
             FROM tb_people p
             INNER JOIN tb_employee e ON e.id = p.id
             INNER JOIN tb_sector s ON s.id = e.sector_id
@@ -40,7 +45,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             AND (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
         """,
         nativeQuery = true)
-    Page<ReportEmployeeSectorProjection> searchEmployeeBySector(
+    Page<EmployeeSectorProjection> searchEmployeeBySector(
             @Param("name") String name, @Param("sectorId") Long sectorId, Pageable pageable);
 
 

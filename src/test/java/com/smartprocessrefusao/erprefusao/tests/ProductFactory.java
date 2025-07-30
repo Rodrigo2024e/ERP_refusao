@@ -60,8 +60,8 @@ public class ProductFactory {
 			}
 
 			@Override
-			public String getNumber() {
-				return "7604000";
+			public Integer getNumber() {
+				return 7604000;
 			}
 
 			@Override

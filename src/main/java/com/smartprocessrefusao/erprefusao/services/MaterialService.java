@@ -104,11 +104,11 @@ public class MaterialService {
 	        entity.setUom(unit);
 	    });
 	    
-	    Optional.ofNullable(dto.getTaxclassId())
+	    Optional.ofNullable(dto.getTaxClassId())
 	    .ifPresent(id -> {
 	        TaxClassification taxClass = taxRepository.findById(id)
 	            .orElseThrow(() -> new ResourceNotFoundException("Classificação Fiscal não encontrada"));
-	        entity.setTaxclass(taxClass);
+	        entity.setTaxClass(taxClass);
 	    });
 
 	    Optional.ofNullable(dto.getProdGroupId())

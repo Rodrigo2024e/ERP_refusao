@@ -21,7 +21,7 @@ public class MaterialFactory {
 		TaxClassification tax = new TaxClassification();
 		tax.setId(1L);
 		tax.setDescription("Sucata de alumínio");
-		tax.setNumber("7602000");
+		tax.setNumber(7602000);
 		return tax;
 		
 	}
@@ -38,7 +38,7 @@ public class MaterialFactory {
 		material.setId(1L);
 		material.setDescription("Sucata de alumínio");
 		material.setUom(createUnit());
-		material.setTaxclass(createTaxClassification());
+		material.setTaxClass(createTaxClassification());
 		material.setProdGroup(createGroup());
 		return material;
 	}
@@ -72,8 +72,8 @@ public class MaterialFactory {
 			}
 			
 			@Override
-			public String getNumber() {
-				return "7602000";
+			public Integer getNumber() {
+				return 7602000;
 			}
 			
 			@Override

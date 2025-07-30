@@ -9,10 +9,10 @@ public class ReportProductDTO {
 	private String description;
 	private Integer alloy;
 	private Integer inch;
-	private Integer length;
+	private double length;
 	private String unit;
 	private String tax_Classification;
-	private String number;
+	private Integer number;
 	private String product_Group;
     
     public ReportProductDTO() {
@@ -61,7 +61,7 @@ public class ReportProductDTO {
 		return inch;
 	}
 
-	public Integer getLength() {
+	public double getLength() {
 		return length;
 	}
 
@@ -73,7 +73,7 @@ public class ReportProductDTO {
 		return tax_Classification;
 	}
 
-	public String getNumber() {
+	public Integer getNumber() {
 		return number;
 	}
 

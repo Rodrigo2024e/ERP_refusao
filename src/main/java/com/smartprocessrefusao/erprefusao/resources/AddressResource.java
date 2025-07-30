@@ -30,11 +30,11 @@ public class AddressResource {
     @Autowired
     private AddressService addressService;
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
     @GetMapping(value = "/search")
     public ResponseEntity<Page<AddressDTO>> searchAddresses(
-            @RequestParam(name = "nameCity", required = false) String nameCity,
-            @RequestParam(name = "addressId", required = false) Long addressId,
+            @RequestParam(required = false) String nameCity,
+            @RequestParam(required = false) Long addressId,
             Pageable pageable) {
         Page<AddressDTO> page = addressService.searchAddresses(nameCity, addressId, pageable);
         return ResponseEntity.ok(page);

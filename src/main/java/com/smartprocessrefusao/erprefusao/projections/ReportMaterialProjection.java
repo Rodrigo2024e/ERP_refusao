@@ -6,6 +6,6 @@ public interface ReportMaterialProjection {
 	String getDescription();
 	String getUnit();
 	String getTax_Classification();
-	String getNumber();
+	Integer getNumber();
 	String getProduct_Group();
 }

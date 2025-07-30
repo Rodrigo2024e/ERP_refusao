@@ -13,7 +13,7 @@ public class AddressDTO {
 
 	private Long idAddress;
 
-	@Size(min = 3, max = 30, message = "O nome deve ter entre 5 a 30 caracteres")
+	@Size(min = 3, max = 30, message = "O nome deve ter entre 3 a 30 caracteres")
 	private String street;
 
 	@NotNull(message = "O numero é obrigatório")
@@ -21,7 +21,7 @@ public class AddressDTO {
 
 	private String complement;
 
-	@Size(min = 5, max = 50, message = "O nome deve ter entre 5 a 50 caracteres")
+	@Size(min = 3, max = 50, message = "O nome deve ter entre 3 a 30 caracteres")
 	private String neighborhood;
 
 	@Pattern(regexp = "\\d{2}.\\d{3}-\\d{3}", message = "O CEP deve estar no formato 00.000-000.")

@@ -9,7 +9,7 @@ public class ReportMaterialDTO {
 	private String description;
 	private String unit;
 	private String tax_Classification;
-	private String number;
+	private Integer number;
 	private String product_Group;
     
     public ReportMaterialDTO() {
@@ -20,8 +20,8 @@ public class ReportMaterialDTO {
 		id = entity.getId();
 		description = entity.getDescription();
 		unit = entity.getUom().getAcronym();
-		tax_Classification = entity.getTaxclass().getDescription();
-		number = entity.getTaxclass().getNumber();
+		tax_Classification = entity.getTaxClass().getDescription();
+		number = entity.getTaxClass().getNumber();
 		product_Group = entity.getProdGroup().getDescription();
 	    		
 	}
@@ -52,7 +52,7 @@ public class ReportMaterialDTO {
 		return tax_Classification;
 	}
 
-	public String getNumber() {
+	public Integer getNumber() {
 		return number;
 	}
 

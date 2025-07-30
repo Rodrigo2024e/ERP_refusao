@@ -8,7 +8,7 @@ public class PartnerFactory {
 	public static Partner createPartner() {
 		Partner partner = new Partner();
 		partner.setId(1L);
-		partner.setName("João Carlos");
+		partner.setName("Ecoalumi Aluminio S/A");
 		partner.setEmail("joao@gmail.com");
 		partner.setCellPhone("44-12244-1222");
 		partner.setTelephone("44-1442-2222");

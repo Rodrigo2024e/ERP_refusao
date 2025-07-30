@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,19 @@ class PartnerServiceTest {
 		dto = PartnerFactory.createPartnerDTO();
 	}
 
-	// 1 - Report Partner
+	// 1 - FindAll City
+	@Test
+	void findAllShouldReturnListOfDTOs() {
+		List<Partner> partnes = List.of(PartnerFactory.createPartner(), PartnerFactory.createPartner());
+		when(repository.findAll()).thenReturn(partnes);
+
+		List<PartnerDTO> result = service.findAll();
+
+		assertEquals(2, result.size());
+		assertEquals("Ecoalumi Aluminio S/A", result.get(0).getName());
+	}
+
+	// 2 - Report Partner
 	@Test
 	void reportPartnerShouldReturnPagedDTOs() {
 		ReportPartnerProjection projection = mock(ReportPartnerProjection.class);
@@ -75,7 +88,26 @@ class PartnerServiceTest {
 		verify(repository).searchPeopleNameByOrId("João", 1L, pageable);
 	}
 
-	// 2 - Insert Partner
+	// 3 - FindById
+	@Test
+	void findByIdShouldReturnDTOWhenIdExists() {
+		when(repository.findById(4L)).thenReturn(Optional.of(partner));
+
+		PartnerDTO result = service.findById(4L);
+
+		assertEquals("Ecoalumi Aluminio S/A", result.getName());
+
+	}
+	
+	// 4 - FindById-EntityNotFoundException
+		@Test
+		void findByIdShouldThrowWhenIdDoesNotExist() {
+			when(repository.findById(999L)).thenReturn(Optional.empty());
+
+			assertThrows(ResourceNotFoundException.class, () -> service.findById(999L));
+		}
+
+	// 5 - Insert Partner
 	@Test
 	void insertShouldSavePartner() {
 		when(repository.save(any())).thenReturn(partner);
@@ -87,7 +119,7 @@ class PartnerServiceTest {
 		verify(repository).save(any());
 	}
 
-	// 3 - Update Partner
+	// 6 - Update Partner
 	@Test
 	void updateShouldReturnUpdatedDTOWhenIdExists() {
 		when(repository.getReferenceById(1L)).thenReturn(partner);
@@ -101,7 +133,7 @@ class PartnerServiceTest {
 		verify(repository).save(any());
 	}
 
-	// 4 - Update Partner Invalid
+	// 7 - Update Partner Invalid
 	@Test
 	void updateShouldThrowResourceNotFoundWhenIdNotExists() {
 		when(repository.getReferenceById(99L)).thenThrow(EntityNotFoundException.class);
@@ -110,7 +142,7 @@ class PartnerServiceTest {
 		verify(repository).getReferenceById(99L);
 	}
 
-	// 5 - Delete Id exists
+	// 8 - Delete Id exists
 	@Test
 	void deleteShouldDoNothingWhenIdExists() {
 		when(repository.existsById(1L)).thenReturn(true);
@@ -120,7 +152,7 @@ class PartnerServiceTest {
 		verify(repository).deleteById(1L);
 	}
 
-	// 6 - Delete Id Does Not exists
+	// 9 - Delete Id Does Not exists
 	@Test
 	void deleteShouldThrowResourceNotFoundWhenIdDoesNotExist() {
 		when(repository.existsById(99L)).thenReturn(false);
@@ -129,7 +161,7 @@ class PartnerServiceTest {
 		verify(repository, never()).deleteById(any());
 	}
 
-	// 7 - Delete Id Dependent
+	// 10 - Delete Id Dependent
 	@Test
 	void deleteShouldThrowDatabaseExceptionWhenIntegrityViolation() {
 		when(repository.existsById(1L)).thenReturn(true);

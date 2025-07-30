@@ -2,27 +2,44 @@ package com.smartprocessrefusao.erprefusao.dto;
 
 import com.smartprocessrefusao.erprefusao.entities.Product;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class ProductDTO {
 
 	private Long id;
+
+	@Size(min = 3, max = 30, message = "O campo descrição deve ter entre 3 a 30 caracteres")
 	private String description;
+
+	@NotNull(message = "A liga deve ser composta de 4 dígitos")
 	private Integer alloy;
+
+	@NotNull(message = "A polegada deve ser composta de 1 dígito")
 	private Integer inch;
-	private Integer length;
+
+	@NotNull(message = "A metragen deve ser informada")
+	private Double length;
+
+	@NotNull(message = "Campo Unidade de Medida requerido")
 	private Long uomId;
 	private String acronym;
+
+	@NotNull(message = "Campo Classificação Fiscal requerida")
 	private Long taxClassId;
 	private String taxClass;
-	private String number;
+	private Integer number;
+
+	@NotNull(message = "Campo Grupo de Mercadoria requerido")
 	private Long prodGroupId;
 	private String prodGroup;
-	
+
 	public ProductDTO() {
-		
+
 	}
 
-	public ProductDTO(Long id, String description, Integer alloy, Integer inch, Integer length, Long uomId,
-			String acronym, Long taxClassId, String taxClass, String number, Long prodGroupId, String prodGroup) {
+	public ProductDTO(Long id, String description, Integer alloy, Integer inch, Double length, Long uomId,
+			String acronym, Long taxClassId, String taxClass, Integer number, Long prodGroupId, String prodGroup) {
 		this.id = id;
 		this.description = description;
 		this.alloy = alloy;
@@ -68,7 +85,7 @@ public class ProductDTO {
 		return inch;
 	}
 
-	public Integer getLength() {
+	public Double getLength() {
 		return length;
 	}
 
@@ -88,7 +105,7 @@ public class ProductDTO {
 		return taxClass;
 	}
 
-	public String getNumber() {
+	public Integer getNumber() {
 		return number;
 	}
 
@@ -99,6 +116,5 @@ public class ProductDTO {
 	public String getProdGroup() {
 		return prodGroup;
 	}
-	
-	
+
 }

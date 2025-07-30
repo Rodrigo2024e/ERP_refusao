@@ -20,13 +20,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
-import com.smartprocessrefusao.erprefusao.dto.EmployeeDTO;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
 import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeSectorDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.Sector;
+import com.smartprocessrefusao.erprefusao.projections.EmployeeSectorProjection;
 import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeProjection;
-import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeSectorProjection;
 import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.SectorRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
@@ -48,7 +47,7 @@ class EmployeeServiceTest {
 	private SectorRepository sectorRepository;
 
 	private Employee employee;
-	private EmployeeDTO employeeDTO;
+	private EmployeeSectorDTO employeeDTO;
 	private Sector sector;
 
 	@BeforeEach
@@ -73,11 +72,11 @@ class EmployeeServiceTest {
 	// 2 - Report Employee with Sector
 	@Test
 	void reportEmployeeShouldReturnPagedReportEmployeeBySectorDTO() {
-		ReportEmployeeSectorProjection projection = Mockito.mock(ReportEmployeeSectorProjection.class);
-		Page<ReportEmployeeSectorProjection> page = new PageImpl<>(List.of(projection));
+		EmployeeSectorProjection projection = Mockito.mock(EmployeeSectorProjection.class);
+		Page<EmployeeSectorProjection> page = new PageImpl<>(List.of(projection));
 		when(employeeRepository.searchEmployeeBySector(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(page);
 
-		Page<ReportEmployeeSectorDTO> result = service.reportEmployeeBySector("João", 1L, PageRequest.of(0, 10));
+		Page<EmployeeSectorDTO> result = service.reportEmployeeBySector("João", 1L, PageRequest.of(0, 10));
 
 		Assertions.assertNotNull(result);
 	}
@@ -87,10 +86,10 @@ class EmployeeServiceTest {
 	void findByIdShouldReturnEmployeeDTOWhenIdExists() {
 		when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
 
-		EmployeeDTO result = service.findById(1L);
+		EmployeeSectorDTO result = service.findById(1L);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals("João", result.getName());
+		Assertions.assertEquals("Jonathas Junio", result.getName());
 	}
 
 	// 4 - FindById-EntityNotFoundException
@@ -106,20 +105,20 @@ class EmployeeServiceTest {
 	// 5 - Insert Employee
 	@Test
 	void insertShouldSaveEmployeeAndReturnDTO() {
-		when(sectorRepository.findById(1L)).thenReturn(Optional.of(sector));
+		when(sectorRepository.findById(12L)).thenReturn(Optional.of(sector));
 		when(employeeRepository.save(Mockito.any())).thenReturn(employee);
 
-		EmployeeDTO result = service.insert(employeeDTO);
+		EmployeeSectorDTO result = service.insert(employeeDTO);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals("João", result.getName());
+		Assertions.assertEquals("Jonathas Junio", result.getName());
 		verify(employeeRepository).save(Mockito.any());
 	}
 
 	// 6 - Insert Sector Invalid
 	@Test
 	void copyDtoToEntityShoulNotFoundExceptionWhenSectorDTOInvalid() {
-		when(sectorRepository.findById(1L)).thenReturn(Optional.empty());
+		when(sectorRepository.findById(12L)).thenReturn(Optional.empty());
 
 		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
 			service.insert(employeeDTO);
@@ -130,13 +129,13 @@ class EmployeeServiceTest {
 	@Test
 	void updateShouldUpdateEmployeeDTOWhenIdExists() {
 		when(employeeRepository.getReferenceById(1L)).thenReturn(employee);
-		when(sectorRepository.findById(1L)).thenReturn(Optional.of(sector));
+		when(sectorRepository.findById(12L)).thenReturn(Optional.of(sector));
 		when(employeeRepository.save(employee)).thenReturn(employee);
 
-		EmployeeDTO result = service.update(1L, employeeDTO);
+		EmployeeSectorDTO result = service.update(1L, employeeDTO);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals("João", result.getName());
+		Assertions.assertEquals("Jonathas Junio", result.getName());
 	}
 
 	// 8 - Update Employee Invalid

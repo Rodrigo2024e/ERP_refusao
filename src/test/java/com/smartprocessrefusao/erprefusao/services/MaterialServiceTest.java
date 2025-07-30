@@ -107,7 +107,7 @@ public class MaterialServiceTest {
 		assertEquals("Sucata de alumínio", result.getDescription());
 		assertEquals("kg", result.getAcronym());
 		assertEquals("Sucata de alumínio", result.getDescription());
-		assertEquals("7602000", result.getNumber());
+		assertEquals(7602000, result.getNumber());
 		assertEquals("Sucata de alumínio", result.getDescription_prodGroup());
 	}
 

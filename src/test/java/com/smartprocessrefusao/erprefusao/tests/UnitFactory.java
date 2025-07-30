@@ -1,5 +1,6 @@
 package com.smartprocessrefusao.erprefusao.tests;
 
+import com.smartprocessrefusao.erprefusao.dto.UnitDTO;
 import com.smartprocessrefusao.erprefusao.entities.Unit;
 
 public class UnitFactory {
@@ -16,4 +17,10 @@ public class UnitFactory {
 	public static Unit createUnit(Long id, String description, String acronym) {
 		return new Unit(id, description, acronym);
 	}
+	
+	public static UnitDTO createUnitDTO() {
+		return new UnitDTO(null, "Kilograma", "kg");
+	}
+	
+	
 }

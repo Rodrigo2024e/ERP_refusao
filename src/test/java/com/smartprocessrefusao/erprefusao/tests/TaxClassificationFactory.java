@@ -9,7 +9,7 @@ public class TaxClassificationFactory {
 		TaxClassification tax = new TaxClassification();
 		tax.setId(1L);
 		tax.setDescription("Tarugo de alumínio");
-		tax.setNumber("7604000");
+		tax.setNumber(7604000);
 		return tax;
 	}
 	

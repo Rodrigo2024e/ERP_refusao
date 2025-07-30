@@ -106,7 +106,7 @@ public class ProductServiceTest {
 		assertEquals("Tarugo de alumínio", result.getDescription());
 		assertEquals("kg", result.getAcronym());
 		assertEquals("Tarugo de alumínio", result.getTaxClass());
-		assertEquals("7604000", result.getNumber());
+		assertEquals(7604000, result.getNumber());
 		assertEquals("Produto acabado", result.getProdGroup());
 	}
 

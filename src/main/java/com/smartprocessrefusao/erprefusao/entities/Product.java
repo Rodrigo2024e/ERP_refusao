@@ -22,7 +22,7 @@ public class Product implements IdProjection<Long> {
 	private String description;
 	private Integer alloy;
 	private Integer inch;
-	private Integer length;
+	private Double length;
 	
 	@ManyToOne
 	@JoinColumn(name = "uomId")
@@ -40,7 +40,7 @@ public class Product implements IdProjection<Long> {
 		
 	}
 
-	public Product(Long id, String description, Integer alloy, Integer inch, Integer length, Unit uom,
+	public Product(Long id, String description, Integer alloy, Integer inch, Double length, Unit uom,
 			TaxClassification taxclass, ProductGroup prodGroup) {
 		this.id = id;
 		this.description = description;
@@ -84,11 +84,11 @@ public class Product implements IdProjection<Long> {
 		this.inch = inch;
 	}
 
-	public Integer getLength() {
+	public Double getLength() {
 		return length;
 	}
 
-	public void setLength(Integer length) {
+	public void setLength(Double length) {
 		this.length = length;
 	}
 

@@ -2,7 +2,6 @@ package com.smartprocessrefusao.erprefusao.dto;
 
 import com.smartprocessrefusao.erprefusao.entities.Material;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -10,8 +9,7 @@ public class MaterialDTO {
 
 	private Long id;
 	
-	@Size(min = 3, max = 30, message = "O campo nome deve ter entre 3 a 30 caracteres")
-	@NotBlank(message = "Campo requerido")
+	@Size(min = 3, max = 30, message = "O campo descrição deve ter entre 3 a 30 caracteres")
 	private String description;
 	
 	@NotNull(message = "Campo Unidade de Medida requerido")
@@ -20,9 +18,9 @@ public class MaterialDTO {
 	private String acronym;
 	
 	@NotNull(message = "Campo Classificação Fiscal requerida")
-	private Long taxclassId;
+	private Long taxClassId;
 	private String description_taxclass;
-	private String number;
+	private Integer number;
 	
 	@NotNull(message = "Campo Grupo de Mercadoria requerido")
 	private Long prodGroupId;
@@ -32,14 +30,14 @@ public class MaterialDTO {
 		
 	}
 
-	public MaterialDTO(Long id, String description, Long uomId, String description_uom, String acronym, Long taxclassId, 
-			String description_taxclass, String number, Long prodGroupId, String description_prodGroup) {
+	public MaterialDTO(Long id, String description, Long uomId, String description_uom, String acronym, Long taxClassId, 
+			String description_taxclass, Integer number, Long prodGroupId, String description_prodGroup) {
 		this.id = id;
 		this.description = description;
 		this.uomId = uomId;
 		this.description_uom = description_uom;
 		this.acronym = acronym;
-		this.taxclassId = taxclassId;
+		this.taxClassId = taxClassId;
 		this.description_taxclass = description_taxclass;
 		this.number = number;
 		this.prodGroupId = prodGroupId;
@@ -52,9 +50,9 @@ public class MaterialDTO {
 		uomId = entity.getUom().getId();
 		description_uom = entity.getUom().getDescription();
 		acronym = entity.getUom().getAcronym();
-		taxclassId = entity.getTaxclass().getId();
-		description_taxclass = entity.getTaxclass().getDescription();
-		number = entity.getTaxclass().getNumber();
+		taxClassId = entity.getTaxClass().getId();
+		description_taxclass = entity.getTaxClass().getDescription();
+		number = entity.getTaxClass().getNumber();
 		prodGroupId = entity.getProdGroup().getId();
 		description_prodGroup =  entity.getProdGroup().getDescription();
 	}
@@ -79,15 +77,15 @@ public class MaterialDTO {
 		return acronym;
 	}
 
-	public Long getTaxclassId() {
-		return taxclassId;
+	public Long getTaxClassId() {
+		return taxClassId;
 	}
 
 	public String getDescription_taxclass() {
 		return description_taxclass;
 	}
 
-	public String getNumber() {
+	public Integer getNumber() {
 		return number;
 	}
 

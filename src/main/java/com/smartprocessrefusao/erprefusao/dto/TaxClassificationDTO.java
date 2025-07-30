@@ -2,7 +2,7 @@ package com.smartprocessrefusao.erprefusao.dto;
 
 import com.smartprocessrefusao.erprefusao.entities.TaxClassification;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class TaxClassificationDTO {
@@ -10,18 +10,16 @@ public class TaxClassificationDTO {
 	private Long id;
 
 	@Size(min = 5, max = 30, message = "O campo nome deve ter entre 5 a 30 caracteres")
-	@NotBlank(message = "Campo requerido")
 	private String description;
 	
-	@Size(min = 7, max = 7, message = "O campo nome deve ter 7 caracteres")
-	@NotBlank(message = "Campo requerido")
-	private String number;
+	@NotNull(message = "A numeração fiscal deve ser composta de 7 dígitos")
+	private Integer number;
 	
 	public TaxClassificationDTO() {
 		
 	}
 
-	public TaxClassificationDTO(Long id, String description, String number) {
+	public TaxClassificationDTO(Long id, String description, Integer number) {
 		this.id = id;
 		this.description = description;
 		this.number = number;
@@ -41,7 +39,7 @@ public class TaxClassificationDTO {
 		return description;
 	}
 
-	public String getNumber() {
+	public Integer getNumber() {
 		return number;
 	}
 	
