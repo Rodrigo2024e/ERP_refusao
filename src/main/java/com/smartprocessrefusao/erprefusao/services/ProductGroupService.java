@@ -77,7 +77,7 @@ public class ProductGroupService {
 	}
 	
 	public void copyDtoToEntity(ProductGroupDTO dto, ProductGroup entity) {
-	    entity.setDescription(dto.getDescription());
+	    entity.setDescription(dto.getDescription().toUpperCase());
 
 	}
 }

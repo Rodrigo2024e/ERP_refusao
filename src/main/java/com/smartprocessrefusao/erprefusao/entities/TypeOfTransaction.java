@@ -4,52 +4,34 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import com.smartprocessrefusao.erprefusao.projections.IdProjection;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "tb_material")
-public class Material implements IdProjection<Long> {
+@Table(name = "tb_type_transaction")
+public class TypeOfTransaction {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	private String description;
 
-	@ManyToOne
-	@JoinColumn(name = "uom_id")
-	private Unit uom;
-
-	@ManyToOne
-	@JoinColumn(name = "taxClass_id")
-	private TaxClassification taxClass;
-
-	@ManyToOne
-	@JoinColumn(name = "prodGroup_id")
-	private ProductGroup prodGroup;
-
-	@ManyToMany(mappedBy = "materials")
+	@ManyToMany(mappedBy = "transactions")
 	private Set<Movement> movements = new HashSet<>();
 
-	public Material() {
+	public TypeOfTransaction() {
 
 	}
 
-	public Material(Long id, String description, Unit uom, TaxClassification taxClass, ProductGroup prodGroup) {
-		super();
+	public TypeOfTransaction(Long id, String description) {
+
 		this.id = id;
 		this.description = description;
-		this.uom = uom;
-		this.taxClass = taxClass;
-		this.prodGroup = prodGroup;
 	}
 
 	public Long getId() {
@@ -66,30 +48,6 @@ public class Material implements IdProjection<Long> {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Unit getUom() {
-		return uom;
-	}
-
-	public void setUom(Unit uom) {
-		this.uom = uom;
-	}
-
-	public TaxClassification getTaxClass() {
-		return taxClass;
-	}
-
-	public void setTaxClass(TaxClassification taxClass) {
-		this.taxClass = taxClass;
-	}
-
-	public ProductGroup getProdGroup() {
-		return prodGroup;
-	}
-
-	public void setProdGroup(ProductGroup prodGroup) {
-		this.prodGroup = prodGroup;
 	}
 
 	public Set<Movement> getMovements() {
@@ -113,7 +71,7 @@ public class Material implements IdProjection<Long> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Material other = (Material) obj;
+		TypeOfTransaction other = (TypeOfTransaction) obj;
 		return Objects.equals(id, other.id);
 	}
 

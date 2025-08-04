@@ -106,7 +106,7 @@ public class UserService implements UserDetailsService {
     }
     
     private void copyDtoToEntity(UserDTO dto, User entity) {
-        entity.setEmail(dto.getEmail());
+        entity.setEmail(dto.getEmail().toUpperCase());
         
         Optional.ofNullable(dto.getEmployee_id())
 	    .ifPresent(id -> {

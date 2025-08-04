@@ -89,8 +89,8 @@ public class EmployeeService {
 	}
 
 	public void copyDtoToEntity(EmployeeSectorDTO dto, Employee entity) {
-		entity.setName(dto.getName());
-		entity.setEmail(dto.getEmail());
+		entity.setName(dto.getName().toUpperCase());
+		entity.setEmail(dto.getEmail().toUpperCase());
 		entity.setCellPhone(dto.getCellPhone());
 		entity.setTelephone(dto.getTelephone());
 		entity.setCpf(dto.getCpf());

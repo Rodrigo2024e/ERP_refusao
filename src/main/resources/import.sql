@@ -80,3 +80,34 @@ INSERT INTO tb_product (description, alloy, inch, length, uom_id, taxclass_id, p
 INSERT INTO tb_product (description, alloy, inch, length, uom_id, taxclass_id, prod_group_id) VALUES ('Tarugo de alumínio', '6063', 6, 6, 1, 2, 2);
 INSERT INTO tb_product (description, alloy, inch, length, uom_id, taxclass_id, prod_group_id) VALUES ('Tarugo de alumínio', '6060', 7, 6, 1, 2, 2);
 INSERT INTO tb_product (description, alloy, inch, length, uom_id, taxclass_id, prod_group_id) VALUES ('Tarugo de alumínio', '6063', 7, 6, 1, 2, 2);
+
+INSERT INTO tb_expenses (expenses, direct_costs, indirect_costs, investiment) VALUES (true, false, false, false);
+INSERT INTO tb_expenses (expenses, direct_costs, indirect_costs, investiment) VALUES (false, true, false, false);
+INSERT INTO tb_expenses (expenses, direct_costs, indirect_costs, investiment) VALUES (false, false, true, false);
+INSERT INTO tb_expenses (expenses, direct_costs, indirect_costs, investiment) VALUES (false, false, false, true);
+
+INSERT INTO tb_type_transaction (description) VALUES ('Compra');
+INSERT INTO tb_type_transaction (description) VALUES ('Industrialização');
+INSERT INTO tb_type_transaction (description) VALUES ('Retorno de Industrialização');
+INSERT INTO tb_type_transaction (description) VALUES ('Arrendamento');
+
+INSERT INTO tb_ticket (num_ticket, date_ticket, number_plate, net_weight) VALUES (34950,'2022-07-25', 'ABC-1245', 1000);
+INSERT INTO tb_movement (amount_material, unit_value, total_value, metal_yield, metal_weight, slag, num_ticket_id) VALUES (200, 2.0, 400.0, 0.88, 176.0, 24.0, 34950);
+INSERT INTO tb_movement (amount_material, unit_value, total_value, metal_yield, metal_weight, slag, num_ticket_id) VALUES (300, 2.0, 600.0, 0.90, 270.0, 30.0, 34950);
+INSERT INTO tb_movement (amount_material, unit_value, total_value, metal_yield, metal_weight, slag, num_ticket_id) VALUES (500, 2.0, 1000.0, 0.97, 485.0, 15.0, 34950);
+
+INSERT INTO tb_movement_material (material_id, movement_mat_id) VALUES (1, 1);
+INSERT INTO tb_movement_material (material_id, movement_mat_id) VALUES (2, 2);
+INSERT INTO tb_movement_material (material_id, movement_mat_id) VALUES (3, 3);
+
+INSERT INTO tb_movement_partner (partner_id, movement_par_id) VALUES (4, 1);
+INSERT INTO tb_movement_partner (partner_id, movement_par_id) VALUES (5, 2);
+INSERT INTO tb_movement_partner (partner_id, movement_par_id) VALUES (6, 3);
+
+INSERT INTO tb_movement_expense (expense_id, movement_exp_id) VALUES (2, 1);
+INSERT INTO tb_movement_expense (expense_id, movement_exp_id) VALUES (2, 2);
+INSERT INTO tb_movement_expense (expense_id, movement_exp_id) VALUES (2, 3);
+
+INSERT INTO tb_movement_transaction (transaction_id, movement_tra_id) VALUES (1, 1);
+INSERT INTO tb_movement_transaction (transaction_id, movement_tra_id) VALUES (2, 2);
+INSERT INTO tb_movement_transaction (transaction_id, movement_tra_id) VALUES (2, 3);

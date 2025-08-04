@@ -1,12 +1,16 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.smartprocessrefusao.erprefusao.projections.IdProjection;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table (name = "tb_partner")
+@Table(name = "tb_partner")
 public class Partner extends People implements IdProjection<Long> {
 	private static final long serialVersionUID = 1L;
 
@@ -15,13 +19,16 @@ public class Partner extends People implements IdProjection<Long> {
 	private Boolean supplier;
 	private Boolean client;
 	private Boolean active;
-	
+
+	@ManyToMany(mappedBy = "partners")
+	private Set<Movement> movements = new HashSet<>();
+
 	public Partner() {
-		
+
 	}
 
-	public Partner(Long id, String people, String email, String cellPhone, String telephone, 
-			Address address, String cnpj, String ie, Boolean supplier, Boolean client, Boolean active) {
+	public Partner(Long id, String people, String email, String cellPhone, String telephone, Address address,
+			String cnpj, String ie, Boolean supplier, Boolean client, Boolean active) {
 		super(id, people, email, cellPhone, telephone, address);
 		this.cnpj = cnpj;
 		this.ie = ie;
@@ -69,5 +76,13 @@ public class Partner extends People implements IdProjection<Long> {
 	public void setActive(Boolean active) {
 		this.active = active;
 	}
-	
+
+	public Set<Movement> getMovements() {
+		return movements;
+	}
+
+	public void setMovements(Set<Movement> movements) {
+		this.movements = movements;
+	}
+
 }

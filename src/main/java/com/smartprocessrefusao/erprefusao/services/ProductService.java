@@ -97,7 +97,7 @@ public class ProductService {
 	}
 
 	public void copyDtoToEntity(ProductDTO dto, Product entity) {
-	    entity.setDescription(dto.getDescription());
+	    entity.setDescription(dto.getDescription().toUpperCase());
 	    entity.setAlloy(dto.getAlloy());
 	    entity.setInch(dto.getInch());
 	    entity.setLength(dto.getLength());

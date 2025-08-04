@@ -95,7 +95,7 @@ public class MaterialService {
 	}
 	
 	public void copyDtoToEntity(MaterialDTO dto, Material entity) {
-	    entity.setDescription(dto.getDescription());
+	    entity.setDescription(dto.getDescription().toUpperCase());
 	  
 	    Optional.ofNullable(dto.getUomId())
 	    .ifPresent(id -> {

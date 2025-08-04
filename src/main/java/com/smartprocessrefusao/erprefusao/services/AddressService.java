@@ -80,10 +80,10 @@ public class AddressService {
 	} 
     
     private void copyDtoToEntity(AddressDTO dto, Address entity) {
-        entity.setStreet(dto.getStreet());
+        entity.setStreet(dto.getStreet().toUpperCase());
         entity.setNumberAddress(dto.getNumberAddress());
-        entity.setComplement(dto.getComplement());
-        entity.setNeighborhood(dto.getNeighborhood());
+        entity.setComplement(dto.getComplement().toUpperCase());
+        entity.setNeighborhood(dto.getNeighborhood().toUpperCase());
         entity.setZipCode(dto.getZipCode());
         
         Optional.ofNullable(dto.getCityId())

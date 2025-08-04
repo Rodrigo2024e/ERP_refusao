@@ -77,8 +77,8 @@ public class SectorService {
 	}
 	
 	public void copyDtoToEntity(SectorDTO dto, Sector entity) {
-	    entity.setNameSector(dto.getNameSector());
-	    entity.setProcess(dto.getProcess());
+	    entity.setNameSector(dto.getNameSector().toUpperCase());
+	    entity.setProcess(dto.getProcess().toUpperCase());
 
 	}
 	

@@ -70,7 +70,7 @@ public class CityService {
 	}
 
 	public void copyDtoToEntity(CityDTO dto, City entity) {
-		entity.setNameCity(dto.getNameCity());
+		entity.setNameCity(dto.getNameCity().toUpperCase());
 
 			try {
 				StateBrazil state = StateBrazil.fromUf(dto.getUfState());
