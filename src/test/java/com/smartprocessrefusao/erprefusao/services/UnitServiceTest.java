@@ -101,7 +101,7 @@ public class UnitServiceTest {
 	      UnitDTO result = service.update(1L, unitDTO);
 
 	        Assertions.assertNotNull(result);
-	        Assertions.assertEquals("Kilograma", result.getDescription());
+	        Assertions.assertEquals("KILOGRAMA", result.getDescription());
 	}
 	//6
 	@Test

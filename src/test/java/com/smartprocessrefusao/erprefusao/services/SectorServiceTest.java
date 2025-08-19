@@ -53,7 +53,7 @@ public class SectorServiceTest {
 		List<SectorDTO> result = service.findAll();
 
 		Assertions.assertFalse(result.isEmpty());
-		Assertions.assertEquals("Producão", result.get(0).getNameSector());
+		Assertions.assertEquals("PRODUÇÃO", result.get(0).getNameSector());
 	}
 
 	// 2 - FindById
@@ -64,7 +64,7 @@ public class SectorServiceTest {
 		SectorDTO result = service.findById(1L);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals("Producão", result.getNameSector());
+		Assertions.assertEquals("PRODUÇÃO", result.getNameSector());
 	}
 
 	// 3 - FindById-EntityNotFoundException
@@ -85,7 +85,7 @@ public class SectorServiceTest {
 		SectorDTO result = service.insert(sectorDTO);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals("Producão", result.getNameSector());
+		Assertions.assertEquals("PRODUÇÃO", result.getNameSector());
 	}
 
 	// 5 - Update Product
@@ -97,7 +97,7 @@ public class SectorServiceTest {
 		SectorDTO result = service.update(1L, sectorDTO);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals("Producão", result.getNameSector());
+		Assertions.assertEquals("PRODUÇÃO", result.getNameSector());
 	}
 
 	// 6 - Update Product Invalid

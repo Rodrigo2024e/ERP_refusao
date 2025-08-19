@@ -1,8 +1,8 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,25 +12,25 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "tb_productGroup")
-public class ProductGroup {
+@Table(name = "tb_materialGroup")
+public class MaterialGroup {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String description;
-	
-	@OneToMany(mappedBy = "prodGroup")
-	private List<Material> materials = new ArrayList<>();
 
-	public ProductGroup() {
-		
+	@OneToMany(mappedBy = "materialGroup")
+	private Set<Material> materials = new HashSet<>();
+
+	public MaterialGroup() {
+
 	}
-	
-	public ProductGroup(Long id, String description) {
+
+	public MaterialGroup(Long id, String description) {
 		this.id = id;
 		this.description = description;
-		
+
 	}
 
 	public Long getId() {
@@ -49,9 +49,13 @@ public class ProductGroup {
 		this.description = description;
 	}
 
-	public List<Material> getMaterials() {
+	public Set<Material> getMaterials() {
 		return materials;
 	}
+
+//	public Set<Product> getProducts() {
+//		return products;
+//	}
 
 	@Override
 	public int hashCode() {
@@ -66,8 +70,8 @@ public class ProductGroup {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ProductGroup other = (ProductGroup) obj;
+		MaterialGroup other = (MaterialGroup) obj;
 		return Objects.equals(id, other.id);
-	}	
-	
+	}
+
 }

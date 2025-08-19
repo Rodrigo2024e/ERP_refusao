@@ -7,6 +7,6 @@ import com.smartprocessrefusao.erprefusao.entities.TaxClassification;
 
 @Repository
 public interface TaxClassificationRepository extends JpaRepository<TaxClassification, Long> {
-	
 
+	
 }

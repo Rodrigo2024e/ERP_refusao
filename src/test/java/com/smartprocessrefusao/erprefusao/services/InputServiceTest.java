@@ -25,34 +25,34 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.smartprocessrefusao.erprefusao.dto.MaterialDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportMaterialDTO;
-import com.smartprocessrefusao.erprefusao.entities.Material;
-import com.smartprocessrefusao.erprefusao.entities.ProductGroup;
+import com.smartprocessrefusao.erprefusao.dto.InputDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportInputDTO;
+import com.smartprocessrefusao.erprefusao.entities.Input;
+import com.smartprocessrefusao.erprefusao.entities.MaterialGroup;
 import com.smartprocessrefusao.erprefusao.entities.TaxClassification;
 import com.smartprocessrefusao.erprefusao.entities.Unit;
-import com.smartprocessrefusao.erprefusao.projections.ReportMaterialProjection;
-import com.smartprocessrefusao.erprefusao.repositories.MaterialRepository;
-import com.smartprocessrefusao.erprefusao.repositories.ProductGroupRepository;
+import com.smartprocessrefusao.erprefusao.projections.ReportInputProjection;
+import com.smartprocessrefusao.erprefusao.repositories.InputRepository;
+import com.smartprocessrefusao.erprefusao.repositories.MaterialGroupRepository;
 import com.smartprocessrefusao.erprefusao.repositories.TaxClassificationRepository;
 import com.smartprocessrefusao.erprefusao.repositories.UnitRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
-import com.smartprocessrefusao.erprefusao.tests.MaterialFactory;
-import com.smartprocessrefusao.erprefusao.tests.ProductGroupFactory;
+import com.smartprocessrefusao.erprefusao.tests.InputFactory;
+import com.smartprocessrefusao.erprefusao.tests.MatGroupFactory;
 import com.smartprocessrefusao.erprefusao.tests.TaxClassificationFactory;
 import com.smartprocessrefusao.erprefusao.tests.UnitFactory;
 
 import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(SpringExtension.class)
-public class MaterialServiceTest {
+public class InputServiceTest {
 
 	@InjectMocks
-	private MaterialService service;
+	private InputService service;
 
 	@Mock
-	private MaterialRepository MaterialRepository;
+	private InputRepository MaterialRepository;
 
 	@Mock
 	private UnitRepository unitRepository;
@@ -61,37 +61,38 @@ public class MaterialServiceTest {
 	private TaxClassificationRepository taxRepository;
 
 	@Mock
-	private ProductGroupRepository groupRepository;
+	private MaterialGroupRepository groupRepository;
 
-	private Material Material;
-	private MaterialDTO MaterialDTO;
+	private Input input;
+	private InputDTO inputDTO;
 	private Unit unit;
 	private TaxClassification tax;
-	private ProductGroup group;
-	private Long MaterialExistingId, MaterialNonExistingId, dependentId;
+	private MaterialGroup group;
+	private Long inputExistingId, inputNonExistingId, dependentId;
 
 	@BeforeEach
 	void setUp() {
-		MaterialExistingId = 1L;
-		MaterialNonExistingId = 999L;
+		inputExistingId = 1L;
+		inputNonExistingId = 999L;
 		dependentId = 3L;
 
 		unit = UnitFactory.createUnit();
 		tax = TaxClassificationFactory.createTaxClass();
-		group = ProductGroupFactory.createGroup();
-		MaterialDTO = MaterialFactory.createMaterialDTO();
-		Material = MaterialFactory.createMaterial();
+		group = MatGroupFactory.createGroup();
+		inputDTO = InputFactory.createInputDTO();
+		input = InputFactory.createInput();
 
 	}
 
-	// 1 - Report Material
+	// 1 - Report Input
 	@Test
 	void reportMaterialShouldReturnPagedReportDTO() {
-		ReportMaterialProjection projection = Mockito.mock(ReportMaterialProjection.class);
-		Page<ReportMaterialProjection> page = new PageImpl<>(List.of(projection));
-		when(MaterialRepository.searchMaterialByNameOrId(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(page);
+		ReportInputProjection projection = Mockito.mock(ReportInputProjection.class);
+		Page<ReportInputProjection> page = new PageImpl<>(List.of(projection));
+		when(MaterialRepository.searchMaterialByNameOrGroup(Mockito.any(), Mockito.any(), Mockito.any()))
+				.thenReturn(page);
 
-		Page<ReportMaterialDTO> result = service.reportMaterial("Tarugo de alumínio", 1L, PageRequest.of(0, 10));
+		Page<ReportInputDTO> result = service.reportInput("Perfil de processo", 1L, PageRequest.of(0, 10));
 
 		Assertions.assertNotNull(result);
 	}
@@ -100,22 +101,23 @@ public class MaterialServiceTest {
 	@Test
 	public void findByIdShouldReturnMaterialDTOWhenIdExists() {
 
-		when(MaterialRepository.findById(MaterialExistingId)).thenReturn(Optional.of(Material));
+		when(MaterialRepository.findById(inputExistingId)).thenReturn(Optional.of(input));
 
-		MaterialDTO result = service.findById(MaterialExistingId);
+		InputDTO result = service.findById(inputExistingId);
 		assertNotNull(result);
-		assertEquals("Sucata de alumínio", result.getDescription());
+		assertEquals("SCRAP", result.getTypeMaterial());
+		assertEquals("PERFIL DE PROCESSO", result.getDescription());
 		assertEquals("kg", result.getAcronym());
-		assertEquals("Sucata de alumínio", result.getDescription());
+		assertEquals("SUCATA DE ALUMINIO", result.getDescription_taxclass());
 		assertEquals(7602000, result.getNumber());
-		assertEquals("Sucata de alumínio", result.getDescription_prodGroup());
+		assertEquals("SUCATA DE ALUMINIO", result.getDescription_matGroup());
 	}
 
 	// 3 - FindById-EntityNotFoundException
 	@Test
 	public void findByIdShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
 
-		assertThrows(ResourceNotFoundException.class, () -> service.findById(MaterialNonExistingId));
+		assertThrows(ResourceNotFoundException.class, () -> service.findById(inputNonExistingId));
 	}
 
 	// 4 - Insert Material
@@ -125,98 +127,108 @@ public class MaterialServiceTest {
 		when(unitRepository.findById(Mockito.any())).thenReturn(Optional.of(unit));
 		when(taxRepository.findById(Mockito.any())).thenReturn(Optional.of(tax));
 		when(groupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
-		when(MaterialRepository.save(any())).thenReturn(Material);
+		when(MaterialRepository.save(any())).thenReturn(input);
 
-		MaterialDTO result = service.insert(MaterialDTO);
+		InputDTO result = service.insert(inputDTO);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals("Sucata de alumínio", result.getDescription());
+		Assertions.assertEquals("PERFIL DE PROCESSO", result.getDescription());
 		verify(MaterialRepository).save(Mockito.any());
 	}
 
-	// 5 - Insert Unit Invalid
+	// 5 - Insert Type Material Invalid
+	@Test
+	void insertShouldThrowWhenTypeMaterialIsInvalid() {
+		InputDTO dto = InputFactory.createTypeMaterialInvalid();
+
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.insert(dto);
+		});
+	}
+
+	// 6 - Insert Unit Invalid
 	@Test
 	void copyDtoToEntityShoulNotFoundExceptionWhenUnitDTOInvalid() {
-		when(MaterialRepository.getReferenceById(1L)).thenReturn(Material);
-		when(MaterialRepository.save(Material)).thenReturn(Material);
+		when(MaterialRepository.getReferenceById(1L)).thenReturn(input);
+		when(MaterialRepository.save(input)).thenReturn(input);
 		when(unitRepository.findById(999L)).thenReturn(Optional.empty());
 		when(taxRepository.findById(Mockito.any())).thenReturn(Optional.of(tax));
 		when(groupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
 
 		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-			service.insert(MaterialDTO);
+			service.insert(inputDTO);
 		});
 	}
 
-	// 6 - Insert TaxClassification Invalid
+	// 7 - Insert TaxClassification Invalid
 	@Test
 	void copyDtoToEntityShoulNotFoundExceptionWhenTaxClassificationDTOInvalid() {
-		when(MaterialRepository.getReferenceById(1L)).thenReturn(Material);
-		when(MaterialRepository.save(Material)).thenReturn(Material);
+		when(MaterialRepository.getReferenceById(1L)).thenReturn(input);
+		when(MaterialRepository.save(input)).thenReturn(input);
 		when(unitRepository.findById(Mockito.any())).thenReturn(Optional.of(unit));
 		when(taxRepository.findById(999L)).thenReturn(Optional.empty());
 		when(groupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
 
 		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-			service.insert(MaterialDTO);
+			service.insert(inputDTO);
 		});
 	}
 
-	// 7 - Insert Material Group Invalid
+	// 8 - Insert Material Group Invalid
 	@Test
 	void copyDtoToEntityShoulNotFoundExceptionWhenMaterialGroupDTOInvalid() {
-		when(MaterialRepository.getReferenceById(1L)).thenReturn(Material);
-		when(MaterialRepository.save(Material)).thenReturn(Material);
+		when(MaterialRepository.getReferenceById(1L)).thenReturn(input);
+		when(MaterialRepository.save(input)).thenReturn(input);
 		when(unitRepository.findById(Mockito.any())).thenReturn(Optional.of(unit));
 		when(taxRepository.findById(Mockito.any())).thenReturn(Optional.of(tax));
 		when(groupRepository.findById(999L)).thenReturn(Optional.empty());
 
 		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-			service.insert(MaterialDTO);
+			service.insert(inputDTO);
 		});
 	}
 
-	// 8 - Update Material
+	// 9 - Update Material
 	@Test
 	public void updateShouldReturnMaterialDTOWhenIdExists() {
-		when(MaterialRepository.getReferenceById(1L)).thenReturn(Material);
-		when(MaterialRepository.save(Material)).thenReturn(Material);
+		when(MaterialRepository.getReferenceById(1L)).thenReturn(input);
+		when(MaterialRepository.save(input)).thenReturn(input);
 		when(unitRepository.findById(Mockito.any())).thenReturn(Optional.of(unit));
 		when(taxRepository.findById(Mockito.any())).thenReturn(Optional.of(tax));
 		when(groupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
 
-		MaterialDTO result = service.update(1L, MaterialDTO);
+		InputDTO result = service.update(1L, inputDTO);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals("Sucata de alumínio", result.getDescription());
+		Assertions.assertEquals("PERFIL DE PROCESSO", result.getDescription());
 	}
 
-	// 9 - Update Material Invalid
+	// 10 - Update Material Invalid
 	@Test
 	public void updateShouldReturnResourceNotFoundExceptionWhenIdDoesNotExist() {
-		when(MaterialRepository.getReferenceById(MaterialNonExistingId)).thenThrow(EntityNotFoundException.class);
+		when(MaterialRepository.getReferenceById(inputNonExistingId)).thenThrow(EntityNotFoundException.class);
 
-		assertThrows(ResourceNotFoundException.class, () -> service.update(MaterialNonExistingId, MaterialDTO));
+		assertThrows(ResourceNotFoundException.class, () -> service.update(inputNonExistingId, inputDTO));
 	}
 
-	// 10 - Delete Id exists
+	// 11 - Delete Id exists
 	@Test
 	public void deleteShouldDoNothingWhenIdExists() {
-		when(MaterialRepository.existsById(MaterialExistingId)).thenReturn(true);
+		when(MaterialRepository.existsById(inputExistingId)).thenReturn(true);
 
-		assertDoesNotThrow(() -> service.delete(MaterialExistingId));
-		verify(MaterialRepository).deleteById(MaterialExistingId);
+		assertDoesNotThrow(() -> service.delete(inputExistingId));
+		verify(MaterialRepository).deleteById(inputExistingId);
 	}
 
-	// 11 - Delete Id Does Not exists
+	// 12 - Delete Id Does Not exists
 	@Test
 	public void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesNotExists() {
-		when(MaterialRepository.existsById(MaterialNonExistingId)).thenReturn(false);
+		when(MaterialRepository.existsById(inputNonExistingId)).thenReturn(false);
 
-		assertThrows(ResourceNotFoundException.class, () -> service.delete(MaterialNonExistingId));
+		assertThrows(ResourceNotFoundException.class, () -> service.delete(inputNonExistingId));
 	}
 
-	// 12 - Delete Id Dependent
+	// 13 - Delete Id Dependent
 	@Test
 	public void deleteShouldThrowDataBaseExceptionWhenIdDependent() {
 		when(MaterialRepository.existsById(dependentId)).thenReturn(true);

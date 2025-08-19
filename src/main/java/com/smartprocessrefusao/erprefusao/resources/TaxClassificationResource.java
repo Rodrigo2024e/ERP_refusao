@@ -27,44 +27,42 @@ public class TaxClassificationResource {
 
 	@Autowired
 	private TaxClassificationService taxClassificationService;
-	
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping
-	public ResponseEntity<List<TaxClassificationDTO>> findAll(){
-			List<TaxClassificationDTO> list = taxClassificationService.findAll();		
-			return ResponseEntity.ok().body(list);
-		}
+	public ResponseEntity<List<TaxClassificationDTO>> findAll() {
+		List<TaxClassificationDTO> list = taxClassificationService.findAll();
+		return ResponseEntity.ok().body(list);
+	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<TaxClassificationDTO> findById(@PathVariable Long id){
+	public ResponseEntity<TaxClassificationDTO> findById(@PathVariable Long id) {
 		TaxClassificationDTO dto = taxClassificationService.findById(id);
 		return ResponseEntity.ok().body(dto);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PostMapping
 	public ResponseEntity<TaxClassificationDTO> insert(@Valid @RequestBody TaxClassificationDTO dto) {
 		dto = taxClassificationService.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(dto.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<TaxClassificationDTO> update(@PathVariable Long id, @Valid @RequestBody TaxClassificationDTO dto) {
+	public ResponseEntity<TaxClassificationDTO> update(@PathVariable Long id,
+			@Valid @RequestBody TaxClassificationDTO dto) {
 		dto = taxClassificationService.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		taxClassificationService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-	
-	
+
 }

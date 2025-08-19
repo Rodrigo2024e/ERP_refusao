@@ -9,7 +9,7 @@ public interface ReportEmployeeProjection {
 		String getEmail();
 		String getCellPhone();
 		String getTelephone();
-		Boolean getSysUser();
+		boolean isSysUser();
 		Long getSectorId();
 		String getNameSector();
 		String getProcess();

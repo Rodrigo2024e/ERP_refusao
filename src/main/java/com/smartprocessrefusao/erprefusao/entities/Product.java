@@ -1,63 +1,29 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
-import java.util.Objects;
-
 import com.smartprocessrefusao.erprefusao.projections.IdProjection;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_product")
-public class Product implements IdProjection<Long> {
+public class Product extends Material implements IdProjection<Long> {
+	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 	private String description;
 	private Integer alloy;
-	private Integer inch;
-	private Double length;
-	
-	@ManyToOne
-	@JoinColumn(name = "uomId")
-	private Unit uom;
-	
-	@ManyToOne
-	@JoinColumn(name = "taxclassId")
-	private TaxClassification taxclass;
-	
-	@ManyToOne
-	@JoinColumn(name = "prodGroupId")
-	private ProductGroup prodGroup;
-	
-	public Product () {
-		
+	private Integer billetDiameter;
+	private Double billetLength;
+
+	public Product() {
+
 	}
 
-	public Product(Long id, String description, Integer alloy, Integer inch, Double length, Unit uom,
-			TaxClassification taxclass, ProductGroup prodGroup) {
-		this.id = id;
+	public Product(String description, Integer alloy, Integer billetDiameter, Double billetLength) {
 		this.description = description;
 		this.alloy = alloy;
-		this.inch = inch;
-		this.length = length;
-		this.uom = uom;
-		this.taxclass = taxclass;
-		this.prodGroup = prodGroup;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+		this.billetDiameter = billetDiameter;
+		this.billetLength = billetLength;
 	}
 
 	public String getDescription() {
@@ -76,62 +42,20 @@ public class Product implements IdProjection<Long> {
 		this.alloy = alloy;
 	}
 
-	public Integer getInch() {
-		return inch;
+	public Integer getBilletDiameter() {
+		return billetDiameter;
 	}
 
-	public void setInch(Integer inch) {
-		this.inch = inch;
+	public void setBilletDiameter(Integer billetDiameter) {
+		this.billetDiameter = billetDiameter;
 	}
 
-	public Double getLength() {
-		return length;
+	public Double getBilletLength() {
+		return billetLength;
 	}
 
-	public void setLength(Double length) {
-		this.length = length;
+	public void setBilletLength(Double billetLength) {
+		this.billetLength = billetLength;
 	}
 
-	public Unit getUom() {
-		return uom;
-	}
-
-	public void setUom(Unit uom) {
-		this.uom = uom;
-	}
-
-	public TaxClassification getTaxclass() {
-		return taxclass;
-	}
-
-	public void setTaxclass(TaxClassification taxclass) {
-		this.taxclass = taxclass;
-	}
-
-	public ProductGroup getProdGroup() {
-		return prodGroup;
-	}
-
-	public void setProdGroup(ProductGroup prodGroup) {
-		this.prodGroup = prodGroup;
-	}
-	
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Product other = (Product) obj;
-		return Objects.equals(id, other.id);
-	}
-	
 }

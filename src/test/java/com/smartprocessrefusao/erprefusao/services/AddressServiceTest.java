@@ -106,7 +106,7 @@ public class AddressServiceTest {
 			AddressDTO result = service.insert(addressDTO);
 
 			Assertions.assertNotNull(result);
-			Assertions.assertEquals("Rua A", result.getStreet());
+			Assertions.assertEquals("RUA A", result.getStreet());
 		}
 
 		//3 - Insert City Invalid 

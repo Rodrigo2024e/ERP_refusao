@@ -124,7 +124,7 @@ public class EmployeeSectorDTO {
 		return rg;
 	}
 
-	public Boolean getSysUser() {
+	public Boolean isSysUser() {
 		return sysUser;
 	}
 

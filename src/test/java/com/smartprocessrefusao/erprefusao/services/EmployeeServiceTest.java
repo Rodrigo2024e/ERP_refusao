@@ -30,6 +30,7 @@ import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.SectorRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
+import com.smartprocessrefusao.erprefusao.tests.EmployeeFactory;
 import com.smartprocessrefusao.erprefusao.tests.EmployeeFactory.Factory;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -55,6 +56,7 @@ class EmployeeServiceTest {
 		employee = Factory.createEmployee();
 		employeeDTO = Factory.createEmployeeDTO();
 		sector = Factory.createSector();
+		EmployeeFactory.create();
 	}
 
 	// 1 - Report Employee
@@ -89,7 +91,7 @@ class EmployeeServiceTest {
 		EmployeeSectorDTO result = service.findById(1L);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals("Jonathas Junio", result.getName());
+		Assertions.assertEquals("JONATHAS JUNIO", result.getName());
 	}
 
 	// 4 - FindById-EntityNotFoundException
@@ -111,7 +113,7 @@ class EmployeeServiceTest {
 		EmployeeSectorDTO result = service.insert(employeeDTO);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals("Jonathas Junio", result.getName());
+		Assertions.assertEquals("JONATHAS JUNIO", result.getName());
 		verify(employeeRepository).save(Mockito.any());
 	}
 
@@ -135,7 +137,7 @@ class EmployeeServiceTest {
 		EmployeeSectorDTO result = service.update(1L, employeeDTO);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals("Jonathas Junio", result.getName());
+		Assertions.assertEquals("JONATHAS JUNIO", result.getName());
 	}
 
 	// 8 - Update Employee Invalid

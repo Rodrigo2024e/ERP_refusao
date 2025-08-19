@@ -9,27 +9,27 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table (name = "tb_employee")
+@Table(name = "tb_employee")
 public class Employee extends People implements IdProjection<Long> {
 	private static final long serialVersionUID = 1L;
-	
+
 	private String cpf;
 	private String rg;
-	private boolean sysUser;
-	
+	private Boolean sysUser;
+
 	@OneToOne(mappedBy = "employee")
 	private User user;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "sector_id")
 	private Sector sector;
-	
+
 	public Employee() {
-		
+
 	}
 
 	public Employee(Long id, String name, String email, String cellPhone, String telephone, Address address, String cpf,
-			String rg, boolean sysUser, User user, Sector sector) {
+			String rg, Boolean sysUser, User user, Sector sector) {
 		super(id, name, email, cellPhone, telephone, address);
 		this.cpf = cpf;
 		this.rg = rg;
@@ -54,11 +54,11 @@ public class Employee extends People implements IdProjection<Long> {
 		this.rg = rg;
 	}
 
-	public boolean getSysUser() {
+	public Boolean getSysUser() {
 		return sysUser;
 	}
 
-	public void setSysUser(boolean sysUser) {
+	public void setSysUser(Boolean sysUser) {
 		this.sysUser = sysUser;
 	}
 
@@ -78,6 +78,4 @@ public class Employee extends People implements IdProjection<Long> {
 		this.sector = sector;
 	}
 
-	
-	
 }

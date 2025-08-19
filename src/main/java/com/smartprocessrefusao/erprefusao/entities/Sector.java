@@ -15,25 +15,25 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tb_sector")
 public class Sector implements IdProjection<Long> {
-	
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    private String nameSector;
-    private String process;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @OneToMany(mappedBy = "sector")
-    private Set<Employee> employees = new HashSet<>();
+	private String nameSector;
+	private String process;
 
-    public Sector() {
-    }
+	@OneToMany(mappedBy = "sector")
+	private Set<Employee> employees = new HashSet<>();
+
+	public Sector() {
+	}
 
 	public Sector(Long id, String nameSector, String process) {
 		this.id = id;
 		this.nameSector = nameSector;
 		this.process = process;
-		
+
 	}
 
 	public Long getId() {
@@ -64,8 +64,4 @@ public class Sector implements IdProjection<Long> {
 		return employees;
 	}
 
-	public void setEmployees(Set<Employee> employees) {
-		this.employees = employees;
-	} 
-    
 }

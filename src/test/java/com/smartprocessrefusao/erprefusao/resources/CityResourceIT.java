@@ -106,7 +106,7 @@ public class CityResourceIT {
 	@Test
 	public void insertShouldInsertResourceWhenAdminLoggedAndCorrectData() throws Exception {
 
-		CityDTO dto = new CityDTO(null, "Sorocoba", "SP", (long) 26, "São Paulo", "Brasil");
+		CityDTO dto = new CityDTO(null, "Sorocaba", "SP", (long) 26, "São Paulo", "Brasil");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/cities").header("Authorization", "Bearer " + adminToken)
@@ -114,7 +114,7 @@ public class CityResourceIT {
 
 		result.andExpect(status().isCreated());
 		result.andExpect(jsonPath("$.id").exists());
-		result.andExpect(jsonPath("$.nameCity").value("Sorocoba"));
+		result.andExpect(jsonPath("$.nameCity").value("SOROCABA"));
 		result.andExpect(jsonPath("$.ufState").value("SP"));
 		result.andExpect(jsonPath("$.idState").value((long) 26));
 		result.andExpect(jsonPath("$.nameState").value("São Paulo"));

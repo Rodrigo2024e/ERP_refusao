@@ -22,24 +22,23 @@ public class TaxClassificationService {
 
 	@Autowired
 	private TaxClassificationRepository taxClassificationRepository;
-	
+
 	@Transactional(readOnly = true)
 	public List<TaxClassificationDTO> findAll() {
-	    List<TaxClassification> list = taxClassificationRepository.findAll();
-	    return list.stream().map(TaxClassificationDTO::new).toList();
+		List<TaxClassification> list = taxClassificationRepository.findAll();
+		return list.stream().map(TaxClassificationDTO::new).toList();
 	}
 
 	@Transactional(readOnly = true)
 	public TaxClassificationDTO findById(Long id) {
 		try {
-		Optional<TaxClassification> obj = taxClassificationRepository.findById(id);
-		TaxClassification entity = obj.orElseThrow(()-> new EntityNotFoundException("Entity not found"));
-		return new TaxClassificationDTO(entity);
-		}
-		catch (EntityNotFoundException e) {
+			Optional<TaxClassification> obj = taxClassificationRepository.findById(id);
+			TaxClassification entity = obj.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
+			return new TaxClassificationDTO(entity);
+		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
-		}	
-		
+		}
+
 	}
 
 	@Transactional
@@ -49,18 +48,17 @@ public class TaxClassificationService {
 		entity = taxClassificationRepository.save(entity);
 		return new TaxClassificationDTO(entity);
 	}
-	
+
 	@Transactional
-	public TaxClassificationDTO update(Long id, TaxClassificationDTO dto) {	
+	public TaxClassificationDTO update(Long id, TaxClassificationDTO dto) {
 		try {
 			TaxClassification entity = taxClassificationRepository.getReferenceById(id);
 			copyDtoToEntity(dto, entity);
 			entity = taxClassificationRepository.save(entity);
 			return new TaxClassificationDTO(entity);
-		}
-		catch (EntityNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
-		}		
+		}
 	}
 
 	@Transactional(propagation = Propagation.SUPPORTS)
@@ -70,15 +68,14 @@ public class TaxClassificationService {
 		}
 		try {
 			taxClassificationRepository.deleteById(id);
-		}
-		catch (DataIntegrityViolationException e) {
+		} catch (DataIntegrityViolationException e) {
 			throw new DatabaseException("Integrity violation");
 		}
 	}
-	
+
 	public void copyDtoToEntity(TaxClassificationDTO dto, TaxClassification entity) {
-	    entity.setDescription(dto.getDescription().toUpperCase());
-	    entity.setNumber(dto.getNumber());
+		entity.setDescription(dto.getDescription().toUpperCase());
+		entity.setNumber(dto.getNumber());
 
 	}
 }

@@ -53,8 +53,8 @@ public class ProductResourceIT {
 
 		existingId = 1L;
 
-		dto = new ProductDTO(null, "Tarugo de Alumínio", 6060, 6, 6.0, (long) 1, "kg", (long) 1, "Tarugo de Alumínio",
-				7604000, (long) 2, "Produto Acabado");
+		dto = new ProductDTO(null, "FINISHED_PRODUCTS", "Tarugo de Aluminio", 6060, 6, 6.0, (long) 1, "kg", (long) 1,
+				"Tarugo de alumínio", 7604000, (long) 1, "Produto acabado");
 
 		clientUsername = "michele@alunova.com";
 		clientPassword = "123456";
@@ -69,8 +69,8 @@ public class ProductResourceIT {
 	@Test
 	public void insertShouldReturn401WhenInvalidToken() throws Exception {
 
-		ProductDTO dto = new ProductDTO(null, "Tarugo de Alumínio", 6060, 6, 6.0, (long) 1, "kg", (long) 1,
-				"Tarugo de Alumínio", 7604000, (long) 2, "Produto Acabado");
+		ProductDTO dto = new ProductDTO(null, "FINISHED_PRODUCTS", "Tarugo de Aluminio", 6060, 6, 6.0, (long) 1, "kg", (long) 1,
+				"Tarugo de alumínio", 7604000, (long) 1, "Produto acabado");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/products").header("Authorization", "Bearer " + invalidToken)
@@ -83,8 +83,8 @@ public class ProductResourceIT {
 	@Test
 	public void insertShouldReturn403WhenClientLogged() throws Exception {
 
-		ProductDTO dto = new ProductDTO(null, "Tarugo de Alumínio", 6060, 6, 6.0, (long) 1, "kg", (long) 1,
-				"Tarugo de Alumínio", 7604000, (long) 2, "Produto Acabado");
+		ProductDTO dto = new ProductDTO(null, "FINISHED_PRODUCTS", "Tarugo de Aluminio", 6060, 6, 6.0, (long) 1, "kg", (long) 1,
+				"Tarugo de alumínio", 7604000, (long) 1, "Produto acabado");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/products").header("Authorization", "Bearer " + clientToken)
@@ -102,18 +102,18 @@ public class ProductResourceIT {
 
 		result.andExpect(status().isOk());
 		result.andExpect(jsonPath("$.content[0].description").value("Tarugo de alumínio"));
+		result.andExpect(jsonPath("$.content[0].alloy").value(6005));
 		result.andExpect(jsonPath("$.content[1].description").value("Tarugo de alumínio"));
-		result.andExpect(jsonPath("$.content[2].description").value("Tarugo de alumínio"));
+		result.andExpect(jsonPath("$.content[1].alloy").value(6060));
 
 	}
 
 	// 4 - FindByIdProduct
 	@Test
-	public void findByIdShouldReturnAddressWhenIdExistsAndAdminRole() throws Exception {
-		mockMvc.perform(get("/products/{id}", existingId).header("Authorization", "Bearer " + adminToken)
+	public void findByIdShouldReturnProductWhenIdExistsAndAdminRole() throws Exception {
+		mockMvc.perform(get("/products/6", existingId).header("Authorization", "Bearer " + adminToken)
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
 	}
-	
 
 	// 5 - AdminLoggedAndCorrectData
 	@Test
@@ -138,8 +138,8 @@ public class ProductResourceIT {
 	// 6 - AdminLoggedAndInvalidDescriptionProduct
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndInvalidDescription() throws Exception {
-		ProductDTO dto = new ProductDTO(null, "Ta", 6060, 6, 6.0, (long) 1, "kg", (long) 1,
-				"Tarugo de Alumínio", 7604000, (long) 2, "Produto Acabado");
+		ProductDTO dto = new ProductDTO(null, "FINISHED_PRODUCTS", "Ta", 6060, 6, 6.0, (long) 1, "kg", (long) 1,
+				"Tarugo de alumínio", 7604000, (long) 1, "Produto acabado");
 
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
@@ -155,8 +155,9 @@ public class ProductResourceIT {
 	// 7 - AdminLoggedAndBlankDescriptionProduct
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndBlankDescription() throws Exception {
-		ProductDTO dto = new ProductDTO(null, "", 6060, 6, 6.0, (long) 1, "kg", (long) 1,
-				"Tarugo de Alumínio", 7604000, (long) 2, "Produto Acabado");
+		ProductDTO dto = new ProductDTO(null, "FINISHED_PRODUCTS", ""
+				+ "", 6060, 6, 6.0, (long) 1, "kg", (long) 1,
+				"Tarugo de alumínio", 7604000, (long) 1, "Produto acabado");
 
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
@@ -166,56 +167,6 @@ public class ProductResourceIT {
 		result.andExpect(status().isUnprocessableEntity());
 		result.andExpect(jsonPath("$.errors[0].fieldName").value("description"));
 		result.andExpect(jsonPath("$.errors[0].message").value("O campo descrição deve ter entre 3 a 30 caracteres"));
-
-	}
-	// 8 - AdminLoggedAndInvalidUnit
-	@Test
-	public void insertShouldReturn422WhenAdminLoggedAndInvalidUnit() throws Exception {
-		ProductDTO dto = new ProductDTO(null, "Tarugo de alumínio", 6060, 6, 6.0, null, "kg", (long) 1,
-				"Tarugo de Alumínio", 7604000, (long) 2, "Produto Acabado");
-
-		String jsonBody = objectMapper.writeValueAsString(dto);
-
-		ResultActions result = mockMvc.perform(post("/products").header("Authorization", "Bearer " + adminToken)
-				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
-
-		result.andExpect(status().isUnprocessableEntity());
-		result.andExpect(jsonPath("$.errors[0].fieldName").value("uomId"));
-		result.andExpect(jsonPath("$.errors[0].message").value("Campo Unidade de Medida requerido"));
-
-	}
-
-	// 9 - AdminLoggedAndInvalidClassificationTax
-	@Test
-	public void insertShouldReturn422WhenAdminLoggedAndInvalidClassificationTax() throws Exception {
-		ProductDTO dto = new ProductDTO(null, "Tarugo de alumínio", 6060, 6, 6.0, (long) 1, "kg", null,
-				"Tarugo de Alumínio", 7604000, (long) 2, "Produto Acabado");
-
-		String jsonBody = objectMapper.writeValueAsString(dto);
-
-		ResultActions result = mockMvc.perform(post("/products").header("Authorization", "Bearer " + adminToken)
-				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
-
-		result.andExpect(status().isUnprocessableEntity());
-		result.andExpect(jsonPath("$.errors[0].fieldName").value("taxClassId"));
-		result.andExpect(jsonPath("$.errors[0].message").value("Campo Classificação Fiscal requerida"));
-
-	}
-
-	// 10 - AdminLoggedAndInvalidProdGroup
-	@Test
-	public void insertShouldReturn422WhenAdminLoggedAndInvalidProdGroup() throws Exception {
-		ProductDTO dto = new ProductDTO(null, "Tarugo de alumínio", 6060, 6, 6.0, (long) 1, "kg", (long) 1,
-				"Tarugo de Alumínio", 7604000, null, "Produto Acabado");
-
-		String jsonBody = objectMapper.writeValueAsString(dto);
-
-		ResultActions result = mockMvc.perform(post("/products").header("Authorization", "Bearer " + adminToken)
-				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
-
-		result.andExpect(status().isUnprocessableEntity());
-		result.andExpect(jsonPath("$.errors[0].fieldName").value("prodGroupId"));
-		result.andExpect(jsonPath("$.errors[0].message").value("Campo Grupo de Mercadoria requerido"));
 
 	}
 

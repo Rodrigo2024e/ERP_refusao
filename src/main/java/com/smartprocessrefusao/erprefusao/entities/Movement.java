@@ -1,17 +1,17 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
+
+import com.smartprocessrefusao.erprefusao.enumerados.TypeExpenses;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -22,49 +22,40 @@ public class Movement {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	private BigDecimal  amountMaterial;
-	private BigDecimal  unitValue;
-	private BigDecimal  totalValue;
-	private BigDecimal  metalYield;
-	private BigDecimal  metalWeight;
-	private BigDecimal  slag;
-		
+
+	private BigDecimal amountMaterial;
+	private BigDecimal unitValue;
+	private BigDecimal totalValue;
+	private BigDecimal metalYield;
+	private BigDecimal metalWeight;
+	private BigDecimal slag;
+
 	@ManyToOne
-	@JoinColumn(name = "numTicket_id")
+	@JoinColumn(name = "num_ticket_id")
 	private Ticket numTicket;
 
-	@ManyToMany
-	@JoinTable(name = "tb_movement_material",
-			joinColumns = @JoinColumn(name = "movement_mat_id"),
-			inverseJoinColumns = @JoinColumn(name = "material_id"))
-	Set<Material> materials = new HashSet<>();
+	@ManyToOne
+	@JoinColumn(name = "input_id")
+	private Input input;
 
-	@ManyToMany
-	@JoinTable(name = "tb_movement_partner",
-			joinColumns = @JoinColumn(name = "movement_par_id"),
-			inverseJoinColumns = @JoinColumn(name = "partner_id"))
-	Set<Partner> partners = new HashSet<>();
+	@ManyToOne
+	@JoinColumn(name = "partner_id")
+	private People partner;
 
-	@ManyToMany
-	@JoinTable(name = "tb_movement_transaction",
-			joinColumns = @JoinColumn(name = "movement_tra_id"),
-			inverseJoinColumns = @JoinColumn(name = "transaction_id"))
-	Set<TypeOfTransaction> transactions = new HashSet<>();
-	
-	@ManyToMany
-	@JoinTable(name = "tb_movement_expense",
-			joinColumns = @JoinColumn(name = "movement_exp_id"),
-			inverseJoinColumns = @JoinColumn(name = "expense_id"))
-	Set<TypeExpenses> expenses = new HashSet<>();
+	@ManyToOne
+	@JoinColumn(name = "transaction_id")
+	private TypeTransaction transaction;
+
+	@Enumerated(EnumType.STRING)
+	private TypeExpenses expenses;
 
 	public Movement() {
-		
-		}
+
+	}
 
 	public Movement(Long id, BigDecimal amountMaterial, BigDecimal unitValue, BigDecimal totalValue,
-			BigDecimal metalYield, BigDecimal metalWeight, BigDecimal slag, Ticket numTicket) {
-
+			BigDecimal metalYield, BigDecimal metalWeight, BigDecimal slag, Ticket numTicket, Input input,
+			People partner, TypeTransaction transaction, TypeExpenses expenses) {
 		this.id = id;
 		this.amountMaterial = amountMaterial;
 		this.unitValue = unitValue;
@@ -73,6 +64,10 @@ public class Movement {
 		this.metalWeight = metalWeight;
 		this.slag = slag;
 		this.numTicket = numTicket;
+		this.input = input;
+		this.partner = partner;
+		this.transaction = transaction;
+		this.expenses = expenses;
 	}
 
 	public Long getId() {
@@ -139,35 +134,35 @@ public class Movement {
 		this.numTicket = numTicket;
 	}
 
-	public Set<Material> getMaterials() {
-		return materials;
+	public Input getInput() {
+		return input;
 	}
 
-	public void setMaterials(Set<Material> materials) {
-		this.materials = materials;
+	public void setInput(Input input) {
+		this.input = input;
 	}
 
-	public Set<Partner> getPartners() {
-		return partners;
+	public People getPartner() {
+		return partner;
 	}
 
-	public void setPartners(Set<Partner> partners) {
-		this.partners = partners;
+	public void setPartner(People partner) {
+		this.partner = partner;
 	}
 
-	public Set<TypeOfTransaction> getTransactions() {
-		return transactions;
+	public TypeTransaction getTransaction() {
+		return transaction;
 	}
 
-	public void setTransactions(Set<TypeOfTransaction> transactions) {
-		this.transactions = transactions;
+	public void setTransaction(TypeTransaction transaction) {
+		this.transaction = transaction;
 	}
 
-	public Set<TypeExpenses> getExpenses() {
+	public TypeExpenses getExpenses() {
 		return expenses;
 	}
 
-	public void setExpenses(Set<TypeExpenses> expenses) {
+	public void setExpenses(TypeExpenses expenses) {
 		this.expenses = expenses;
 	}
 

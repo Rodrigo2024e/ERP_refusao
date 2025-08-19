@@ -2,27 +2,27 @@ package com.smartprocessrefusao.erprefusao.dto;
 
 import java.util.Objects;
 
-import com.smartprocessrefusao.erprefusao.entities.ProductGroup;
+import com.smartprocessrefusao.erprefusao.entities.MaterialGroup;
 
 import jakarta.validation.constraints.Size;
 
-public class ProductGroupDTO {
+public class MaterialGroupDTO {
 
 	private Long id;
 
 	@Size(min = 3, max = 30, message = "O campo nome deve ter entre 3 a 30 caracteres")
 	private String description;
 
-	public ProductGroupDTO() {
+	public MaterialGroupDTO() {
 
 	}
 
-	public ProductGroupDTO(Long id, String description) {
+	public MaterialGroupDTO(Long id, String description) {
 		this.id = id;
 		this.description = description;
 	}
 
-	public ProductGroupDTO(ProductGroup entity) {
+	public MaterialGroupDTO(MaterialGroup entity) {
 		id = entity.getId();
 		description = entity.getDescription();
 	}
@@ -48,7 +48,7 @@ public class ProductGroupDTO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ProductGroupDTO other = (ProductGroupDTO) obj;
+		MaterialGroupDTO other = (MaterialGroupDTO) obj;
 		return Objects.equals(id, other.id);
 	}
 

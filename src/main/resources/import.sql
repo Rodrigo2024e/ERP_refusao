@@ -59,32 +59,35 @@ INSERT INTO tb_uom (description, acronym) VALUES ('Metro', 'm');
 INSERT INTO tb_uom (description, acronym) VALUES ('Polegada', 'pol');
 
 INSERT INTO tb_tax_classification (description, number) VALUES ('Sucata de alumínio', '7602000');
+INSERT INTO tb_tax_classification (description, number) VALUES ('Insumos', '7601000');
 INSERT INTO tb_tax_classification (description, number) VALUES ('Tarugo de alumínio', '7604000');
+INSERT INTO tb_tax_classification (description, number) VALUES ('Diversos', '7606000');
 
-INSERT INTO tb_product_group (description) VALUES ('Sucata de alumínio');
-INSERT INTO tb_product_group (description) VALUES ('Produto acabado');
+INSERT INTO tb_material_group (description) VALUES ('Sucata de alumínio');
+INSERT INTO tb_material_group (description) VALUES ('Insumos');
+INSERT INTO tb_material_group (description) VALUES ('Produto acabado');
+INSERT INTO tb_material_group (description) VALUES ('Diversos');
 
-INSERT INTO tb_material (description, uom_id, tax_class_id, prod_group_id) VALUES ('Perfil de Processo', 1, 1, 1);
-INSERT INTO tb_material (description, uom_id, tax_class_id, prod_group_id) VALUES ('Perfil Natural', 1, 1, 1);
-INSERT INTO tb_material (description, uom_id, tax_class_id, prod_group_id) VALUES ('Perfil Pintado', 1, 1, 1);
-INSERT INTO tb_material (description, uom_id, tax_class_id, prod_group_id) VALUES ('Perfil Misto', 1, 1, 1);
-INSERT INTO tb_material (description, uom_id, tax_class_id, prod_group_id) VALUES ('Perfil Anodizado', 1, 1, 1);
-INSERT INTO tb_material (description, uom_id, tax_class_id, prod_group_id) VALUES ('Perfil Picotado', 1, 1, 1);
-INSERT INTO tb_material (description, uom_id, tax_class_id, prod_group_id) VALUES ('Cabo de Alumínio Prensado', 1, 1, 1);
+INSERT INTO tb_material (type_material, uom_material_id, tax_class_material_id, material_group_id) VALUES ('SCRAP', 1, 1, 1);
+INSERT INTO tb_material (type_material, uom_material_id, tax_class_material_id, material_group_id) VALUES ('SCRAP', 1, 1, 1);
+INSERT INTO tb_material (type_material, uom_material_id, tax_class_material_id, material_group_id) VALUES ('SCRAP', 1, 1, 1);
+INSERT INTO tb_material (type_material, uom_material_id, tax_class_material_id, material_group_id) VALUES ('SUPPLIES', 1, 2, 2);
+INSERT INTO tb_material (type_material, uom_material_id, tax_class_material_id, material_group_id) VALUES ('SUPPLIES', 1, 2, 2);
+INSERT INTO tb_material (type_material, uom_material_id, tax_class_material_id, material_group_id) VALUES ('FINISHED_PRODUCTS', 1, 3, 3);
+INSERT INTO tb_material (type_material, uom_material_id, tax_class_material_id, material_group_id) VALUES ('FINISHED_PRODUCTS', 1, 3, 3);
+INSERT INTO tb_material (type_material, uom_material_id, tax_class_material_id, material_group_id) VALUES ('FINISHED_PRODUCTS', 1, 3, 3);
+INSERT INTO tb_material (type_material, uom_material_id, tax_class_material_id, material_group_id) VALUES ('MISC_MATERIALS', 1, 4, 4);
 
-INSERT INTO tb_product (description, alloy, inch, length, uom_id, taxclass_id, prod_group_id) VALUES ('Tarugo de alumínio', '6060', 4, 6, 1, 2, 2);
-INSERT INTO tb_product (description, alloy, inch, length, uom_id, taxclass_id, prod_group_id) VALUES ('Tarugo de alumínio', '6063', 4, 6, 1, 2, 2);
-INSERT INTO tb_product (description, alloy, inch, length, uom_id, taxclass_id, prod_group_id) VALUES ('Tarugo de alumínio', '6060', 5, 6, 1, 2, 2);
-INSERT INTO tb_product (description, alloy, inch, length, uom_id, taxclass_id, prod_group_id) VALUES ('Tarugo de alumínio', '6063', 5, 6, 1, 2, 2);
-INSERT INTO tb_product (description, alloy, inch, length, uom_id, taxclass_id, prod_group_id) VALUES ('Tarugo de alumínio', '6060', 6, 6, 1, 2, 2);
-INSERT INTO tb_product (description, alloy, inch, length, uom_id, taxclass_id, prod_group_id) VALUES ('Tarugo de alumínio', '6063', 6, 6, 1, 2, 2);
-INSERT INTO tb_product (description, alloy, inch, length, uom_id, taxclass_id, prod_group_id) VALUES ('Tarugo de alumínio', '6060', 7, 6, 1, 2, 2);
-INSERT INTO tb_product (description, alloy, inch, length, uom_id, taxclass_id, prod_group_id) VALUES ('Tarugo de alumínio', '6063', 7, 6, 1, 2, 2);
+INSERT INTO tb_input (description, id) VALUES ('PERFIL DE PROCESSO', 1);
+INSERT INTO tb_input (description, id) VALUES ('PERFIL DE PINTADO', 2);
+INSERT INTO tb_input (description, id) VALUES ('PERFIL DE ANODIZADO', 3);
+INSERT INTO tb_input (description, id) VALUES ('GLP - GAS LIQUEFEITO', 4);
+INSERT INTO tb_input (description, id) VALUES ('FILTRO - CAIXA FILTRO', 5);
+INSERT INTO tb_input (description, id) VALUES ('PAPEL SULFITE', 9);
 
-INSERT INTO tb_expenses (expenses, direct_costs, indirect_costs, investiment) VALUES (true, false, false, false);
-INSERT INTO tb_expenses (expenses, direct_costs, indirect_costs, investiment) VALUES (false, true, false, false);
-INSERT INTO tb_expenses (expenses, direct_costs, indirect_costs, investiment) VALUES (false, false, true, false);
-INSERT INTO tb_expenses (expenses, direct_costs, indirect_costs, investiment) VALUES (false, false, false, true);
+INSERT INTO tb_product (description, alloy, billet_diameter, billet_length, id) VALUES ('Tarugo de alumínio', 6060, 4, 6, 6);
+INSERT INTO tb_product (description, alloy, billet_diameter, billet_length, id) VALUES ('Tarugo de alumínio', 6063, 5, 6, 7);
+INSERT INTO tb_product (description, alloy, billet_diameter, billet_length, id) VALUES ('Tarugo de alumínio', 6005, 6, 6, 8);
 
 INSERT INTO tb_type_transaction (description) VALUES ('Compra');
 INSERT INTO tb_type_transaction (description) VALUES ('Industrialização');
@@ -92,22 +95,7 @@ INSERT INTO tb_type_transaction (description) VALUES ('Retorno de Industrializa�
 INSERT INTO tb_type_transaction (description) VALUES ('Arrendamento');
 
 INSERT INTO tb_ticket (num_ticket, date_ticket, number_plate, net_weight) VALUES (34950,'2022-07-25', 'ABC-1245', 1000);
-INSERT INTO tb_movement (amount_material, unit_value, total_value, metal_yield, metal_weight, slag, num_ticket_id) VALUES (200, 2.0, 400.0, 0.88, 176.0, 24.0, 34950);
-INSERT INTO tb_movement (amount_material, unit_value, total_value, metal_yield, metal_weight, slag, num_ticket_id) VALUES (300, 2.0, 600.0, 0.90, 270.0, 30.0, 34950);
-INSERT INTO tb_movement (amount_material, unit_value, total_value, metal_yield, metal_weight, slag, num_ticket_id) VALUES (500, 2.0, 1000.0, 0.97, 485.0, 15.0, 34950);
+INSERT INTO tb_movement (num_ticket_id, partner_id, transaction_id, expenses, input_id, amount_material, unit_value, total_value, metal_yield, metal_weight, slag) VALUES (34950, 4, 2, 'FREE', 1, 200, 2.0, 400.0, 0.88, 176.0, 24.0);
+INSERT INTO tb_movement (num_ticket_id, partner_id, transaction_id, expenses, input_id, amount_material, unit_value, total_value, metal_yield, metal_weight, slag) VALUES (34950, 4, 2, 'FREE', 1, 300, 2.0, 600.0, 0.90, 270.0, 30.0);
+INSERT INTO tb_movement (num_ticket_id, partner_id, transaction_id, expenses, input_id, amount_material, unit_value, total_value, metal_yield, metal_weight, slag) VALUES (34950, 6, 1, 'DIRECT_COSTS', 3, 500, 2.0, 1000.0, 0.97, 485.0, 15.0);
 
-INSERT INTO tb_movement_material (material_id, movement_mat_id) VALUES (1, 1);
-INSERT INTO tb_movement_material (material_id, movement_mat_id) VALUES (2, 2);
-INSERT INTO tb_movement_material (material_id, movement_mat_id) VALUES (3, 3);
-
-INSERT INTO tb_movement_partner (partner_id, movement_par_id) VALUES (4, 1);
-INSERT INTO tb_movement_partner (partner_id, movement_par_id) VALUES (5, 2);
-INSERT INTO tb_movement_partner (partner_id, movement_par_id) VALUES (6, 3);
-
-INSERT INTO tb_movement_expense (expense_id, movement_exp_id) VALUES (2, 1);
-INSERT INTO tb_movement_expense (expense_id, movement_exp_id) VALUES (2, 2);
-INSERT INTO tb_movement_expense (expense_id, movement_exp_id) VALUES (2, 3);
-
-INSERT INTO tb_movement_transaction (transaction_id, movement_tra_id) VALUES (1, 1);
-INSERT INTO tb_movement_transaction (transaction_id, movement_tra_id) VALUES (2, 2);
-INSERT INTO tb_movement_transaction (transaction_id, movement_tra_id) VALUES (2, 3);

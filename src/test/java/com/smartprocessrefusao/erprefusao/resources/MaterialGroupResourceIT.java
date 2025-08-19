@@ -18,14 +18,14 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smartprocessrefusao.erprefusao.dto.ProductGroupDTO;
-import com.smartprocessrefusao.erprefusao.tests.ProductGroupFactory;
+import com.smartprocessrefusao.erprefusao.dto.MaterialGroupDTO;
+import com.smartprocessrefusao.erprefusao.tests.MatGroupFactory;
 import com.smartprocessrefusao.erprefusao.tests.TokenUtil;
 
 @AutoConfigureMockMvc
 @SpringBootTest
 @Transactional
-public class ProductGroupResourceIT {
+public class MaterialGroupResourceIT {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -46,14 +46,14 @@ public class ProductGroupResourceIT {
 	private Long existingId;
 
 	@SuppressWarnings("unused")
-	private ProductGroupDTO dto;
+	private MaterialGroupDTO dto;
 
 	@BeforeEach
 	void setUp() throws Exception {
 
 		existingId = 1L;
 
-		dto = new ProductGroupDTO(null, "Sucata de alumínio");
+		dto = new MaterialGroupDTO(null, "Sucata de alumínio");
 
 		clientUsername = "michele@alunova.com";
 		clientPassword = "123456";
@@ -68,10 +68,10 @@ public class ProductGroupResourceIT {
 	@Test
 	public void insertShouldReturn401WhenInvalidToken() throws Exception {
 
-		ProductGroupDTO dto = new ProductGroupDTO(null, "Sucata de alumínio");
+		MaterialGroupDTO dto = new MaterialGroupDTO(null, "Sucata de alumínio");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
-		ResultActions result = mockMvc.perform(post("/prodGroups").header("Authorization", "Bearer " + invalidToken)
+		ResultActions result = mockMvc.perform(post("/matGroups").header("Authorization", "Bearer " + invalidToken)
 				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
 
 		result.andExpect(status().isUnauthorized());
@@ -81,46 +81,46 @@ public class ProductGroupResourceIT {
 	@Test
 	public void insertShouldReturn403WhenClientLogged() throws Exception {
 
-		ProductGroupDTO dto = new ProductGroupDTO(null, "Sucata de alumínio");
+		MaterialGroupDTO dto = new MaterialGroupDTO(null, "Sucata de alumínio");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
-		ResultActions result = mockMvc.perform(post("/prodGroups").header("Authorization", "Bearer " + clientToken)
+		ResultActions result = mockMvc.perform(post("/matGroups").header("Authorization", "Bearer " + clientToken)
 				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
 
 		result.andExpect(status().isForbidden());
 	}
 
-	// 3 - SortedByIdProductGroup
+	// 3 - SortedByIdMaterialGroup
 	@Test
-	public void findAllShouldReturnAllResourcesPageadProductGroupSortedById() throws Exception {
+	public void findAllShouldReturnAllResourcesPageadMaterialGroupSortedById() throws Exception {
 
-		ResultActions result = mockMvc.perform(get("/prodGroups").header("Authorization", "Bearer " + adminToken)
+		ResultActions result = mockMvc.perform(get("/matGroups").header("Authorization", "Bearer " + adminToken)
 				.contentType(MediaType.APPLICATION_JSON));
 
 		result.andExpect(status().isOk());
 		result.andExpect(jsonPath("$[0].description").value("Sucata de alumínio"));
-		result.andExpect(jsonPath("$[1].description").value("Produto acabado"));
+		result.andExpect(jsonPath("$[1].description").value("Insumos"));
 
 	}
 
 	// 4 - FindByIdProductGroup
 	@Test
 	public void findByIdShouldReturnAddressWhenIdExistsAndAdminRole() throws Exception {
-		mockMvc.perform(get("/prodGroups/{id}", existingId).header("Authorization", "Bearer " + adminToken)
+		mockMvc.perform(get("/matGroups/{id}", existingId).header("Authorization", "Bearer " + adminToken)
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
 	}
 
 	// 5 - AdminLoggedAndCorrectData
 	@Test
 	public void insertShouldInsertResourceWhenAdminLoggedAndCorrectData() throws Exception {
-		ProductGroupDTO dto = ProductGroupFactory.createGroupDTO();
+		MaterialGroupDTO dto = MatGroupFactory.createGroupDTO();
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		System.out.println("==== JSON enviado ====");
 		System.out.println(jsonBody);
 
 		MvcResult result = mockMvc
-				.perform(post("/prodGroups").header("Authorization", "Bearer " + adminToken).content(jsonBody)
+				.perform(post("/matGroups").header("Authorization", "Bearer " + adminToken).content(jsonBody)
 						.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
 				.andDo(print()).andReturn();
 
@@ -130,14 +130,14 @@ public class ProductGroupResourceIT {
 
 	}
 
-	// 6 - AdminLoggedAndBlankDescriptionProdGroup
+	// 6 - AdminLoggedAndBlankDescriptionMatGroup
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndBlankDescription() throws Exception {
-		ProductGroupDTO dto = new ProductGroupDTO(null, "");
+		MaterialGroupDTO dto = new MaterialGroupDTO(null, "");
 
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
-		ResultActions result = mockMvc.perform(post("/prodGroups").header("Authorization", "Bearer " + adminToken)
+		ResultActions result = mockMvc.perform(post("/matGroups").header("Authorization", "Bearer " + adminToken)
 				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
 
 		result.andExpect(status().isUnprocessableEntity());
@@ -149,11 +149,11 @@ public class ProductGroupResourceIT {
 	// 7 - AdminLoggedAndInvalidDescriptionProdGroup
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndInvalidDescription() throws Exception {
-		ProductGroupDTO dto = new ProductGroupDTO(null, "ab");
+		MaterialGroupDTO dto = new MaterialGroupDTO(null, "ab");
 
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
-		ResultActions result = mockMvc.perform(post("/prodGroups").header("Authorization", "Bearer " + adminToken)
+		ResultActions result = mockMvc.perform(post("/matGroups").header("Authorization", "Bearer " + adminToken)
 				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
 
 		result.andExpect(status().isUnprocessableEntity());

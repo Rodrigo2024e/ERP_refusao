@@ -99,7 +99,7 @@ public class TaxClassificationResourceIT {
 
 		result.andExpect(status().isOk());
 		result.andExpect(jsonPath("$[0].description").value("Sucata de alumínio"));
-		result.andExpect(jsonPath("$[1].description").value("Tarugo de alumínio"));
+		result.andExpect(jsonPath("$[0].number").value(7602000));
 
 	}
 
@@ -158,7 +158,7 @@ public class TaxClassificationResourceIT {
 
 		result.andExpect(status().isUnprocessableEntity());
 		result.andExpect(jsonPath("$.errors[0].fieldName").value("number"));
-		result.andExpect(jsonPath("$.errors[0].message").value("O campo nome deve ter 7 digitos"));
+		result.andExpect(jsonPath("$.errors[0].message").value("A numeração fiscal deve ser composta de 7 dígitos"));
 
 	}
 

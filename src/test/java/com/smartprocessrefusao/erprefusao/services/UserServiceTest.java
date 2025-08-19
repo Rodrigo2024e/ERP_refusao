@@ -114,7 +114,7 @@ public class UserServiceTest {
 		when(userRepository.findById(existingId)).thenReturn(Optional.of(user));
 		UserDTO result = userService.findById(existingId);
 		assertNotNull(result);
-		assertEquals("luciano@gmail.com", result.getEmail());
+		assertEquals("LUCIANO@GMAIL.COM", result.getEmail());
 	}
 
 	@Test
@@ -132,7 +132,7 @@ public class UserServiceTest {
 
 		UserDTO result = userService.insert(insertDTO);
 		assertNotNull(result);
-		assertEquals("luciano@gmail.com", result.getEmail());
+		assertEquals("LUCIANO@GMAIL.COM", result.getEmail());
 	}
 
 	@Test
@@ -144,7 +144,7 @@ public class UserServiceTest {
 
 		UserDTO result = userService.update(1L, updateDTO);
 		assertNotNull(result);
-		assertEquals("luciano@gmail.com", result.getEmail());
+		assertEquals("LUCIANO@GMAIL.COM", result.getEmail());
 	}
 
 	@Test
@@ -203,8 +203,8 @@ public class UserServiceTest {
 
 	@Test
 	public void authenticatedShouldThrowWhenUserNotFound() {
-		when(customUserUtil.getLoggedUsername()).thenReturn("luciano@gmail.com");
-		when(userRepository.findByEmail("luciano@gmail.com")).thenReturn(Optional.empty());
+		when(customUserUtil.getLoggedUsername()).thenReturn("LUCIANO@GMAIL.COM");
+		when(userRepository.findByEmail("LUCIANO@GMAIL.COM")).thenReturn(Optional.empty());
 		assertThrows(UsernameNotFoundException.class, () -> userService.authenticated());
 	}
 
@@ -215,7 +215,7 @@ public class UserServiceTest {
 
 		UserDTO result = userService.getMe();
 		assertNotNull(result);
-		assertEquals("luciano@gmail.com", result.getEmail());
+		assertEquals("LUCIANO@GMAIL.COM", result.getEmail());
 	}
 
 	@Test

@@ -1,9 +1,10 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -19,16 +20,16 @@ public class Ticket {
 
 	private LocalDate dateTicket;
 	private String numberPlate;
-	private Double netWeight;
+	private BigDecimal netWeight;
 
 	@OneToMany(mappedBy = "numTicket")
-	private List<Movement> movements = new ArrayList<>();
+	private Set<Movement> movements = new HashSet<>();
 
 	public Ticket() {
 
 	}
 
-	public Ticket(Integer numTicket, LocalDate dateTicket, String numberPlate, Double netWeight) {
+	public Ticket(Integer numTicket, LocalDate dateTicket, String numberPlate, BigDecimal netWeight) {
 		this.numTicket = numTicket;
 		this.dateTicket = dateTicket;
 		this.numberPlate = numberPlate;
@@ -59,21 +60,18 @@ public class Ticket {
 		this.numberPlate = numberPlate;
 	}
 
-	public Double getNetWeight() {
+	public BigDecimal getNetWeight() {
 		return netWeight;
 	}
 
-	public void setNetWeight(Double netWeight) {
+	public void setNetWeight(BigDecimal netWeight) {
 		this.netWeight = netWeight;
 	}
 
-	public List<Movement> getMovements() {
+	public Set<Movement> getMovements() {
 		return movements;
 	}
 
-	public void setMovements(List<Movement> movements) {
-		this.movements = movements;
-	}
 
 	@Override
 	public int hashCode() {

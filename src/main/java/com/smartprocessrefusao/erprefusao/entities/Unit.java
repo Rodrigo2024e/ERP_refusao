@@ -1,8 +1,8 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,16 +20,18 @@ public class Unit {
 	private Long id;
 	private String description;
 	private String acronym;
-	
-	@OneToMany(mappedBy = "uom")
-	private List<Material> materials = new ArrayList<>();
-	
-	public Unit (){
-		
+
+	@OneToMany(mappedBy = "uomMaterial")
+	private Set<Material> materials = new HashSet<>();
+
+//	@OneToMany(mappedBy = "uomProduct")
+//	private Set<Product> products = new HashSet<>();
+
+	public Unit() {
+
 	}
 
 	public Unit(Long id, String description, String acronym) {
-		super();
 		this.id = id;
 		this.description = description;
 		this.acronym = acronym;
@@ -59,9 +61,13 @@ public class Unit {
 		this.acronym = acronym;
 	}
 
-	public List<Material> getMaterials() {
+	public Set<Material> getMaterials() {
 		return materials;
 	}
+
+//	public Set<Product> getProducts() {
+//		return products;
+//	}
 
 	@Override
 	public int hashCode() {
@@ -79,6 +85,5 @@ public class Unit {
 		Unit other = (Unit) obj;
 		return Objects.equals(id, other.id);
 	}
-	
-	
+
 }

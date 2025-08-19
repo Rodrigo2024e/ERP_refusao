@@ -76,23 +76,19 @@ public class ReportPartnerDTO {
 		this.zipCode = projection.getZipCode();
 		this.cityId = projection.getCityId();
 		this.nameCity = projection.getNameCity();
-		this.ufState = projection.getUfState();
 		this.nameState = projection.getNameState();
 		this.country = projection.getCountry();
 	    		
-	     if (projection.getUfState() != null) {
-	            StateBrazil stateEnum = StateBrazil.fromUf(projection.getUfState()); 
-	            if (stateEnum != null) {
-	                this.nameState = stateEnum.getNameState();
-	                this.country = stateEnum.getCountry();
-	            } else {
-	                this.nameState = null; 
-	                this.country = null;
-	            }
-	        } else {
-	            this.nameState = null;
-	            this.country = null;
-	        }
+		String uf = projection.getUfState();
+		StateBrazil stateEnum = null;
+
+		if (uf != null && !uf.isEmpty()) {
+		    stateEnum = StateBrazil.fromUf(uf);
+		}
+
+		this.ufState = uf;
+		this.nameState = (stateEnum != null) ? stateEnum.getNameState() : "Estado não encontrado";
+		this.country = (stateEnum != null) ? stateEnum.getCountry() : (projection.getCountry() != null ? projection.getCountry() : "País desconhecido");
 	}
 
 	public Long getId() {

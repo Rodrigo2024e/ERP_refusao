@@ -34,11 +34,11 @@ public class ProductResource {
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/report")
 	 public ResponseEntity<Page<ReportProductDTO>> getReportProduct(
-			 @RequestParam(name = "description", required = false) String description,
-	            @RequestParam(name = "productId", required = false) Long productId,
+			 @RequestParam(required = false) Integer alloy,
+	            @RequestParam(required = false) Long productId,
 	            Pageable pageable) {
 	        
-	        Page<ReportProductDTO> result = ProductService.reportProduct(description, productId, pageable);
+	        Page<ReportProductDTO> result = ProductService.reportProduct(alloy, productId, pageable);
 	        return ResponseEntity.ok(result);
 	    
 	}

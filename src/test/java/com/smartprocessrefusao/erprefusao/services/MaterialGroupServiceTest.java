@@ -22,26 +22,26 @@ import org.mockito.Mock;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.smartprocessrefusao.erprefusao.dto.ProductGroupDTO;
-import com.smartprocessrefusao.erprefusao.entities.ProductGroup;
-import com.smartprocessrefusao.erprefusao.repositories.ProductGroupRepository;
+import com.smartprocessrefusao.erprefusao.dto.MaterialGroupDTO;
+import com.smartprocessrefusao.erprefusao.entities.MaterialGroup;
+import com.smartprocessrefusao.erprefusao.repositories.MaterialGroupRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
-import com.smartprocessrefusao.erprefusao.tests.ProductGroupFactory;
+import com.smartprocessrefusao.erprefusao.tests.MatGroupFactory;
 
 import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(SpringExtension.class)
-public class ProductGroupServiceTest {
+public class MaterialGroupServiceTest {
 
 	@InjectMocks
-	private ProductGroupService service;
+	private MaterialGroupService service;
 
 	@Mock
-	private ProductGroupRepository repository;
+	private MaterialGroupRepository repository;
 
-	private ProductGroup group;
-	private ProductGroupDTO dto;
+	private MaterialGroup group;
+	private MaterialGroupDTO dto;
 	private Long existingId;
 	private Long nonExistingId;
 
@@ -50,8 +50,8 @@ public class ProductGroupServiceTest {
 		existingId = 1L;
 		nonExistingId = 999L;
 
-		group = ProductGroupFactory.createGroup();
-		dto = new ProductGroupDTO(group);
+		group = MatGroupFactory.createGroup();
+		dto = new MaterialGroupDTO(group);
 	}
 
 	// 1 - FindAll ProductGroup
@@ -60,10 +60,10 @@ public class ProductGroupServiceTest {
 
 		when(repository.findAll()).thenReturn(List.of(group));
 
-		List<ProductGroupDTO> result = service.findAll();
+		List<MaterialGroupDTO> result = service.findAll();
 		assertFalse(result.isEmpty());
 		assertEquals(1, result.size());
-		assertEquals("Produto acabado", result.get(0).getDescription());
+		assertEquals("PRODUTO ACABADO", result.get(0).getDescription());
 	}
 
 	// 2 - FindById
@@ -72,9 +72,9 @@ public class ProductGroupServiceTest {
 
 		when(repository.findById(existingId)).thenReturn(Optional.of(group));
 
-		ProductGroupDTO result = service.findById(existingId);
+		MaterialGroupDTO result = service.findById(existingId);
 		assertNotNull(result);
-		assertEquals("Produto acabado", result.getDescription());
+		assertEquals("PRODUTO ACABADO", result.getDescription());
 
 	}
 
@@ -91,7 +91,7 @@ public class ProductGroupServiceTest {
 
 		when(repository.save(any())).thenReturn(group);
 
-		ProductGroupDTO result = service.insert(dto);
+		MaterialGroupDTO result = service.insert(dto);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(result.getId(), group.getId());
@@ -104,10 +104,10 @@ public class ProductGroupServiceTest {
 		when(repository.getReferenceById(1L)).thenReturn(group);
 		when(repository.save(group)).thenReturn(group);
 
-		ProductGroupDTO result = service.update(1L, dto);
+		MaterialGroupDTO result = service.update(1L, dto);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals("Produto acabado", result.getDescription());
+		Assertions.assertEquals("PRODUTO ACABADO", result.getDescription());
 	}
 
 	// 6 - Update ProductGroup Invalid

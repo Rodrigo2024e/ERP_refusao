@@ -6,7 +6,7 @@ import java.util.Set;
 import com.smartprocessrefusao.erprefusao.projections.IdProjection;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -20,7 +20,7 @@ public class Partner extends People implements IdProjection<Long> {
 	private Boolean client;
 	private Boolean active;
 
-	@ManyToMany(mappedBy = "partners")
+	@OneToMany(mappedBy = "partner")
 	private Set<Movement> movements = new HashSet<>();
 
 	public Partner() {
@@ -79,10 +79,6 @@ public class Partner extends People implements IdProjection<Long> {
 
 	public Set<Movement> getMovements() {
 		return movements;
-	}
-
-	public void setMovements(Set<Movement> movements) {
-		this.movements = movements;
 	}
 
 }

@@ -2,6 +2,7 @@ package com.smartprocessrefusao.erprefusao.tests;
 
 import com.smartprocessrefusao.erprefusao.dto.ProductDTO;
 import com.smartprocessrefusao.erprefusao.entities.Product;
+import com.smartprocessrefusao.erprefusao.enumerados.TypeMaterial;
 import com.smartprocessrefusao.erprefusao.projections.ReportProductProjection;
 
 public class ProductFactory {
@@ -9,10 +10,14 @@ public class ProductFactory {
 	public static Product createProduct() {
 		Product product = new Product();
 		product.setId(1L);
-		product.setDescription("Tarugo de alumínio");
-		product.setUom(UnitFactory.createUnit());
-		product.setTaxclass(TaxClassificationFactory.createTaxClass());
-		product.setProdGroup(ProductGroupFactory.createGroup());
+		product.setTypeMaterial(TypeMaterial.FINISHED_PRODUCTS);
+		product.setDescription("TARUGO DE ALUMÍNIO");
+		product.setAlloy(6060);
+		product.setBilletDiameter(4);
+		product.setBilletLength(6.0);
+		product.setUomMaterial(UnitFactory.createUnit());
+		product.setTaxClassMaterial(TaxClassificationFactory.createTaxClass());
+		product.setMaterialGroup(MatGroupFactory.createGroup());
 		return product;
 	}
 
@@ -21,12 +26,28 @@ public class ProductFactory {
 		return new ProductDTO(product);
 	}
 
+	public static ProductDTO createTaxClassificationInvalid() {
+		return new ProductDTO(1L, "FINISHED_PRODUCTS", "Tarugo de alumínio", 6060, 6, 6.0, 1L, "kg", 99L,
+				"Tax Class Invalid", 7604000, 2L, "Produto acabado");
+	}
+
+	public static ProductDTO createTypeMaterialInvalid() {
+		return new ProductDTO(1L, null, "Type Material Invalid", 6060, 6, 6.0, 1L, "kg", 2L, "Tarugo de alumínio",
+				7604000, 2L, "Produto acabado");
+	}
+
+
 	public static ReportProductProjection create() {
 		return new ReportProductProjection() {
 
 			@Override
 			public Long getId() {
 				return 1L;
+			}
+
+			@Override
+			public String getTypeMaterial() {
+				return "FINISHED_PRODUCTS";
 			}
 
 			@Override
@@ -40,12 +61,12 @@ public class ProductFactory {
 			}
 
 			@Override
-			public Integer getInch() {
+			public Integer getBilletDiameter() {
 				return 5;
 			}
 
 			@Override
-			public Integer getLength() {
+			public Integer getBilletLength() {
 				return 6;
 			}
 
@@ -65,7 +86,7 @@ public class ProductFactory {
 			}
 
 			@Override
-			public String getProduct_Group() {
+			public String getMaterial_Group() {
 				return "Produto acabado";
 			}
 		};

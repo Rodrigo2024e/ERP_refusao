@@ -10,15 +10,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.smartprocessrefusao.erprefusao.dto.MaterialDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportMaterialDTO;
-import com.smartprocessrefusao.erprefusao.entities.Material;
-import com.smartprocessrefusao.erprefusao.entities.ProductGroup;
+import com.smartprocessrefusao.erprefusao.dto.InputDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportInputDTO;
+import com.smartprocessrefusao.erprefusao.entities.Input;
+import com.smartprocessrefusao.erprefusao.entities.MaterialGroup;
 import com.smartprocessrefusao.erprefusao.entities.TaxClassification;
 import com.smartprocessrefusao.erprefusao.entities.Unit;
-import com.smartprocessrefusao.erprefusao.projections.ReportMaterialProjection;
-import com.smartprocessrefusao.erprefusao.repositories.MaterialRepository;
-import com.smartprocessrefusao.erprefusao.repositories.ProductGroupRepository;
+import com.smartprocessrefusao.erprefusao.enumerados.TypeMaterial;
+import com.smartprocessrefusao.erprefusao.projections.ReportInputProjection;
+import com.smartprocessrefusao.erprefusao.repositories.InputRepository;
+import com.smartprocessrefusao.erprefusao.repositories.MaterialGroupRepository;
 import com.smartprocessrefusao.erprefusao.repositories.TaxClassificationRepository;
 import com.smartprocessrefusao.erprefusao.repositories.UnitRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
@@ -27,10 +28,10 @@ import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundEx
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class MaterialService {
+public class InputService {
 
 	@Autowired
-	private MaterialRepository materialRepository;
+	private InputRepository inputRepository;
 	
 	@Autowired
 	private UnitRepository unitRepository;
@@ -39,20 +40,20 @@ public class MaterialService {
 	private TaxClassificationRepository taxRepository;
 	
 	@Autowired
-	private ProductGroupRepository productGroupRepository;
+	private MaterialGroupRepository materialGroupRepository;
 
 	   @Transactional(readOnly = true) 
-	    public Page<ReportMaterialDTO> reportMaterial(String description, Long materialId, Pageable pageable) {
-	        Page<ReportMaterialProjection> page = materialRepository.searchMaterialByNameOrId(description, materialId, pageable);
-	        return page.map(ReportMaterialDTO::new);
+	    public Page<ReportInputDTO> reportInput(String description, Long groupId, Pageable pageable) {
+	        Page<ReportInputProjection> page = inputRepository.searchMaterialByNameOrGroup(description, groupId, pageable);
+	        return page.map(ReportInputDTO::new);
 	    }
 	
 	@Transactional(readOnly = true)
-	public MaterialDTO findById(Long id) {
+	public InputDTO findById(Long id) {
 		try {
-		Optional<Material> obj = materialRepository.findById(id);
-		Material entity = obj.orElseThrow(()-> new EntityNotFoundException("Entity not found"));
-		return new MaterialDTO(entity);
+		Optional<Input> obj = inputRepository.findById(id);
+		Input entity = obj.orElseThrow(()-> new EntityNotFoundException("Entity not found"));
+		return new InputDTO(entity);
 		}
 		catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
@@ -61,20 +62,20 @@ public class MaterialService {
 	}
 
 	@Transactional
-	public MaterialDTO insert(MaterialDTO dto) {
-		Material entity = new Material();
+	public InputDTO insert(InputDTO dto) {
+		Input entity = new Input();
 		copyDtoToEntity(dto, entity);
-		entity = materialRepository.save(entity);
-		return new MaterialDTO(entity);
+		entity = inputRepository.save(entity);
+		return new InputDTO(entity);
 	}
 	
 	@Transactional
-	public MaterialDTO update(Long id, MaterialDTO dto) {	
+	public InputDTO update(Long id, InputDTO dto) {	
 		try {
-			Material entity = materialRepository.getReferenceById(id);
+			Input entity = inputRepository.getReferenceById(id);
 			copyDtoToEntity(dto, entity);
-			entity = materialRepository.save(entity);
-			return new MaterialDTO(entity);
+			entity = inputRepository.save(entity);
+			return new InputDTO(entity);
 		}
 		catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
@@ -83,39 +84,49 @@ public class MaterialService {
 
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public void delete(Long id) {
-		if (!materialRepository.existsById(id)) {
+		if (!inputRepository.existsById(id)) {
 			throw new ResourceNotFoundException("Id not found " + id);
 		}
 		try {
-			materialRepository.deleteById(id);
+			inputRepository.deleteById(id);
 		}
 		catch (DataIntegrityViolationException e) {
 			throw new DatabaseException("Integrity violation");
 		}
 	}
 	
-	public void copyDtoToEntity(MaterialDTO dto, Material entity) {
+	public void copyDtoToEntity(InputDTO dto, Input entity) {
+		
+		try {
+			if (dto.getTypeMaterial() != null) {
+				TypeMaterial typeMaterial = TypeMaterial.valueOf(dto.getTypeMaterial());
+				entity.setTypeMaterial(typeMaterial);
+			}
+		} catch (IllegalArgumentException e) {
+			throw new ResourceNotFoundException("Tipo de material inválido: " + dto.getTypeMaterial());
+		}
+		
 	    entity.setDescription(dto.getDescription().toUpperCase());
 	  
 	    Optional.ofNullable(dto.getUomId())
 	    .ifPresent(id -> {
 	        Unit unit = unitRepository.findById(id)
 	            .orElseThrow(() -> new ResourceNotFoundException("Unidade de medida não encontrada"));
-	        entity.setUom(unit);
+	        entity.setUomMaterial(unit);
 	    });
 	    
 	    Optional.ofNullable(dto.getTaxClassId())
 	    .ifPresent(id -> {
 	        TaxClassification taxClass = taxRepository.findById(id)
 	            .orElseThrow(() -> new ResourceNotFoundException("Classificação Fiscal não encontrada"));
-	        entity.setTaxClass(taxClass);
+	        entity.setTaxClassMaterial(taxClass);
 	    });
 
-	    Optional.ofNullable(dto.getProdGroupId())
+	    Optional.ofNullable(dto.getMatGroupId())
 	    .ifPresent(id -> {
-	        ProductGroup prodGroup = productGroupRepository.findById(id)
+	        MaterialGroup matGroup = materialGroupRepository.findById(id)
 	            .orElseThrow(() -> new ResourceNotFoundException("Grupo de Mercadoria não encontrada"));
-	        entity.setProdGroup(prodGroup);
+	        entity.setMaterialGroup(matGroup);
 	    });
 					  
 	  

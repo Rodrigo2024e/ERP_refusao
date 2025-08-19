@@ -11,10 +11,10 @@ import com.smartprocessrefusao.erprefusao.entities.Address;
 	    public static Address createAddress() {
 	        Address address = new Address();
 	        address.setIdAddress(1L);
-	        address.setStreet("Rua A");
+	        address.setStreet("RUA A");
 	        address.setNumberAddress(123);
-	        address.setComplement("Casa");
-	        address.setNeighborhood("Centro");
+	        address.setComplement("CASA");
+	        address.setNeighborhood("CENTRO");
 	        address.setZipCode("12345-678");
 	        address.setCity(CityFactory.createCity());
 	        address.setPeople(PeopleFactory.createPeople());
@@ -24,7 +24,7 @@ import com.smartprocessrefusao.erprefusao.entities.Address;
 	    public static AddressDTO createAddressDTO() {
 	        return new AddressDTO(
 	            1L, // idAddress
-	            "Rua Teste", 
+	            "RUA TESTE", 
 	            123, 
 	            "Complemento", 
 	            "Bairro", 

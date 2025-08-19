@@ -139,8 +139,8 @@ public class PartnerResourceIT {
 
 		result.andExpect(status().isCreated());
 		result.andExpect(jsonPath("$.id").exists());
-		result.andExpect(jsonPath("$.name").value("Apple"));
-		result.andExpect(jsonPath("$.email").value("apple@gmail.com.br"));
+		result.andExpect(jsonPath("$.name").value("APPLE"));
+		result.andExpect(jsonPath("$.email").value("APPLE@GMAIL.COM.BR"));
 		result.andExpect(jsonPath("$.cellPhone").value("44-12244-1222"));
 		result.andExpect(jsonPath("$.telephone").value("44-1442-2222"));
 		result.andExpect(jsonPath("$.cnpj").value("07.911.773/0001-79"));

@@ -15,33 +15,37 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	
 	@Query(value = """
 			SELECT
-				pr.id, 
+				m.id, 
+				m.type_material, 
 				pr.description, 
 				pr.alloy, 
-				pr.inch,
-				pr.length,
+				pr.billet_diameter,
+				pr.billet_length,
 				u.acronym as unit, 
 				t.description as Tax_Classification, 
 				t.number, 
-				p.description as Product_Group
-			FROM tb_product pr
-			INNER JOIN tb_uom u ON u.id = pr.uom_id
-			INNER JOIN tb_tax_classification t ON t.id = pr.taxclass_id
-			INNER JOIN tb_product_group p ON p.id = pr.prod_group_id
+				mg.id As matGroupId,
+				mg.description as material_Group
+			FROM tb_material m
+			INNER JOIN tb_product pr ON pr.id = m.id
+			INNER JOIN tb_uom u ON u.id = m.uom_material_id
+			INNER JOIN tb_tax_classification t ON t.id = m.tax_class_material_id
+			INNER JOIN tb_material_group mg ON mg.id = m.material_group_id
 			WHERE (:productId IS NULL OR pr.id = :productId)
-			AND (:description IS NULL OR LOWER(pr.description) LIKE LOWER(CONCAT('%', :description, '%')))
-			ORDER BY pr.description
+			AND (:alloy IS NULL OR LOWER(pr.alloy) LIKE LOWER(CONCAT('%', :alloy, '%')))
+			ORDER BY pr.alloy
 		""", 
 		countQuery = """
 			SELECT COUNT(m.id)
-				FROM tb_product pr
-				INNER JOIN tb_uom u ON u.id = pr.uom_id
-				INNER JOIN tb_tax_classification t ON t.id = pr.taxclass_id
-				INNER JOIN tb_product_group p ON p.id = pr.prod_group_id
+				FROM tb_material m
+				INNER JOIN tb_product pr ON pr.id = m.id
+				INNER JOIN tb_uom u ON u.id = m.uom_material_id
+				INNER JOIN tb_tax_classification t ON t.id = m.tax_class_material_id
+			INNER JOIN tb_material_group mg ON mg.id = m.material_group_id
 				WHERE (:productId IS NULL OR m.id = :productId)
-				AND (:description IS NULL OR LOWER(pr.description) LIKE LOWER(CONCAT('%', :description, '%')))
+				AND (:alloy IS NULL OR LOWER(pr.alloy) LIKE LOWER(CONCAT('%', :alloy, '%')))
 		""",
 		nativeQuery = true)
 	Page<ReportProductProjection> searchProductByNameOrId(
-			@Param("description") String description, @Param("productId") Long productId, Pageable pageable);
+			@Param("alloy") Integer alloy, @Param("productId") Long productId, Pageable pageable);
 }

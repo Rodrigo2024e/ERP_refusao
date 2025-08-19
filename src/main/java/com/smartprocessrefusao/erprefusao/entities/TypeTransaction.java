@@ -8,12 +8,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_type_transaction")
-public class TypeOfTransaction {
+public class TypeTransaction {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,14 +21,14 @@ public class TypeOfTransaction {
 
 	private String description;
 
-	@ManyToMany(mappedBy = "transactions")
+	@OneToMany(mappedBy = "transaction")
 	private Set<Movement> movements = new HashSet<>();
 
-	public TypeOfTransaction() {
+	public TypeTransaction() {
 
 	}
 
-	public TypeOfTransaction(Long id, String description) {
+	public TypeTransaction(Long id, String description) {
 
 		this.id = id;
 		this.description = description;
@@ -54,10 +54,6 @@ public class TypeOfTransaction {
 		return movements;
 	}
 
-	public void setMovements(Set<Movement> movements) {
-		this.movements = movements;
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -71,7 +67,7 @@ public class TypeOfTransaction {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TypeOfTransaction other = (TypeOfTransaction) obj;
+		TypeTransaction other = (TypeTransaction) obj;
 		return Objects.equals(id, other.id);
 	}
 

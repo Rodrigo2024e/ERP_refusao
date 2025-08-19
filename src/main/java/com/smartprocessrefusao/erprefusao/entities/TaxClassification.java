@@ -1,8 +1,8 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,16 +20,18 @@ public class TaxClassification {
 	private Long id;
 	private String description;
 	private Integer number;
-	
-	@OneToMany(mappedBy = "taxClass")
-	private List<Material> materials = new ArrayList<>();
-	
-	public TaxClassification () {
-		
+
+	@OneToMany(mappedBy = "taxClassMaterial")
+	private Set<Material> materials = new HashSet<>();
+
+//	@OneToMany(mappedBy = "taxClassProduct")
+//	private Set<Product> products = new HashSet<>();
+
+	public TaxClassification() {
+
 	}
 
 	public TaxClassification(Long id, String description, Integer number) {
-		super();
 		this.id = id;
 		this.description = description;
 		this.number = number;
@@ -59,9 +61,13 @@ public class TaxClassification {
 		this.number = number;
 	}
 
-	public List<Material> getMaterials() {
+	public Set<Material> getMaterials() {
 		return materials;
 	}
+
+//	public Set<Product> getProducts() {
+//		return products;
+//	}
 
 	@Override
 	public int hashCode() {
@@ -79,6 +85,5 @@ public class TaxClassification {
 		TaxClassification other = (TaxClassification) obj;
 		return Objects.equals(id, other.id);
 	}
-	
-	
+
 }

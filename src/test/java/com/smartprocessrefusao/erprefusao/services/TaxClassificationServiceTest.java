@@ -63,7 +63,7 @@ public class TaxClassificationServiceTest {
 		List<TaxClassificationDTO> result = service.findAll();
 		assertFalse(result.isEmpty());
 		assertEquals(1, result.size());
-		assertEquals("Tarugo de alumínio", result.get(0).getDescription());
+		assertEquals("TARUGO DE ALUMÍNIO", result.get(0).getDescription());
 	}
 
 	// 2 - FindById
@@ -72,7 +72,7 @@ public class TaxClassificationServiceTest {
 		when(repository.findById(exisitngId)).thenReturn(Optional.of(tax));
 		TaxClassificationDTO result = service.findById(exisitngId);
 		assertNotNull(result);
-		assertEquals("Tarugo de alumínio", result.getDescription());
+		assertEquals("TARUGO DE ALUMÍNIO", result.getDescription());
 	}
 
 	// 3 - FindById-EntityNotFoundException
@@ -102,7 +102,7 @@ public class TaxClassificationServiceTest {
 		TaxClassificationDTO result = service.update(1L, taxDTO);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals("Tarugo de alumínio", result.getDescription());
+		Assertions.assertEquals("TARUGO DE ALUMÍNIO", result.getDescription());
 	}
 
 	// 6 - Update tax Invalid

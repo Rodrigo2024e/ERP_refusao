@@ -78,8 +78,8 @@ public class UnitService {
 	}
 	
 	public void copyDtoToEntity(UnitDTO dto, Unit entity) {
-	    entity.setDescription(dto.getDescription());
-	    entity.setAcronym(dto.getAcronym());
+	    entity.setDescription(dto.getDescription().toUpperCase());
+	    entity.setAcronym(dto.getAcronym().toUpperCase());
 
 	}
 }

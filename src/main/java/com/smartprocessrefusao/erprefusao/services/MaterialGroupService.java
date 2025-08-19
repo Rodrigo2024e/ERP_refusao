@@ -9,32 +9,32 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.smartprocessrefusao.erprefusao.dto.ProductGroupDTO;
-import com.smartprocessrefusao.erprefusao.entities.ProductGroup;
-import com.smartprocessrefusao.erprefusao.repositories.ProductGroupRepository;
+import com.smartprocessrefusao.erprefusao.dto.MaterialGroupDTO;
+import com.smartprocessrefusao.erprefusao.entities.MaterialGroup;
+import com.smartprocessrefusao.erprefusao.repositories.MaterialGroupRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class ProductGroupService {
+public class MaterialGroupService {
 
 	@Autowired
-	private ProductGroupRepository productGroupRepository;
+	private MaterialGroupRepository productGroupRepository;
 	
 	@Transactional(readOnly = true)
-	public List<ProductGroupDTO> findAll() {
-	    List<ProductGroup> list = productGroupRepository.findAll();
-	    return list.stream().map(ProductGroupDTO::new).toList();
+	public List<MaterialGroupDTO> findAll() {
+	    List<MaterialGroup> list = productGroupRepository.findAll();
+	    return list.stream().map(MaterialGroupDTO::new).toList();
 	}
 
 	@Transactional(readOnly = true)
-	public ProductGroupDTO findById(Long id) {
+	public MaterialGroupDTO findById(Long id) {
 		try {
-		Optional<ProductGroup> obj = productGroupRepository.findById(id);
-		ProductGroup entity = obj.orElseThrow(()-> new EntityNotFoundException("Entity not found"));
-		return new ProductGroupDTO(entity);
+		Optional<MaterialGroup> obj = productGroupRepository.findById(id);
+		MaterialGroup entity = obj.orElseThrow(()-> new EntityNotFoundException("Entity not found"));
+		return new MaterialGroupDTO(entity);
 		}
 		catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
@@ -43,20 +43,20 @@ public class ProductGroupService {
 	}
 
 	@Transactional
-	public ProductGroupDTO insert(ProductGroupDTO dto) {
-		ProductGroup entity = new ProductGroup();
+	public MaterialGroupDTO insert(MaterialGroupDTO dto) {
+		MaterialGroup entity = new MaterialGroup();
 		copyDtoToEntity(dto, entity);
 		entity = productGroupRepository.save(entity);
-		return new ProductGroupDTO(entity);
+		return new MaterialGroupDTO(entity);
 	}
 	
 	@Transactional
-	public ProductGroupDTO update(Long id, ProductGroupDTO dto) {	
+	public MaterialGroupDTO update(Long id, MaterialGroupDTO dto) {	
 		try {
-			ProductGroup entity = productGroupRepository.getReferenceById(id);
+			MaterialGroup entity = productGroupRepository.getReferenceById(id);
 			copyDtoToEntity(dto, entity);
 			entity = productGroupRepository.save(entity);
-			return new ProductGroupDTO(entity);
+			return new MaterialGroupDTO(entity);
 		}
 		catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
@@ -76,7 +76,7 @@ public class ProductGroupService {
 		}
 	}
 	
-	public void copyDtoToEntity(ProductGroupDTO dto, ProductGroup entity) {
+	public void copyDtoToEntity(MaterialGroupDTO dto, MaterialGroup entity) {
 	    entity.setDescription(dto.getDescription().toUpperCase());
 
 	}

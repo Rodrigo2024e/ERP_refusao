@@ -95,7 +95,7 @@ public class EmployeeService {
 		entity.setTelephone(dto.getTelephone());
 		entity.setCpf(dto.getCpf());
 		entity.setRg(dto.getRg());
-		entity.setSysUser(dto.getSysUser());
+		entity.setSysUser(dto.isSysUser());
 
 		Optional.ofNullable(dto.getSectorId()).ifPresent(id -> {
 			Sector sector = sectorRepository.findById(id)

@@ -8,7 +8,7 @@ public class SectorFactory {
 	public static Sector createSector() {
 		Sector sector = new Sector();
 		sector.setId(1L);
-		sector.setNameSector("Producão");
+		sector.setNameSector("PRODUÇÃO");
 		sector.setProcess("Corte de tarugos");
 		return sector;
 	}

@@ -67,25 +67,25 @@ class PartnerServiceTest {
 		List<PartnerDTO> result = service.findAll();
 
 		assertEquals(2, result.size());
-		assertEquals("Ecoalumi Aluminio S/A", result.get(0).getName());
+		assertEquals("ECOALUMI ALUMINIO S/A", result.get(0).getName());
 	}
 
 	// 2 - Report Partner
 	@Test
 	void reportPartnerShouldReturnPagedDTOs() {
 		ReportPartnerProjection projection = mock(ReportPartnerProjection.class);
-		when(projection.getName()).thenReturn("João Carlos");
+		when(projection.getName()).thenReturn("JOÃO CARLOS");
 
 		Page<ReportPartnerProjection> page = new PageImpl<>(List.of(projection));
 		when(repository.searchPeopleNameByOrId(any(), any(), any())).thenReturn(page);
 
 		Pageable pageable = PageRequest.of(0, 10);
-		Page<ReportPartnerDTO> result = service.reportPartner("João", 1L, pageable);
+		Page<ReportPartnerDTO> result = service.reportPartner("JOÃO", 1L, pageable);
 
 		assertNotNull(result);
 		assertEquals(1, result.getTotalElements());
-		assertEquals("João Carlos", result.getContent().get(0).getName());
-		verify(repository).searchPeopleNameByOrId("João", 1L, pageable);
+		assertEquals("JOÃO CARLOS", result.getContent().get(0).getName());
+		verify(repository).searchPeopleNameByOrId("JOÃO", 1L, pageable);
 	}
 
 	// 3 - FindById
@@ -95,7 +95,7 @@ class PartnerServiceTest {
 
 		PartnerDTO result = service.findById(4L);
 
-		assertEquals("Ecoalumi Aluminio S/A", result.getName());
+		assertEquals("ECOALUMI ALUMINIO S/A", result.getName());
 
 	}
 	

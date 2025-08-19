@@ -6,47 +6,42 @@ import com.smartprocessrefusao.erprefusao.projections.ReportProductProjection;
 public class ReportProductDTO {
 
 	private Long id;
+	private String typeMaterial;
 	private String description;
 	private Integer alloy;
-	private Integer inch;
-	private double length;
-	private String unit;
-	private String tax_Classification;
-	private Integer number;
-	private String product_Group;
-    
-    public ReportProductDTO() {
-    	
-    }
+	private Integer billetDiameter;
+	private double BilletLength;
+
+	public ReportProductDTO() {
+
+	}
 
 	public ReportProductDTO(Product entity) {
 		id = entity.getId();
+		typeMaterial = entity.getTypeMaterial().toString();
 		description = entity.getDescription();
 		alloy = entity.getAlloy();
-		inch = entity.getInch();
-		length = entity.getLength();
-		unit = entity.getUom().getAcronym();
-		tax_Classification = entity.getTaxclass().getDescription();
-		number = entity.getTaxclass().getNumber();
-		product_Group = entity.getProdGroup().getDescription();
-	    		
+		billetDiameter = entity.getBilletDiameter();
+		BilletLength = entity.getBilletLength();
+
 	}
 
 	public ReportProductDTO(ReportProductProjection projection) {
 		this.id = projection.getId();
+		this.typeMaterial = projection.getTypeMaterial();
 		this.description = projection.getDescription();
 		this.alloy = projection.getAlloy();
-		this.inch = projection.getInch();
-		this.length = projection.getLength();
-		this.unit = projection.getUnit();
-		this.tax_Classification = projection.getTax_Classification();
-		this.number = projection.getNumber();
-		this.product_Group = projection.getProduct_Group();
-	    		
+		this.billetDiameter = projection.getBilletDiameter();
+		this.BilletLength = projection.getBilletLength();
+
 	}
 
 	public Long getId() {
 		return id;
+	}
+
+	public String getTypeMaterial() {
+		return typeMaterial;
 	}
 
 	public String getDescription() {
@@ -57,28 +52,13 @@ public class ReportProductDTO {
 		return alloy;
 	}
 
-	public Integer getInch() {
-		return inch;
+	public Integer getBilletDiameter() {
+		return billetDiameter;
 	}
 
-	public double getLength() {
-		return length;
+	public double getBilletLength() {
+		return BilletLength;
 	}
 
-	public String getUnit() {
-		return unit;
-	}
 
-	public String getTax_Classification() {
-		return tax_Classification;
-	}
-
-	public Integer getNumber() {
-		return number;
-	}
-
-	public String getProduct_Group() {
-		return product_Group;
-	}
-	
 }

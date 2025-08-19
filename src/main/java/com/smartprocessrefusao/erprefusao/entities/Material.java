@@ -1,55 +1,59 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
-import java.util.HashSet;
+import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
 
-import com.smartprocessrefusao.erprefusao.projections.IdProjection;
+import com.smartprocessrefusao.erprefusao.enumerados.TypeMaterial;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_material")
-public class Material implements IdProjection<Long> {
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Material implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String description;
+
+	@Enumerated(EnumType.STRING)
+	private TypeMaterial typeMaterial;
 
 	@ManyToOne
-	@JoinColumn(name = "uom_id")
-	private Unit uom;
+	@JoinColumn(name = "uom_material_id")
+	private Unit uomMaterial;
 
 	@ManyToOne
-	@JoinColumn(name = "taxClass_id")
-	private TaxClassification taxClass;
+	@JoinColumn(name = "tax_class_material_id")
+	private TaxClassification taxClassMaterial;
 
 	@ManyToOne
-	@JoinColumn(name = "prodGroup_id")
-	private ProductGroup prodGroup;
-
-	@ManyToMany(mappedBy = "materials")
-	private Set<Movement> movements = new HashSet<>();
+	@JoinColumn(name = "material_group_id")
+	private MaterialGroup materialGroup;
 
 	public Material() {
 
 	}
 
-	public Material(Long id, String description, Unit uom, TaxClassification taxClass, ProductGroup prodGroup) {
-		super();
+	public Material(Long id, TypeMaterial typeMaterial, Unit uomMaterial, TaxClassification taxClassMaterial,
+			MaterialGroup materialGroup) {
 		this.id = id;
-		this.description = description;
-		this.uom = uom;
-		this.taxClass = taxClass;
-		this.prodGroup = prodGroup;
+		this.typeMaterial = typeMaterial;
+		this.uomMaterial = uomMaterial;
+		this.taxClassMaterial = taxClassMaterial;
+		this.materialGroup = materialGroup;
+
 	}
 
 	public Long getId() {
@@ -60,44 +64,36 @@ public class Material implements IdProjection<Long> {
 		this.id = id;
 	}
 
-	public String getDescription() {
-		return description;
+	public TypeMaterial getTypeMaterial() {
+		return typeMaterial;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setTypeMaterial(TypeMaterial typeMaterial) {
+		this.typeMaterial = typeMaterial;
 	}
 
-	public Unit getUom() {
-		return uom;
+	public Unit getUomMaterial() {
+		return uomMaterial;
 	}
 
-	public void setUom(Unit uom) {
-		this.uom = uom;
+	public void setUomMaterial(Unit uomMaterial) {
+		this.uomMaterial = uomMaterial;
 	}
 
-	public TaxClassification getTaxClass() {
-		return taxClass;
+	public TaxClassification getTaxClassMaterial() {
+		return taxClassMaterial;
 	}
 
-	public void setTaxClass(TaxClassification taxClass) {
-		this.taxClass = taxClass;
+	public void setTaxClassMaterial(TaxClassification taxClassMaterial) {
+		this.taxClassMaterial = taxClassMaterial;
 	}
 
-	public ProductGroup getProdGroup() {
-		return prodGroup;
+	public MaterialGroup getMaterialGroup() {
+		return materialGroup;
 	}
 
-	public void setProdGroup(ProductGroup prodGroup) {
-		this.prodGroup = prodGroup;
-	}
-
-	public Set<Movement> getMovements() {
-		return movements;
-	}
-
-	public void setMovements(Set<Movement> movements) {
-		this.movements = movements;
+	public void setMaterialGroup(MaterialGroup materialGroup) {
+		this.materialGroup = materialGroup;
 	}
 
 	@Override

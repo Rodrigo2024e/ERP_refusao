@@ -115,8 +115,8 @@ public class SectorResourceIT {
 
 		result.andExpect(status().isCreated());
 		result.andExpect(jsonPath("$.id").exists());
-		result.andExpect(jsonPath("$.nameSector").value("Gerência Industrial"));
-		result.andExpect(jsonPath("$.process").value("Administração"));
+		result.andExpect(jsonPath("$.nameSector").value("GERÊNCIA INDUSTRIAL"));
+		result.andExpect(jsonPath("$.process").value("ADMINISTRAÇÃO"));
 
 	}
 	// 6 - AdminLoggedAndBlankNameSector

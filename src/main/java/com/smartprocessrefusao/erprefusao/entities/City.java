@@ -72,8 +72,4 @@ public class City implements IdProjection<Long> {
 		return address;
 	}
 
-	public void setAddress(Set<Address> address) {
-		this.address = address;
-	}
-	
 }

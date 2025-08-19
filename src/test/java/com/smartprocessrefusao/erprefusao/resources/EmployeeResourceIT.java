@@ -238,7 +238,7 @@ public class EmployeeResourceIT {
 	// 13 - AdminLoggedAndIsUser
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndIsUser() throws Exception {
-		EmployeeSectorDTO dto = new EmployeeSectorDTO(null, "Jonathas Junio", "jonathas@alunova.com", "44-12345-7652",
+		EmployeeSectorDTO dto = new EmployeeSectorDTO(null, "JONATHAS JUNIO", "jonathas@alunova.com", "44-12345-7652",
 				"01-1000-1000", "058.651.619-03", "20.533.347-45", null, 12L, "Administração", "Comercial");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 

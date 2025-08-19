@@ -23,15 +23,15 @@ public class ReportEmployeeDTO {
 	private String complement;
 	private String neighborhood;
 	private String zipCode;
-    private Long cityId;
-    private String nameCity;
-    private String ufState; 
-    private String nameState; 
-    private String country;   
-    
-    public ReportEmployeeDTO() {
-    	
-    }
+	private Long cityId;
+	private String nameCity;
+	private String ufState;
+	private String nameState;
+	private String country;
+
+	public ReportEmployeeDTO() {
+
+	}
 
 	public ReportEmployeeDTO(Employee entity) {
 		idPessoa = entity.getId();
@@ -54,9 +54,9 @@ public class ReportEmployeeDTO {
 		cityId = entity.getAddress().getCity().getId();
 		nameCity = entity.getAddress().getCity().getNameCity();
 		ufState = entity.getAddress().getCity().getUfState().getUf();
-	    nameState = entity.getAddress().getCity().getUfState().getNameState();
-	    country = entity.getAddress().getCity().getUfState().getCountry();
-	    		
+		nameState = entity.getAddress().getCity().getUfState().getNameState();
+		country = entity.getAddress().getCity().getUfState().getCountry();
+
 	}
 
 	public ReportEmployeeDTO(ReportEmployeeProjection projection) {
@@ -67,7 +67,7 @@ public class ReportEmployeeDTO {
 		this.email = projection.getEmail();
 		this.cellPhone = projection.getCellPhone();
 		this.telephone = projection.getTelephone();
-		this.sysUser = projection.getSysUser();
+		this.sysUser = projection.isSysUser();
 		this.sectorId = projection.getSectorId();
 		this.nameSector = projection.getNameSector();
 		this.process = projection.getProcess();
@@ -79,23 +79,19 @@ public class ReportEmployeeDTO {
 		this.zipCode = projection.getZipCode();
 		this.cityId = projection.getCityId();
 		this.nameCity = projection.getNameCity();
-		this.ufState = projection.getUfState();
 		this.nameState = projection.getNameState();
-		this.country = projection.getCountry();
-	    		
-	     if (projection.getUfState() != null) {
-	            StateBrazil stateEnum = StateBrazil.fromUf(projection.getUfState()); 
-	            if (stateEnum != null) {
-	                this.nameState = stateEnum.getNameState();
-	                this.country = stateEnum.getCountry();
-	            } else {
-	                this.nameState = null; 
-	                this.country = null;
-	            }
-	        } else {
-	            this.nameState = null;
-	            this.country = null;
-	        }
+
+		String uf = projection.getUfState();
+		StateBrazil stateEnum = null;
+
+		if (uf != null && !uf.isEmpty()) {
+		    stateEnum = StateBrazil.fromUf(uf);
+		}
+
+		this.ufState = uf;
+		this.nameState = (stateEnum != null) ? stateEnum.getNameState() : "Estado não encontrado";
+		this.country = (stateEnum != null) ? stateEnum.getCountry() : (projection.getCountry() != null ? projection.getCountry() : "País desconhecido");
+
 	}
 
 	public Long getIdPessoa() {
@@ -186,5 +182,4 @@ public class ReportEmployeeDTO {
 		return country;
 	}
 
-	
 }

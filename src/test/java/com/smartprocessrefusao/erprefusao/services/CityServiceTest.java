@@ -56,7 +56,7 @@ public class CityServiceTest {
 		List<CityDTO> result = service.findAll();
 
 		assertEquals(2, result.size());
-		assertEquals("São Paulo", result.get(0).getNameCity());
+		assertEquals("SÃO PAULO", result.get(0).getNameCity());
 	}
 
 	// 2 - FindById
@@ -66,7 +66,7 @@ public class CityServiceTest {
 
 		CityDTO result = service.findById(1L);
 
-		assertEquals("São Paulo", result.getNameCity());
+		assertEquals("SÃO PAULO", result.getNameCity());
 		assertEquals("SP", result.getUfState());
 	}
 

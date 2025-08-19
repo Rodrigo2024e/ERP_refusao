@@ -1,11 +1,14 @@
 package com.smartprocessrefusao.erprefusao.projections;
 
-public interface ReportMaterialProjection {
+public interface ReportInputProjection {
 
 	Long getId();
+	String getType_Material();
 	String getDescription();
 	String getUnit();
+	Long getTaxClassId();
 	String getTax_Classification();
 	Integer getNumber();
-	String getProduct_Group();
+	Long getMatGroupId();
+	String getMaterial_Group();
 }

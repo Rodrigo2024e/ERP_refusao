@@ -3,10 +3,10 @@ package com.smartprocessrefusao.erprefusao.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.smartprocessrefusao.erprefusao.entities.ProductGroup;
+import com.smartprocessrefusao.erprefusao.entities.MaterialGroup;
 
 @Repository
-public interface ProductGroupRepository extends JpaRepository<ProductGroup, Long> {
+public interface MaterialGroupRepository extends JpaRepository<MaterialGroup, Long> {
 	
 
 }
