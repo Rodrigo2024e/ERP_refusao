@@ -29,7 +29,7 @@ public class CityService {
 		List<City> list = cityRepository.findAllByOrderByNameCityAsc();
 		return list.stream().map(CityDTO::new).toList();
 	}
-	
+
 	@Transactional(readOnly = true)
 	public CityDTO findById(Long id) {
 		Optional<City> obj = cityRepository.findById(id);
@@ -62,6 +62,7 @@ public class CityService {
 		if (!cityRepository.existsById(id)) {
 			throw new ResourceNotFoundException("Id not found " + id);
 		}
+
 		try {
 			cityRepository.deleteById(id);
 		} catch (DataIntegrityViolationException e) {
@@ -72,12 +73,12 @@ public class CityService {
 	public void copyDtoToEntity(CityDTO dto, City entity) {
 		entity.setNameCity(dto.getNameCity().toUpperCase());
 
-			try {
-				StateBrazil state = StateBrazil.fromUf(dto.getUfState());
-				entity.setUfState(state);
-			} catch (IllegalArgumentException e) {
-				throw new ResourceNotFoundException("UF inválida: " + dto.getUfState());
-			}
+		try {
+			StateBrazil state = StateBrazil.fromUf(dto.getUfState());
+			entity.setUfState(state);
+		} catch (IllegalArgumentException e) {
+			throw new ResourceNotFoundException("UF inválida: " + dto.getUfState());
 		}
+	}
 
 }

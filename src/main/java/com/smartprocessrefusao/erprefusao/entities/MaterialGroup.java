@@ -53,10 +53,6 @@ public class MaterialGroup {
 		return materials;
 	}
 
-//	public Set<Product> getProducts() {
-//		return products;
-//	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

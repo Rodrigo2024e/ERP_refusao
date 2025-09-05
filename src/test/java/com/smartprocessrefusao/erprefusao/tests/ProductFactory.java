@@ -27,15 +27,14 @@ public class ProductFactory {
 	}
 
 	public static ProductDTO createTaxClassificationInvalid() {
-		return new ProductDTO(1L, "FINISHED_PRODUCTS", "Tarugo de alumínio", 6060, 6, 6.0, 1L, "kg", 99L,
+		return new ProductDTO(1L, "FINISHED_PRODUCTS", "Tarugo de alumínio", 6060, 6, 6.0, (long) 1, "kg", 99L,
 				"Tax Class Invalid", 7604000, 2L, "Produto acabado");
 	}
 
 	public static ProductDTO createTypeMaterialInvalid() {
-		return new ProductDTO(1L, null, "Type Material Invalid", 6060, 6, 6.0, 1L, "kg", 2L, "Tarugo de alumínio",
+		return new ProductDTO(1L, "", "Type Material Invalid", 6060, 6, 6.0, (long) 1, "kg", 2L, "Tarugo de alumínio",
 				7604000, 2L, "Produto acabado");
 	}
-
 
 	public static ReportProductProjection create() {
 		return new ReportProductProjection() {
@@ -66,17 +65,27 @@ public class ProductFactory {
 			}
 
 			@Override
-			public Integer getBilletLength() {
-				return 6;
+			public Double getBilletLength() {
+				return 6.0;
 			}
 
 			@Override
-			public String getUnit() {
+			public Long getUnitId() {
+				return 1L;
+			}
+
+			@Override
+			public String getAcronym() {
 				return "kg";
 			}
 
 			@Override
-			public String getTax_Classification() {
+			public Long getTaxClassId() {
+				return 2L;
+			}
+
+			@Override
+			public String getDescription_taxclass() {
 				return "Produto acabado";
 			}
 
@@ -86,7 +95,11 @@ public class ProductFactory {
 			}
 
 			@Override
-			public String getMaterial_Group() {
+			public Long getMatGroupId() {
+				return 2L;
+			}
+			@Override
+			public String getDescription_matGroup() {
 				return "Produto acabado";
 			}
 		};

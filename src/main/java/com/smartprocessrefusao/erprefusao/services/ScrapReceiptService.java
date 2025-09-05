@@ -12,29 +12,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.smartprocessrefusao.erprefusao.dto.MovementDTO;
+import com.smartprocessrefusao.erprefusao.dto.ScrapReceiptDTO;
 import com.smartprocessrefusao.erprefusao.entities.Input;
-import com.smartprocessrefusao.erprefusao.entities.Movement;
+import com.smartprocessrefusao.erprefusao.entities.ScrapReceipt;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.entities.Ticket;
-import com.smartprocessrefusao.erprefusao.entities.TypeTransaction;
-import com.smartprocessrefusao.erprefusao.enumerados.TypeExpenses;
-import com.smartprocessrefusao.erprefusao.projections.MovementProjection;
+import com.smartprocessrefusao.erprefusao.enumerados.TypeCosts;
+import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
+import com.smartprocessrefusao.erprefusao.projections.ScrapReceiptProjection;
 import com.smartprocessrefusao.erprefusao.repositories.InputRepository;
-import com.smartprocessrefusao.erprefusao.repositories.MovementRepository;
+import com.smartprocessrefusao.erprefusao.repositories.ScrapReceiptRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
 import com.smartprocessrefusao.erprefusao.repositories.TicketRepository;
-import com.smartprocessrefusao.erprefusao.repositories.TypeTransactionRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class MovementService {
+public class ScrapReceiptService {
 
 	@Autowired
-	private MovementRepository movementRepository;
+	private ScrapReceiptRepository scrapReceiptRepository;
 
 	@Autowired
 	private TicketRepository ticketRepository;
@@ -45,23 +44,21 @@ public class MovementService {
 	@Autowired
 	private PartnerRepository partnerRepository;
 
-	@Autowired
-	private TypeTransactionRepository transactionRepository;
 
 	@Transactional(readOnly = true)
-	public Page<MovementDTO> reportMovement(Integer numberTicketId, Pageable pageable) {
+	public Page<ScrapReceiptDTO> reportMovement(Integer numberTicketId, Pageable pageable) {
 
-		Page<MovementProjection> page = movementRepository.searchMovementByNumberTicket(numberTicketId, pageable);
+		Page<ScrapReceiptProjection> page = scrapReceiptRepository.searchScrapReceiptByNumberTicket(numberTicketId, pageable);
 
-		return page.map(MovementDTO::new);
+		return page.map(ScrapReceiptDTO::new);
 	}
 
 	@Transactional(readOnly = true)
-	public MovementDTO findById(Long id) {
+	public ScrapReceiptDTO findById(Long id) {
 		try {
-			Optional<Movement> obj = movementRepository.findById(id);
-			Movement entity = obj.orElseThrow(() -> new EntityNotFoundException("Movement not found"));
-			return new MovementDTO(entity);
+			Optional<ScrapReceipt> obj = scrapReceiptRepository.findById(id);
+			ScrapReceipt entity = obj.orElseThrow(() -> new EntityNotFoundException("Receipt not found"));
+			return new ScrapReceiptDTO(entity);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
 		}
@@ -69,62 +66,62 @@ public class MovementService {
 	}
 
 	@Transactional
-	public MovementDTO insert(MovementDTO dto) {
+	public ScrapReceiptDTO insert(ScrapReceiptDTO dto) {
 
 		// 1. Buscar ticket
 		Ticket ticket = ticketRepository.findByNumTicket(dto.getNumTicketId())
 				.orElseThrow(() -> new ResourceNotFoundException("Ticket não encontrado"));
 
-		// 2. Somar amountMaterial existentes do ticket (se tiver)
-		BigDecimal somaAmountMaterial = movementRepository.sumAmountMaterialByNumTicket(dto.getNumTicketId());
-		if (somaAmountMaterial == null) {
-			somaAmountMaterial = BigDecimal.ZERO;
+		// 2. Somar amountScrap existentes do ticket (se tiver)
+		BigDecimal somaAmountScrap = scrapReceiptRepository.sumAmountScrapByNumTicket(dto.getNumTicketId());
+		if (somaAmountScrap == null) {
+			somaAmountScrap = BigDecimal.ZERO;
 		}
 
 		// 3. Calcular novo total incluindo o dto.amountMaterial
-		BigDecimal novoTotal = somaAmountMaterial.add(dto.getAmountMaterial());
+		BigDecimal newScrap = somaAmountScrap.add(dto.getAmountScrap());
 
 		// 4. Validar com netWeight do ticket
-		if (novoTotal.compareTo(ticket.getNetWeight()) > 0) {
+		if (newScrap.compareTo(ticket.getNetWeight()) > 0) {
 			throw new IllegalArgumentException("Peso de ticket excedido! " + "Ticket nº: "
 					+ ticket.getNumTicket() + " Peso Total: " + ticket.getNetWeight() + " kg");
 
 		}
 
-		Movement entity = new Movement();
+		ScrapReceipt entity = new ScrapReceipt();
 		copyDtoToEntity(dto, entity);
-		entity = movementRepository.save(entity);
-		return new MovementDTO(entity);
+		entity = scrapReceiptRepository.save(entity);
+		return new ScrapReceiptDTO(entity);
 	}
 
 	@Transactional
-	public MovementDTO update(Long id, MovementDTO dto) {
+	public ScrapReceiptDTO update(Long id, ScrapReceiptDTO dto) {
 		try {
-			Movement entity = movementRepository.getReferenceById(id);
+			ScrapReceipt entity = scrapReceiptRepository.getReferenceById(id);
 
 			// 1. Buscar ticket
 			Ticket ticket = ticketRepository.findByNumTicket(dto.getNumTicketId())
-					.orElseThrow(() -> new ResourceNotFoundException("Ticket não encontrada"));
+					.orElseThrow(() -> new ResourceNotFoundException("Ticket não encontrado"));
 
 			// 2. Somar amountMaterial de todos os movimentos do ticket, exceto o atual
-			BigDecimal somaAmountMaterial = movementRepository
-					.sumAmountMaterialByNumTicketExcludingId(dto.getNumTicketId(), id);
-			if (somaAmountMaterial == null) {
-				somaAmountMaterial = BigDecimal.ZERO;
+			BigDecimal somaAmountScrap = scrapReceiptRepository
+					.sumAmountScrapByNumTicketExcludingId(dto.getNumTicketId(), id);
+			if (somaAmountScrap == null) {
+				somaAmountScrap = BigDecimal.ZERO;
 			}
 
 			// 3. Calcular novo total
-			BigDecimal novoTotal = somaAmountMaterial.add(dto.getAmountMaterial());
+			BigDecimal newTotal = somaAmountScrap.add(dto.getAmountScrap());
 
 			// 4. Validar
-			if (novoTotal.compareTo(ticket.getNetWeight()) > 0) {
+			if (newTotal.compareTo(ticket.getNetWeight()) > 0) {
 				throw new IllegalArgumentException("Peso de ticket excedido! " + "Ticket nº: "
 						+ ticket.getNumTicket() + " Peso Total: " + ticket.getNetWeight() + " kg");
 			}
 
 			copyDtoToEntity(dto, entity);
-			entity = movementRepository.save(entity);
-			return new MovementDTO(entity);
+			entity = scrapReceiptRepository.save(entity);
+			return new ScrapReceiptDTO(entity);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
 		}
@@ -132,36 +129,37 @@ public class MovementService {
 
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public void delete(Long id) {
-		if (!movementRepository.existsById(id)) {
+		if (!scrapReceiptRepository.existsById(id)) {
 			throw new ResourceNotFoundException("Id not found " + id);
 		}
 		try {
-			movementRepository.deleteById(id);
+			scrapReceiptRepository.deleteById(id);
 		} catch (DataIntegrityViolationException e) {
 			throw new DatabaseException("Integrity violation");
 		}
 	}
 
-	public void copyDtoToEntity(MovementDTO dto, Movement entity) {
-		entity.setAmountMaterial(dto.getAmountMaterial());
+	public void copyDtoToEntity(ScrapReceiptDTO dto, ScrapReceipt entity) {
+		entity.setMoment(dto.getMoment());
+		entity.setAmountScrap(dto.getAmountScrap());
 		entity.setUnitValue(dto.getUnitValue());
 		entity.setMetalYield(dto.getMetalYield());
 
 		// 🧮 Cálculo de totalValue
-		if (dto.getAmountMaterial() != null && dto.getUnitValue() != null) {
+		if (dto.getAmountScrap() != null && dto.getUnitValue() != null) {
 			entity.setTotalValue(
-					dto.getAmountMaterial().multiply(dto.getUnitValue()).setScale(2, RoundingMode.HALF_UP));
+					dto.getAmountScrap().multiply(dto.getUnitValue()).setScale(2, RoundingMode.HALF_UP));
 		}
 
 		// 🧮 Cálculo de metalWeight
-		if (dto.getAmountMaterial() != null && dto.getMetalYield() != null) {
+		if (dto.getAmountScrap() != null && dto.getMetalYield() != null) {
 			entity.setMetalWeight(
-					dto.getAmountMaterial().multiply(dto.getMetalYield()).setScale(2, RoundingMode.HALF_UP));
+					dto.getAmountScrap().multiply(dto.getMetalYield()).setScale(2, RoundingMode.HALF_UP));
 		}
 
 		// 🧮 Cálculo de slag
-		if (dto.getAmountMaterial() != null && entity.getMetalWeight() != null) {
-			entity.setSlag(dto.getAmountMaterial().subtract(entity.getMetalWeight()).setScale(2, RoundingMode.HALF_UP));
+		if (dto.getAmountScrap() != null && entity.getMetalWeight() != null) {
+			entity.setSlag(dto.getAmountScrap().subtract(entity.getMetalWeight()).setScale(2, RoundingMode.HALF_UP));
 		}
 
 		Optional.ofNullable(dto.getNumTicketId()).ifPresent(id -> {
@@ -171,12 +169,12 @@ public class MovementService {
 		});
 
 		try {
-			if (dto.getExpenses() != null) {
-				TypeExpenses expenses = TypeExpenses.valueOf(dto.getExpenses().toUpperCase());
-				entity.setExpenses(expenses);
+			if (dto.getCosts() != null) {
+				TypeCosts expenses = TypeCosts.valueOf(dto.getCosts().toUpperCase());
+				entity.setCosts(expenses);
 			}
 		} catch (IllegalArgumentException e) {
-			throw new ResourceNotFoundException("Tipo de despesa inválida: " + dto.getExpenses());
+			throw new ResourceNotFoundException("Tipo de despesa inválida: " + dto.getCosts());
 		}
 
 		Optional.ofNullable(dto.getPartnerId()).ifPresent(id -> {
@@ -187,16 +185,18 @@ public class MovementService {
 
 		Optional.ofNullable(dto.getInputId()).ifPresent(id -> {
 			Input input = inputRepository.findById(id)
-					.orElseThrow(() -> new ResourceNotFoundException("Material não encontrado"));
+					.orElseThrow(() -> new ResourceNotFoundException("Sucata não encontrado"));
 			entity.setInput(input);
 		});
 
-		Optional.ofNullable(dto.getTransactionId()).ifPresent(id -> {
-			TypeTransaction transaction = transactionRepository.findById(id)
-					.orElseThrow(() -> new ResourceNotFoundException("Operação não encontrada"));
-			entity.setTransaction(transaction);
-		});
-
+		try {
+			if (dto.getTransactionDescription() != null) {
+				TypeTransactionReceipt transaction = TypeTransactionReceipt.valueOf(dto.getTransactionDescription().toUpperCase());
+				entity.setTransaction(transaction);
+			}
+		} catch (IllegalArgumentException e) {
+			throw new ResourceNotFoundException("Tipo de operação inválida: " + dto.getTransactionDescription());
+		}
 	}
 
 }

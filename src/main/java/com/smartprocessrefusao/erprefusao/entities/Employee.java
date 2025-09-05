@@ -78,4 +78,8 @@ public class Employee extends People implements IdProjection<Long> {
 		this.sector = sector;
 	}
 
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 }

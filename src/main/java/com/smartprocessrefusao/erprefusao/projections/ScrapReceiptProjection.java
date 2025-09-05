@@ -1,28 +1,29 @@
 package com.smartprocessrefusao.erprefusao.projections;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
-public interface MovementProjection extends IdProjection<Long> {
+public interface ScrapReceiptProjection extends IdProjection<Long> {
 
 	Long getId();
 
+	Instant getMoment();
+	
 	Integer getNumTicketId();
 
 	Long getPartnerId();
 
 	String getPartnerName();
 
-	Long getTransactionId();
-	
 	String getTransactionDescription();
 
-	String getExpenses();
+	String getCosts();
 
 	Long getInputId();
 
 	String getInputDescription();
 
-	BigDecimal getAmountMaterial();
+	BigDecimal getAmountScrap();
 
 	BigDecimal getUnitValue();
 

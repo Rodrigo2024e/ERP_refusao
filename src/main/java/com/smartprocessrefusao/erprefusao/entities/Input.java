@@ -18,7 +18,10 @@ public class Input extends Material implements IdProjection<Long> {
 	private String description;
 
 	@OneToMany(mappedBy = "input")
-	private Set<Movement> movements = new HashSet<>();
+	private Set<ScrapReceipt> scraptReceipts = new HashSet<>();
+
+	@OneToMany(mappedBy = "input")
+	private Set<SupplierReceipt> supplierReceipts = new HashSet<>();
 
 	public Input() {
 
@@ -39,8 +42,12 @@ public class Input extends Material implements IdProjection<Long> {
 		this.description = description;
 	}
 
-	public Set<Movement> getMovements() {
-		return movements;
+	public Set<ScrapReceipt> getScraptReceipts() {
+		return scraptReceipts;
+	}
+
+	public Set<SupplierReceipt> getSupplierReceipts() {
+		return supplierReceipts;
 	}
 
 }

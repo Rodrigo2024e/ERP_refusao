@@ -44,6 +44,13 @@ import jakarta.validation.Valid;
 	        UserDTO dto = service.findById(id);
 	        return ResponseEntity.ok(dto);
 	    }
+		
+		@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	    @GetMapping(value = "/me")
+	    public ResponseEntity<UserDTO> getMe() {
+	        UserDTO dto = service.getMe();
+	        return ResponseEntity.ok(dto);
+	    }
 
 		@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	    @PostMapping

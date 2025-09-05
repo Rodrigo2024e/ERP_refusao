@@ -24,42 +24,44 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(value = "/cities")
 public class CityResource {
-	
+
 	@Autowired
 	private CityService cityService;
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping
 	public ResponseEntity<List<CityDTO>> findAll() {
-		List<CityDTO> list = cityService.findAll();	
+		List<CityDTO> list = cityService.findAll();
 		return ResponseEntity.ok().body(list);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<CityDTO> findById(@PathVariable Long id){
+	public ResponseEntity<CityDTO> findById(@PathVariable Long id) {
 		CityDTO dto = cityService.findById(id);
 		return ResponseEntity.ok().body(dto);
 	}
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PostMapping
 	public ResponseEntity<CityDTO> insert(@Valid @RequestBody CityDTO dto) {
 		dto = cityService.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(dto.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<CityDTO> update(@PathVariable Long id, @Valid @RequestBody CityDTO dto) {
 		dto = cityService.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		cityService.delete(id);
 		return ResponseEntity.noContent().build();
-	}		
+	}
 
 }

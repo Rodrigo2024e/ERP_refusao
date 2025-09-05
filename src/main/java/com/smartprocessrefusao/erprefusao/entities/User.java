@@ -24,25 +24,23 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tb_user")
 public class User implements UserDetails {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Column(unique = true)
 	private String email;
 	private String password;
-	
+
 	@OneToOne
 	@JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = true)
 	private Employee employee;
-	
+
 	@ManyToMany
-	@JoinTable(name = "tb_user_role",
-			joinColumns = @JoinColumn(name = "user_id"),
-			inverseJoinColumns = @JoinColumn(name = "role_id"))
+	@JoinTable(name = "tb_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
-	
+
 	public User() {
 	}
 
@@ -52,7 +50,7 @@ public class User implements UserDetails {
 		this.email = email;
 		this.password = password;
 		this.employee = employee;
-		
+
 	}
 
 	public Long getId() {
@@ -78,8 +76,8 @@ public class User implements UserDetails {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	  public Employee getEmployee() {
+
+	public Employee getEmployee() {
 		return employee;
 	}
 
@@ -88,22 +86,22 @@ public class User implements UserDetails {
 	}
 
 	public void addRole(Role role) {
-	    	roles.add(role);
-	    }
-	    
-		public boolean hasRole(String roleName) {
-			for (Role role : roles) {
-				if (role.getAuthority().equals(roleName)) {
-					return true;
-				}
+		roles.add(role);
+	}
+
+	public boolean hasRole(String roleName) {
+		for (Role role : roles) {
+			if (role.getAuthority().equals(roleName)) {
+				return true;
 			}
-			return false;
 		}
+		return false;
+	}
 
 	public Set<Role> getRoles() {
 		return roles;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -130,7 +128,7 @@ public class User implements UserDetails {
 	public String getUsername() {
 		return email;
 	}
-	
+
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
@@ -150,6 +148,5 @@ public class User implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
-	
-	
+
 }

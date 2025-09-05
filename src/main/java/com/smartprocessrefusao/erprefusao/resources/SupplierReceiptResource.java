@@ -18,64 +18,56 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.smartprocessrefusao.erprefusao.dto.ReportTicketDTO;
-import com.smartprocessrefusao.erprefusao.dto.TicketDTO;
-import com.smartprocessrefusao.erprefusao.services.TicketService;
+import com.smartprocessrefusao.erprefusao.dto.ReportSupplierReceiptDTO;
+import com.smartprocessrefusao.erprefusao.dto.SupplierReceiptDTO;
+import com.smartprocessrefusao.erprefusao.services.SupplierReceiptService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/tickets")
-public class TicketResource {
+@RequestMapping(value = "/supplierReceipts")
+public class SupplierReceiptResource {
 
 	@Autowired
-	private TicketService ticketService;
+	private SupplierReceiptService supplierReceiptService;
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-	@GetMapping
-	public ResponseEntity<Page<TicketDTO>> TicketAll(Integer numTicket, Pageable pageable) {
-
-		Page<TicketDTO> result = ticketService.findAllPaged(pageable);
-		return ResponseEntity.ok(result);
-	}
-
 	@GetMapping(value = "/report")
-	public ResponseEntity<Page<ReportTicketDTO>> getReportTicket(@RequestParam(required = false) Integer numTicketId,
+	public ResponseEntity<Page<ReportSupplierReceiptDTO>> getReportSupplierReceipt(
+			@RequestParam(required = false) Long inputId, Pageable pageable) {
 
-			Pageable pageable) {
-
-		Page<ReportTicketDTO> result = ticketService.reportTicket(numTicketId, pageable);
+		Page<ReportSupplierReceiptDTO> result = supplierReceiptService.reportSupplierReceipt(inputId, pageable);
 		return ResponseEntity.ok(result);
 
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<TicketDTO> findById(@PathVariable Integer id) {
-		TicketDTO dto = ticketService.findById(id);
+	public ResponseEntity<SupplierReceiptDTO> findById(@PathVariable Long id) {
+		SupplierReceiptDTO dto = supplierReceiptService.findById(id);
 		return ResponseEntity.ok().body(dto);
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PostMapping
-	public ResponseEntity<TicketDTO> insert(@Valid @RequestBody TicketDTO dto) {
-		dto = ticketService.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getNumTicket())
-				.toUri();
+	public ResponseEntity<SupplierReceiptDTO> insert(@Valid @RequestBody SupplierReceiptDTO dto) {
+		dto = supplierReceiptService.insert(dto);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<TicketDTO> update(@PathVariable Integer id, @Valid @RequestBody TicketDTO dto) {
-		dto = ticketService.update(id, dto);
+	public ResponseEntity<SupplierReceiptDTO> update(@PathVariable Long id,
+			@Valid @RequestBody SupplierReceiptDTO dto) {
+		dto = supplierReceiptService.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Integer id) {
-		ticketService.delete(id);
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
+		supplierReceiptService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 

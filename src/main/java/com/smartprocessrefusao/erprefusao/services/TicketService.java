@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.smartprocessrefusao.erprefusao.dto.ReportTicketDTO;
 import com.smartprocessrefusao.erprefusao.dto.TicketDTO;
 import com.smartprocessrefusao.erprefusao.entities.Ticket;
+import com.smartprocessrefusao.erprefusao.projections.ReportTicketProjection;
 import com.smartprocessrefusao.erprefusao.repositories.TicketRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
@@ -28,6 +30,14 @@ public class TicketService {
 	public Page<TicketDTO> findAllPaged(Pageable pageable) {
 		Page<Ticket> list = ticketRepository.findAll(pageable);
 		return list.map(x -> new TicketDTO(x));
+	}
+
+	@Transactional(readOnly = true)
+	public Page<ReportTicketDTO> reportTicket(Integer numTicketId, Pageable pageable) {
+
+		Page<ReportTicketProjection> page = ticketRepository.searchTicketWithScrapReceipt(numTicketId, pageable);
+
+		return page.map(ReportTicketDTO::new);
 	}
 
 	@Transactional(readOnly = true)
@@ -64,10 +74,9 @@ public class TicketService {
 					.orElseThrow(() -> new ResourceNotFoundException("Ticket not found " + id));
 
 			entity.setDateTicket(dto.getDateTicket());
-			entity.setNumberPlate(dto.getNumberPlate());
+			entity.setNumberPlate(dto.getNumberPlate().toUpperCase());
 			entity.setNetWeight(dto.getNetWeight());
 			entity = ticketRepository.save(entity);
-
 			return new TicketDTO(entity);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Ticket not found " + id);
@@ -87,9 +96,10 @@ public class TicketService {
 	}
 
 	public void copyDtoToEntity(TicketDTO dto, Ticket entity) {
+		entity.setMoment(dto.getMoment());
 		entity.setNumTicket(dto.getNumTicket());
 		entity.setDateTicket(dto.getDateTicket());
-		entity.setNumberPlate(dto.getNumberPlate());
+		entity.setNumberPlate(dto.getNumberPlate().toUpperCase());
 		entity.setNetWeight(dto.getNetWeight());
 	}
 

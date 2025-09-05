@@ -1,21 +1,26 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.smartprocessrefusao.erprefusao.entities.Movement;
+import com.smartprocessrefusao.erprefusao.entities.ScrapReceipt;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSerializer;
-import com.smartprocessrefusao.erprefusao.projections.MovementProjection;
+import com.smartprocessrefusao.erprefusao.formatBigDecimal.IntegerBrazilianSerializerWithoutDecimal;
+import com.smartprocessrefusao.erprefusao.projections.ScrapReceiptProjection;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-public class MovementDTO {
+public class ScrapReceiptDTO {
 
 	private Long id;
 
+	private Instant moment;
+
 	@NotNull(message = "Informar o número do ticket associado")
+	@JsonSerialize(using = IntegerBrazilianSerializerWithoutDecimal.class)
 	private Integer numTicketId;
 
 	@NotNull(message = "Informar o id do parceiro")
@@ -23,11 +28,10 @@ public class MovementDTO {
 	private String partnerName;
 
 	@NotNull(message = "Informar o tipo de operação")
-	private Long transactionId;
 	private String transactionDescription;
 
 	@NotBlank(message = "Informar o tipo de gastos")
-	private String expenses;
+	private String costs;
 
 	@NotNull(message = "Informar o id do material")
 	private Long inputId;
@@ -36,16 +40,19 @@ public class MovementDTO {
 	@NotNull(message = "Campo requerido")
 	@Positive(message = "A quantidade recebida deve ser positiva")
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
-	private BigDecimal amountMaterial;
+	private BigDecimal amountScrap;
 
 	@NotNull(message = "Campo requerido")
 	@Positive(message = "O valor unitário deve ser positivo")
+	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal unitValue;
+
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal totalValue;
 
 	@NotNull(message = "Campo requerido")
 	@Positive(message = "O rendimento metálico teórico deve ser positivo")
+	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal metalYield;
 
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
@@ -54,24 +61,24 @@ public class MovementDTO {
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal slag;
 
-	public MovementDTO() {
+	public ScrapReceiptDTO() {
 
 	}
 
-	public MovementDTO(Long id, Integer numTicketId, Long partnerId, String partnerName, Long transactionId,
-			String transactionDescription, String expenses, Long inputId, String inputDescription,
-			BigDecimal amountMaterial, BigDecimal unitValue, BigDecimal totalValue, BigDecimal metalYield,
-			BigDecimal metalWeight, BigDecimal slag) {
+	public ScrapReceiptDTO(Long id, Instant moment, Integer numTicketId, Long partnerId, String partnerName,
+			String transactionDescription, String costs, Long inputId, String inputDescription, BigDecimal amountScrap,
+			BigDecimal unitValue, BigDecimal totalValue, BigDecimal metalYield, BigDecimal metalWeight,
+			BigDecimal slag) {
 		this.id = id;
+		this.moment = moment;
 		this.numTicketId = numTicketId;
 		this.partnerId = partnerId;
 		this.partnerName = partnerName;
-		this.transactionId = transactionId;
 		this.transactionDescription = transactionDescription;
-		this.expenses = expenses;
+		this.costs = costs;
 		this.inputId = inputId;
 		this.inputDescription = inputDescription;
-		this.amountMaterial = amountMaterial;
+		this.amountScrap = amountScrap;
 		this.unitValue = unitValue;
 		this.totalValue = totalValue;
 		this.metalYield = metalYield;
@@ -79,17 +86,17 @@ public class MovementDTO {
 		this.slag = slag;
 	}
 
-	public MovementDTO(Movement entity) {
+	public ScrapReceiptDTO(ScrapReceipt entity) {
 		id = entity.getId();
+		moment = entity.getMoment();
 		numTicketId = entity.getNumTicket().getNumTicket();
 		partnerId = entity.getPartner().getId();
 		partnerName = entity.getPartner().getName();
-		transactionId = entity.getTransaction().getId();
 		transactionDescription = entity.getTransaction().getDescription();
-		expenses = entity.getExpenses().toString();
+		costs = entity.getCosts().toString();
 		inputId = entity.getInput().getId();
 		inputDescription = entity.getInput().getDescription();
-		amountMaterial = entity.getAmountMaterial();
+		amountScrap = entity.getAmountScrap();
 		unitValue = entity.getUnitValue();
 		totalValue = entity.getTotalValue();
 		metalYield = entity.getMetalYield();
@@ -98,42 +105,46 @@ public class MovementDTO {
 
 	}
 
-	public MovementDTO(MovementProjection projection) {
-		this.id = projection.getId();
-		this.numTicketId = projection.getNumTicketId();
+	public ScrapReceiptDTO(ScrapReceiptProjection projection) {
+		id = projection.getId();
+		moment = projection.getMoment();
+		numTicketId = projection.getNumTicketId();
 
 		if (projection.getPartnerId() != null) {
-			this.partnerId = projection.getPartnerId();
-			this.partnerName = projection.getPartnerName();
+			partnerId = projection.getPartnerId();
+			partnerName = projection.getPartnerName();
 		}
 
-		if (projection.getTransactionId() != null) {
-			this.transactionId = projection.getTransactionId();
-			this.transactionDescription = projection.getTransactionDescription();
+		if (projection.getTransactionDescription() != null) {
+			transactionDescription = projection.getTransactionDescription();
 
 		}
 
-		if (projection.getExpenses() != null) {
-			this.expenses = projection.getExpenses().toString();
+		if (projection.getCosts() != null) {
+			costs = projection.getCosts().toString();
 
 		}
 
 		if (projection.getInputId() != null) {
-			this.inputId = projection.getInputId();
-			this.inputDescription = projection.getInputDescription();
+			inputId = projection.getInputId();
+			inputDescription = projection.getInputDescription();
 		}
 
-		this.amountMaterial = projection.getAmountMaterial();
-		this.unitValue = projection.getUnitValue();
-		this.totalValue = projection.getTotalValue();
-		this.metalYield = projection.getMetalYield();
-		this.metalWeight = projection.getMetalWeight();
-		this.slag = projection.getSlag();
+		amountScrap = projection.getAmountScrap();
+		unitValue = projection.getUnitValue();
+		totalValue = projection.getTotalValue();
+		metalYield = projection.getMetalYield();
+		metalWeight = projection.getMetalWeight();
+		slag = projection.getSlag();
 
 	}
 
 	public Long getId() {
 		return id;
+	}
+
+	public Instant getMoment() {
+		return moment;
 	}
 
 	public Integer getNumTicketId() {
@@ -148,16 +159,12 @@ public class MovementDTO {
 		return partnerName;
 	}
 
-	public Long getTransactionId() {
-		return transactionId;
-	}
-
 	public String getTransactionDescription() {
 		return transactionDescription;
 	}
 
-	public String getExpenses() {
-		return expenses;
+	public String getCosts() {
+		return costs;
 	}
 
 	public Long getInputId() {
@@ -168,8 +175,8 @@ public class MovementDTO {
 		return inputDescription;
 	}
 
-	public BigDecimal getAmountMaterial() {
-		return amountMaterial;
+	public BigDecimal getAmountScrap() {
+		return amountScrap;
 	}
 
 	public BigDecimal getUnitValue() {

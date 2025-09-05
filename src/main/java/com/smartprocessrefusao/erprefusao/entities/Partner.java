@@ -21,7 +21,10 @@ public class Partner extends People implements IdProjection<Long> {
 	private Boolean active;
 
 	@OneToMany(mappedBy = "partner")
-	private Set<Movement> movements = new HashSet<>();
+	private Set<ScrapReceipt> scrapReceipts = new HashSet<>();
+
+	@OneToMany(mappedBy = "partner")
+	private Set<SupplierReceipt> supplierReceipts = new HashSet<>();
 
 	public Partner() {
 
@@ -77,8 +80,12 @@ public class Partner extends People implements IdProjection<Long> {
 		this.active = active;
 	}
 
-	public Set<Movement> getMovements() {
-		return movements;
+	public Set<ScrapReceipt> getScrapReceipts() {
+		return scrapReceipts;
+	}
+
+	public Set<SupplierReceipt> getSupplierReceipts() {
+		return supplierReceipts;
 	}
 
 }

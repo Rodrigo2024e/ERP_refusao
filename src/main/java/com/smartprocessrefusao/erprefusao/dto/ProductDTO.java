@@ -24,7 +24,7 @@ public class ProductDTO {
 	private Double billetLength;
 
 	@NotNull(message = "Campo Unidade de Medida requerido")
-	private Long uomId;
+	private Long unitId;
 	private String acronym;
 
 	@NotNull(message = "Campo Classificação Fiscal requerida")
@@ -41,7 +41,7 @@ public class ProductDTO {
 	}
 
 	public ProductDTO(Long id, String typeMaterial, String description, Integer alloy, Integer billetDiameter,
-			Double billetLength, Long uomId, String acronym, Long taxClassId, String description_taxclass,
+			Double billetLength, Long unitId, String acronym, Long taxClassId, String description_taxclass,
 			Integer number, Long matGroupId, String description_matGroup) {
 		this.id = id;
 		this.typeMaterial = typeMaterial;
@@ -49,7 +49,7 @@ public class ProductDTO {
 		this.alloy = alloy;
 		this.billetDiameter = billetDiameter;
 		this.billetLength = billetLength;
-		this.uomId = uomId;
+		this.unitId = unitId;
 		this.acronym = acronym;
 		this.taxClassId = taxClassId;
 		this.description_taxclass = description_taxclass;
@@ -65,7 +65,7 @@ public class ProductDTO {
 		alloy = entity.getAlloy();
 		billetDiameter = entity.getBilletDiameter();
 		billetLength = entity.getBilletLength();
-		uomId = entity.getUomMaterial().getId();
+		unitId = entity.getUomMaterial().getId();
 		acronym = entity.getUomMaterial().getAcronym();
 		taxClassId = entity.getTaxClassMaterial().getId();
 		description_taxclass = entity.getTaxClassMaterial().getDescription();
@@ -98,8 +98,8 @@ public class ProductDTO {
 		return billetLength;
 	}
 
-	public Long getUomId() {
-		return uomId;
+	public Long getUnitId() {
+		return unitId;
 	}
 
 	public String getAcronym() {

@@ -111,7 +111,7 @@ public class ProductService {
 		entity.setBilletDiameter(dto.getBilletDiameter());
 		entity.setBilletLength(dto.getBilletLength());
 
-		Optional.ofNullable(dto.getUomId()).ifPresent(id -> {
+		Optional.ofNullable(dto.getUnitId()).ifPresent(id -> {
 			Unit unit = unitRepository.findById(id)
 					.orElseThrow(() -> new ResourceNotFoundException("Unidade de medida não encontrada"));
 			entity.setUomMaterial(unit);

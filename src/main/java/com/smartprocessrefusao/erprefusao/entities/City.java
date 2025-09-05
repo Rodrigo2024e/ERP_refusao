@@ -3,6 +3,7 @@ package com.smartprocessrefusao.erprefusao.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.smartprocessrefusao.erprefusao.audit.Auditable;
 import com.smartprocessrefusao.erprefusao.enumerados.StateBrazil;
 import com.smartprocessrefusao.erprefusao.projections.IdProjection;
 
@@ -18,24 +19,26 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_city")
-public class City implements IdProjection<Long> {
+public class City extends Auditable<String> implements IdProjection<Long> {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Column(nullable = false)
 	private String nameCity;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private StateBrazil ufState;
-	
+
 	@OneToMany(mappedBy = "city")
-	Set<Address> address = new HashSet<>();
-	
+	Set<Address> addresses = new HashSet<>();
+
 	public City() {
-		
+
 	}
 
 	public City(Long id, String nameCity, StateBrazil ufState) {
@@ -68,8 +71,8 @@ public class City implements IdProjection<Long> {
 		this.ufState = ufState;
 	}
 
-	public Set<Address> getAddress() {
-		return address;
+	public Set<Address> getAddresses() {
+		return addresses;
 	}
 
 }

@@ -21,11 +21,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 				pr.alloy, 
 				pr.billet_diameter,
 				pr.billet_length,
-				u.acronym as unit, 
-				t.description as Tax_Classification, 
+				u.id As UnitId,
+				u.acronym Acronym,
+				t.id As TaxClassId,
+				t.description as description_taxclass, 
 				t.number, 
 				mg.id As matGroupId,
-				mg.description as material_Group
+				mg.description as description_matGroup
 			FROM tb_material m
 			INNER JOIN tb_product pr ON pr.id = m.id
 			INNER JOIN tb_uom u ON u.id = m.uom_material_id

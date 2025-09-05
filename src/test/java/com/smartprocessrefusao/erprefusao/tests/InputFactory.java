@@ -46,7 +46,7 @@ public class InputFactory {
 	}
 
 	public static InputDTO createTypeMaterialInvalid() {
-		return new InputDTO(1L, "TypeMaterialInvalid", "Perfil de processo", 1L, "kg", 1L, "Sucata de alumínio", 7602000, 1L,
+		return new InputDTO(1L, null, "Perfil de processo", 1L, "kg", 1L, "Sucata de alumínio", 7602000, 1L,
 				"Sucata de alumínio");
 	}
 

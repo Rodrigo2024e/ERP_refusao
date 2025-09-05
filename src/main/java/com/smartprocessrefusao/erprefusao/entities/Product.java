@@ -1,8 +1,12 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.smartprocessrefusao.erprefusao.projections.IdProjection;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -14,6 +18,9 @@ public class Product extends Material implements IdProjection<Long> {
 	private Integer alloy;
 	private Integer billetDiameter;
 	private Double billetLength;
+
+	@OneToMany(mappedBy = "product")
+	private Set<ProductDispatch> productsDispatches = new HashSet<>();
 
 	public Product() {
 
@@ -56,6 +63,10 @@ public class Product extends Material implements IdProjection<Long> {
 
 	public void setBilletLength(Double billetLength) {
 		this.billetLength = billetLength;
+	}
+
+	public Set<ProductDispatch> getProductsDispatches() {
+		return productsDispatches;
 	}
 
 }

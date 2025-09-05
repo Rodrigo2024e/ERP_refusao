@@ -18,65 +18,58 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.smartprocessrefusao.erprefusao.dto.ReportTicketDTO;
-import com.smartprocessrefusao.erprefusao.dto.TicketDTO;
-import com.smartprocessrefusao.erprefusao.services.TicketService;
+import com.smartprocessrefusao.erprefusao.dto.ScrapReceiptDTO;
+import com.smartprocessrefusao.erprefusao.services.ScrapReceiptService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/tickets")
-public class TicketResource {
+@RequestMapping(value = "/scrapReceipts")
+public class ScrapReceiptResource {
 
 	@Autowired
-	private TicketService ticketService;
-
+	private ScrapReceiptService scrapReceiptService;
+	
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping
-	public ResponseEntity<Page<TicketDTO>> TicketAll(Integer numTicket, Pageable pageable) {
-
-		Page<TicketDTO> result = ticketService.findAllPaged(pageable);
-		return ResponseEntity.ok(result);
+	 public ResponseEntity<Page<ScrapReceiptDTO>> getReportMovement(
+			 @RequestParam(required = false) Integer numTicketId, Pageable pageable) {
+	        
+	        Page<ScrapReceiptDTO> result = scrapReceiptService.reportMovement(numTicketId, pageable);
+	        return ResponseEntity.ok(result);
+	    
 	}
-
-	@GetMapping(value = "/report")
-	public ResponseEntity<Page<ReportTicketDTO>> getReportTicket(@RequestParam(required = false) Integer numTicketId,
-
-			Pageable pageable) {
-
-		Page<ReportTicketDTO> result = ticketService.reportTicket(numTicketId, pageable);
-		return ResponseEntity.ok(result);
-
-	}
-
+	
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<TicketDTO> findById(@PathVariable Integer id) {
-		TicketDTO dto = ticketService.findById(id);
+	public ResponseEntity<ScrapReceiptDTO> findById(@PathVariable Long id){
+		ScrapReceiptDTO dto = scrapReceiptService.findById(id);
 		return ResponseEntity.ok().body(dto);
 	}
-
+	
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PostMapping
-	public ResponseEntity<TicketDTO> insert(@Valid @RequestBody TicketDTO dto) {
-		dto = ticketService.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getNumTicket())
-				.toUri();
+	public ResponseEntity<ScrapReceiptDTO> insert(@Valid @RequestBody ScrapReceiptDTO dto) {
+		dto = scrapReceiptService.insert(dto);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+				.buildAndExpand(dto.getId()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
-
+	
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<TicketDTO> update(@PathVariable Integer id, @Valid @RequestBody TicketDTO dto) {
-		dto = ticketService.update(id, dto);
+	public ResponseEntity<ScrapReceiptDTO> update(@PathVariable Long id, @Valid @RequestBody ScrapReceiptDTO dto) {
+		dto = scrapReceiptService.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}
-
+	
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Integer id) {
-		ticketService.delete(id);
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
+		scrapReceiptService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-
+	
+	
+	
 }

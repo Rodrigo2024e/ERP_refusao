@@ -24,9 +24,6 @@ public class TaxClassification {
 	@OneToMany(mappedBy = "taxClassMaterial")
 	private Set<Material> materials = new HashSet<>();
 
-//	@OneToMany(mappedBy = "taxClassProduct")
-//	private Set<Product> products = new HashSet<>();
-
 	public TaxClassification() {
 
 	}
@@ -64,10 +61,6 @@ public class TaxClassification {
 	public Set<Material> getMaterials() {
 		return materials;
 	}
-
-//	public Set<Product> getProducts() {
-//		return products;
-//	}
 
 	@Override
 	public int hashCode() {

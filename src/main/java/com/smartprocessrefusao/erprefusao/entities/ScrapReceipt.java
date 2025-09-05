@@ -1,10 +1,13 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Objects;
 
-import com.smartprocessrefusao.erprefusao.enumerados.TypeExpenses;
+import com.smartprocessrefusao.erprefusao.enumerados.TypeCosts;
+import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,14 +19,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "tb_movement")
-public class Movement {
+@Table(name = "tb_scrap_receipt")
+public class ScrapReceipt {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private BigDecimal amountMaterial;
+	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+	private Instant moment;
+	private BigDecimal amountScrap;
 	private BigDecimal unitValue;
 	private BigDecimal totalValue;
 	private BigDecimal metalYield;
@@ -42,22 +47,22 @@ public class Movement {
 	@JoinColumn(name = "partner_id")
 	private People partner;
 
-	@ManyToOne
-	@JoinColumn(name = "transaction_id")
-	private TypeTransaction transaction;
+	@Enumerated(EnumType.STRING)
+	private TypeTransactionReceipt transaction;
 
 	@Enumerated(EnumType.STRING)
-	private TypeExpenses expenses;
+	private TypeCosts costs;
 
-	public Movement() {
+	public ScrapReceipt() {
 
 	}
 
-	public Movement(Long id, BigDecimal amountMaterial, BigDecimal unitValue, BigDecimal totalValue,
+	public ScrapReceipt(Long id, Instant moment, BigDecimal amountScrap, BigDecimal unitValue, BigDecimal totalValue,
 			BigDecimal metalYield, BigDecimal metalWeight, BigDecimal slag, Ticket numTicket, Input input,
-			People partner, TypeTransaction transaction, TypeExpenses expenses) {
+			People partner, TypeTransactionReceipt transaction, TypeCosts costs) {
 		this.id = id;
-		this.amountMaterial = amountMaterial;
+		this.moment = moment;
+		this.amountScrap = amountScrap;
 		this.unitValue = unitValue;
 		this.totalValue = totalValue;
 		this.metalYield = metalYield;
@@ -67,7 +72,7 @@ public class Movement {
 		this.input = input;
 		this.partner = partner;
 		this.transaction = transaction;
-		this.expenses = expenses;
+		this.costs = costs;
 	}
 
 	public Long getId() {
@@ -78,12 +83,20 @@ public class Movement {
 		this.id = id;
 	}
 
-	public BigDecimal getAmountMaterial() {
-		return amountMaterial;
+	public Instant getMoment() {
+		return moment;
 	}
 
-	public void setAmountMaterial(BigDecimal amountMaterial) {
-		this.amountMaterial = amountMaterial;
+	public void setMoment(Instant moment) {
+		this.moment = moment;
+	}
+
+	public BigDecimal getAmountScrap() {
+		return amountScrap;
+	}
+
+	public void setAmountScrap(BigDecimal amountScrap) {
+		this.amountScrap = amountScrap;
 	}
 
 	public BigDecimal getUnitValue() {
@@ -150,20 +163,20 @@ public class Movement {
 		this.partner = partner;
 	}
 
-	public TypeTransaction getTransaction() {
+	public TypeTransactionReceipt getTransaction() {
 		return transaction;
 	}
 
-	public void setTransaction(TypeTransaction transaction) {
+	public void setTransaction(TypeTransactionReceipt transaction) {
 		this.transaction = transaction;
 	}
 
-	public TypeExpenses getExpenses() {
-		return expenses;
+	public TypeCosts getCosts() {
+		return costs;
 	}
 
-	public void setExpenses(TypeExpenses expenses) {
-		this.expenses = expenses;
+	public void setCosts(TypeCosts costs) {
+		this.costs = costs;
 	}
 
 	@Override
@@ -179,7 +192,7 @@ public class Movement {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Movement other = (Movement) obj;
+		ScrapReceipt other = (ScrapReceipt) obj;
 		return Objects.equals(numTicket, other.numTicket);
 	}
 

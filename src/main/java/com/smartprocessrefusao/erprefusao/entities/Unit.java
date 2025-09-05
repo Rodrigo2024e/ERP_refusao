@@ -24,9 +24,6 @@ public class Unit {
 	@OneToMany(mappedBy = "uomMaterial")
 	private Set<Material> materials = new HashSet<>();
 
-//	@OneToMany(mappedBy = "uomProduct")
-//	private Set<Product> products = new HashSet<>();
-
 	public Unit() {
 
 	}
@@ -64,10 +61,6 @@ public class Unit {
 	public Set<Material> getMaterials() {
 		return materials;
 	}
-
-//	public Set<Product> getProducts() {
-//		return products;
-//	}
 
 	@Override
 	public int hashCode() {

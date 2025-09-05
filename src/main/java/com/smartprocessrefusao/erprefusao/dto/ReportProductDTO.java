@@ -1,6 +1,5 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
-import com.smartprocessrefusao.erprefusao.entities.Product;
 import com.smartprocessrefusao.erprefusao.projections.ReportProductProjection;
 
 public class ReportProductDTO {
@@ -11,28 +10,32 @@ public class ReportProductDTO {
 	private Integer alloy;
 	private Integer billetDiameter;
 	private double BilletLength;
+	private Long unitId;
+	private String acronym;
+	private Long taxClassId;
+	private String description_taxclass;
+	private Integer number;
+	private Long matGroupId;
+	private String description_matGroup;
 
 	public ReportProductDTO() {
 
 	}
 
-	public ReportProductDTO(Product entity) {
-		id = entity.getId();
-		typeMaterial = entity.getTypeMaterial().toString();
-		description = entity.getDescription();
-		alloy = entity.getAlloy();
-		billetDiameter = entity.getBilletDiameter();
-		BilletLength = entity.getBilletLength();
-
-	}
-
 	public ReportProductDTO(ReportProductProjection projection) {
-		this.id = projection.getId();
-		this.typeMaterial = projection.getTypeMaterial();
-		this.description = projection.getDescription();
-		this.alloy = projection.getAlloy();
-		this.billetDiameter = projection.getBilletDiameter();
-		this.BilletLength = projection.getBilletLength();
+		id = projection.getId();
+		typeMaterial = projection.getTypeMaterial();
+		description = projection.getDescription();
+		alloy = projection.getAlloy();
+		billetDiameter = projection.getBilletDiameter();
+		BilletLength = projection.getBilletLength();
+		unitId = projection.getUnitId();
+		acronym = projection.getAcronym();
+		taxClassId = projection.getTaxClassId();
+		description_taxclass = projection.getDescription_taxclass();
+		number = projection.getNumber();
+		matGroupId = projection.getMatGroupId();
+		description_matGroup = projection.getDescription_matGroup();
 
 	}
 
@@ -60,5 +63,32 @@ public class ReportProductDTO {
 		return BilletLength;
 	}
 
+	public Long getUnitId() {
+		return unitId;
+	}
+
+	public String getAcronym() {
+		return acronym;
+	}
+
+	public Long getTaxClassId() {
+		return taxClassId;
+	}
+
+	public String getDescription_taxclass() {
+		return description_taxclass;
+	}
+
+	public Integer getNumber() {
+		return number;
+	}
+
+	public Long getMatGroupId() {
+		return matGroupId;
+	}
+
+	public String getDescription_matGroup() {
+		return description_matGroup;
+	}
 
 }

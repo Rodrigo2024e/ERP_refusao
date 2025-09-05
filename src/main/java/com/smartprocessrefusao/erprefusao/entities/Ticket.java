@@ -1,11 +1,13 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -18,22 +20,26 @@ public class Ticket {
 	@Id
 	private Integer numTicket;
 
+	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+	private Instant moment;
 	private LocalDate dateTicket;
 	private String numberPlate;
 	private BigDecimal netWeight;
 
 	@OneToMany(mappedBy = "numTicket")
-	private Set<Movement> movements = new HashSet<>();
+	private Set<ScrapReceipt> scrapReceipts = new HashSet<>();
 
 	public Ticket() {
 
 	}
 
-	public Ticket(Integer numTicket, LocalDate dateTicket, String numberPlate, BigDecimal netWeight) {
+	public Ticket(Integer numTicket, Instant moment, LocalDate dateTicket, String numberPlate, BigDecimal netWeight) {
 		this.numTicket = numTicket;
+		this.moment = moment;
 		this.dateTicket = dateTicket;
 		this.numberPlate = numberPlate;
 		this.netWeight = netWeight;
+
 	}
 
 	public Integer getNumTicket() {
@@ -42,6 +48,14 @@ public class Ticket {
 
 	public void setNumTicket(Integer numTicket) {
 		this.numTicket = numTicket;
+	}
+
+	public Instant getMoment() {
+		return moment;
+	}
+
+	public void setMoment(Instant moment) {
+		this.moment = moment;
 	}
 
 	public LocalDate getDateTicket() {
@@ -68,10 +82,9 @@ public class Ticket {
 		this.netWeight = netWeight;
 	}
 
-	public Set<Movement> getMovements() {
-		return movements;
+	public Set<ScrapReceipt> getScrapReceipts() {
+		return scrapReceipts;
 	}
-
 
 	@Override
 	public int hashCode() {
