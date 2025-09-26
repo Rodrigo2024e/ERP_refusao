@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.Input;
-import com.smartprocessrefusao.erprefusao.projections.ReportInputProjection;
+import com.smartprocessrefusao.erprefusao.projections.InputReportProjection;
 
 @Repository
 public interface InputRepository extends JpaRepository<Input, Long> {
@@ -44,6 +44,6 @@ public interface InputRepository extends JpaRepository<Input, Long> {
 				AND (:description IS NULL OR LOWER(i.description) LIKE LOWER(CONCAT('%', :description, '%')))
 		""",
 		nativeQuery = true)
-	Page<ReportInputProjection> searchMaterialByNameOrGroup(
+	Page<InputReportProjection> searchMaterialByNameOrGroup(
 			@Param("description") String description, @Param("groupId") Long groupId, Pageable pageable);
 }

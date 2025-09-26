@@ -6,6 +6,8 @@ import java.util.Objects;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import com.smartprocessrefusao.erprefusao.audit.Auditable;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,7 +16,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_role")
-public class Role implements GrantedAuthority {
+public class Role extends Auditable<String> implements GrantedAuthority {
 	private static final long serialVersionUID = 1L;
 
 	@Id

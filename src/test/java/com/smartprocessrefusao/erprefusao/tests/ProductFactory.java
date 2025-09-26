@@ -3,7 +3,7 @@ package com.smartprocessrefusao.erprefusao.tests;
 import com.smartprocessrefusao.erprefusao.dto.ProductDTO;
 import com.smartprocessrefusao.erprefusao.entities.Product;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeMaterial;
-import com.smartprocessrefusao.erprefusao.projections.ReportProductProjection;
+import com.smartprocessrefusao.erprefusao.projections.ProductReportProjection;
 
 public class ProductFactory {
 
@@ -32,12 +32,17 @@ public class ProductFactory {
 	}
 
 	public static ProductDTO createTypeMaterialInvalid() {
-		return new ProductDTO(1L, "", "Type Material Invalid", 6060, 6, 6.0, (long) 1, "kg", 2L, "Tarugo de alumínio",
+		return new ProductDTO(1L, "INVALID", "Type Material Invalid", 6060, 6, 6.0, (long) 1, "kg", 2L, "Tarugo de alumínio",
 				7604000, 2L, "Produto acabado");
 	}
 
-	public static ReportProductProjection create() {
-		return new ReportProductProjection() {
+	public static ProductDTO createTypeMaterialNotNull() {
+		return new ProductDTO(1L, "FINISHED_PRODUCTS", "Type Material Invalid", 6060, 6, 6.0, (long) 1, "kg", 2L,
+				"Tarugo de alumínio", 7604000, 2L, "Produto acabado");
+	}
+
+	public static ProductReportProjection create() {
+		return new ProductReportProjection() {
 
 			@Override
 			public Long getId() {
@@ -98,6 +103,7 @@ public class ProductFactory {
 			public Long getMatGroupId() {
 				return 2L;
 			}
+
 			@Override
 			public String getDescription_matGroup() {
 				return "Produto acabado";

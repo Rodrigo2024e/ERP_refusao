@@ -1,6 +1,8 @@
 package com.smartprocessrefusao.erprefusao.services;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +13,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.smartprocessrefusao.erprefusao.dto.ReportSupplierReceiptDTO;
+import com.smartprocessrefusao.erprefusao.dto.SupplierReceiptReportDTO;
 import com.smartprocessrefusao.erprefusao.dto.SupplierReceiptDTO;
 import com.smartprocessrefusao.erprefusao.entities.Input;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.entities.SupplierReceipt;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeCosts;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
-import com.smartprocessrefusao.erprefusao.projections.ReportSupplierReceiptProjection;
+import com.smartprocessrefusao.erprefusao.projections.SupplierReceiptReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.InputRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
 import com.smartprocessrefusao.erprefusao.repositories.SupplierReceiptRepository;
@@ -40,12 +42,12 @@ public class SupplierReceiptService {
 	private PartnerRepository partnerRepository;
 
 	@Transactional(readOnly = true)
-	public Page<ReportSupplierReceiptDTO> reportSupplierReceipt(Long inputId, Pageable pageable) {
+	public Page<SupplierReceiptReportDTO> reportSupplierReceipt(Long inputId, Pageable pageable) {
 
-		Page<ReportSupplierReceiptProjection> page = supplierReceiptRepository.searchSupplierReceiptByinputId(inputId,
+		Page<SupplierReceiptReportProjection> page = supplierReceiptRepository.searchSupplierReceiptByinputId(inputId,
 				pageable);
 
-		return page.map(ReportSupplierReceiptDTO::new);
+		return page.map(SupplierReceiptReportDTO::new);
 	}
 
 	@Transactional(readOnly = true)
@@ -94,32 +96,29 @@ public class SupplierReceiptService {
 	}
 
 	public void copyDtoToEntity(SupplierReceiptDTO dto, SupplierReceipt entity) {
-		entity.setMoment(dto.getMoment());
 		entity.setDateReceipt(dto.getDateReceipt());
 		entity.setAmountSupplier(dto.getAmountSupplier());
 		entity.setUnitValue(dto.getUnitValue());
 
 		// 🧮 Cálculo de totalValue
-		if (dto.getAmountSupplier() != null && dto.getUnitValue() != null) {
-			entity.setTotalValue(
-					dto.getAmountSupplier().multiply(dto.getUnitValue()).setScale(2, RoundingMode.HALF_UP));
-		}
+		BigDecimal amount = Objects.requireNonNull(dto.getAmountSupplier(), "'amountSupplier' não pode ser nulo.");
+		BigDecimal unit = Objects.requireNonNull(dto.getUnitValue(), "'unitValue' não pode ser nulo.");
+		entity.setTotalValue(amount.multiply(unit).setScale(2, RoundingMode.HALF_UP));
 
 		try {
-			if (dto.getTransactionDescription() != null) {
-				TypeTransactionReceipt transaction = TypeTransactionReceipt
-						.valueOf(dto.getTransactionDescription().toUpperCase());
-				entity.setTransaction(transaction);
-			}
+
+			TypeTransactionReceipt transaction = TypeTransactionReceipt
+					.valueOf(dto.getTransactionDescription().toUpperCase());
+			entity.setTransaction(transaction);
+
 		} catch (IllegalArgumentException e) {
 			throw new ResourceNotFoundException("Tipo de operação inválida: " + dto.getTransactionDescription());
 		}
 
 		try {
-			if (dto.getCosts() != null) {
-				TypeCosts expenses = TypeCosts.valueOf(dto.getCosts().toUpperCase());
-				entity.setCosts(expenses);
-			}
+			TypeCosts expenses = TypeCosts.valueOf(dto.getCosts().toUpperCase());
+			entity.setCosts(expenses);
+
 		} catch (IllegalArgumentException e) {
 			throw new ResourceNotFoundException("Tipo de despesa inválida: " + dto.getCosts());
 		}

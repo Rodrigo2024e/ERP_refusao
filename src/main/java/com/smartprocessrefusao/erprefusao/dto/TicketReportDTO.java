@@ -1,17 +1,14 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSerializer;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.IntegerBrazilianSerializerWithoutDecimal;
-import com.smartprocessrefusao.erprefusao.projections.ReportTicketProjection;
+import com.smartprocessrefusao.erprefusao.projections.TicketReportProjection;
 
-public class ReportTicketDTO {
-
-	private Instant moment;
+public class TicketReportDTO {
 
 	@JsonSerialize(using = IntegerBrazilianSerializerWithoutDecimal.class)
 	private Integer numTicket;
@@ -36,14 +33,13 @@ public class ReportTicketDTO {
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal amountScrap;
 
-	public ReportTicketDTO() {
+	public TicketReportDTO() {
 
 	}
 
-	public ReportTicketDTO(Instant moment, Integer numTicket, LocalDate dateTicket, String numberPlate,
-			BigDecimal netWeight, Integer numTicketId, Long partnerId, String namePartner, Long scrapId,
-			String scrapDescription, BigDecimal amountScrap) {
-		this.moment = moment;
+	public TicketReportDTO(Integer numTicket, LocalDate dateTicket, String numberPlate, BigDecimal netWeight,
+			Integer numTicketId, Long partnerId, String namePartner, Long scrapId, String scrapDescription,
+			BigDecimal amountScrap) {
 		this.numTicket = numTicket;
 		this.dateTicket = dateTicket;
 		this.numberPlate = numberPlate;
@@ -56,9 +52,7 @@ public class ReportTicketDTO {
 		this.amountScrap = amountScrap;
 	}
 
-	public ReportTicketDTO(ReportTicketProjection projection) {
-
-		moment = projection.getMoment();
+	public TicketReportDTO(TicketReportProjection projection) {
 		numTicket = projection.getNumTicket();
 		dateTicket = projection.getDateTicket();
 		numberPlate = projection.getNumberPlate();
@@ -69,10 +63,6 @@ public class ReportTicketDTO {
 		scrapId = projection.getScrapId();
 		scrapDescription = projection.getScrapDescription();
 		amountScrap = projection.getAmountScrap();
-	}
-
-	public Instant getMoment() {
-		return moment;
 	}
 
 	public Integer getNumTicket() {

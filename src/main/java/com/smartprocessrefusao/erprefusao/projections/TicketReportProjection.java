@@ -1,12 +1,10 @@
 package com.smartprocessrefusao.erprefusao.projections;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
 
-public interface ReportTicketProjection {
+public interface TicketReportProjection {
 
-	Instant getMoment();
 	
 	Integer getNumTicket();
 

@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.Ticket;
-import com.smartprocessrefusao.erprefusao.projections.ReportTicketProjection;
+import com.smartprocessrefusao.erprefusao.projections.TicketReportProjection;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Integer> {
@@ -18,7 +18,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
 
 	@Query(value = """
 				SELECT
-					t.moment, t.num_ticket, t.date_ticket, t.number_plate, t.net_weight,
+					t.num_ticket, t.date_ticket, t.number_plate, t.net_weight,
 					sr.num_ticket_id, p.id As PartnerId, p.name As NamePartner, i.id As ScrapId, 
 					i.description As ScrapDescription, sr.amount_scrap As AmountScrap
 				FROM tb_ticket t
@@ -36,7 +36,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
 				WHERE (:numTicketId IS NULL OR sr.num_ticket_id = :numTicketId)
 				ORDER BY t.num_ticket
 			""", nativeQuery = true)
-	Page<ReportTicketProjection> searchTicketWithScrapReceipt(@Param("numTicketId") Integer numTicketId,
+	Page<TicketReportProjection> searchTicketWithScrapReceipt(@Param("numTicketId") Integer numTicketId,
 			Pageable pageable);
 
 }

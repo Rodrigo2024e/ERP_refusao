@@ -21,11 +21,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeReportDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.Sector;
 import com.smartprocessrefusao.erprefusao.projections.EmployeeSectorProjection;
-import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeProjection;
+import com.smartprocessrefusao.erprefusao.projections.EmployeeReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.SectorRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
@@ -62,11 +62,11 @@ class EmployeeServiceTest {
 	// 1 - Report Employee
 	@Test
 	void reportEmployeeShouldReturnPagedReportEmployeeDTO() {
-		ReportEmployeeProjection projection = Mockito.mock(ReportEmployeeProjection.class);
-		Page<ReportEmployeeProjection> page = new PageImpl<>(List.of(projection));
+		EmployeeReportProjection projection = Mockito.mock(EmployeeReportProjection.class);
+		Page<EmployeeReportProjection> page = new PageImpl<>(List.of(projection));
 		when(employeeRepository.searchPeopleNameByOrId(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(page);
 
-		Page<ReportEmployeeDTO> result = service.reportEmployee("João", 1L, PageRequest.of(0, 10));
+		Page<EmployeeReportDTO> result = service.reportEmployee("João", 1L, PageRequest.of(0, 10));
 
 		Assertions.assertNotNull(result);
 	}

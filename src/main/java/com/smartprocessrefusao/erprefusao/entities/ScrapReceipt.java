@@ -1,13 +1,12 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.Objects;
 
+import com.smartprocessrefusao.erprefusao.audit.Auditable;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeCosts;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -20,14 +19,13 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_scrap_receipt")
-public class ScrapReceipt {
+public class ScrapReceipt extends Auditable<String> {
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-	private Instant moment;
 	private BigDecimal amountScrap;
 	private BigDecimal unitValue;
 	private BigDecimal totalValue;
@@ -57,11 +55,10 @@ public class ScrapReceipt {
 
 	}
 
-	public ScrapReceipt(Long id, Instant moment, BigDecimal amountScrap, BigDecimal unitValue, BigDecimal totalValue,
+	public ScrapReceipt(Long id, BigDecimal amountScrap, BigDecimal unitValue, BigDecimal totalValue,
 			BigDecimal metalYield, BigDecimal metalWeight, BigDecimal slag, Ticket numTicket, Input input,
 			People partner, TypeTransactionReceipt transaction, TypeCosts costs) {
 		this.id = id;
-		this.moment = moment;
 		this.amountScrap = amountScrap;
 		this.unitValue = unitValue;
 		this.totalValue = totalValue;
@@ -81,14 +78,6 @@ public class ScrapReceipt {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Instant getMoment() {
-		return moment;
-	}
-
-	public void setMoment(Instant moment) {
-		this.moment = moment;
 	}
 
 	public BigDecimal getAmountScrap() {

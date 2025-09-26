@@ -1,17 +1,18 @@
 package com.smartprocessrefusao.erprefusao.projections;
 
-public interface ReportPartnerProjection {
+public interface EmployeeReportProjection {
 
-		Long getId();
+		Long getIdPessoa();
 		String getName();
-		String getCnpj();
-		String getIe();
+		String getCpf();
+		String getRg();
 		String getEmail();
 		String getCellPhone();
 		String getTelephone();
-		Boolean getSupplier();
-		Boolean getClient();
-		Boolean getActive();
+		boolean isSysUser();
+		Long getSectorId();
+		String getNameSector();
+		String getProcess();
 		Long getIdAddress();
 		String getStreet();
 		Integer getNumberAddress();

@@ -1,13 +1,10 @@
 package com.smartprocessrefusao.erprefusao.projections;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 
-public interface ReportProductDispatchProjection {
+public interface ProductDispatchReportProjection {
 
 	Long getId();
-
-	Instant getMoment();
 
 	Integer getNumTicketId();
 

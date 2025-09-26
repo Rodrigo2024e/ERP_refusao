@@ -6,7 +6,7 @@ import com.smartprocessrefusao.erprefusao.entities.MaterialGroup;
 import com.smartprocessrefusao.erprefusao.entities.TaxClassification;
 import com.smartprocessrefusao.erprefusao.entities.Unit;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeMaterial;
-import com.smartprocessrefusao.erprefusao.projections.ReportInputProjection;
+import com.smartprocessrefusao.erprefusao.projections.InputReportProjection;
 
 public class InputFactory {
 
@@ -46,7 +46,7 @@ public class InputFactory {
 	}
 
 	public static InputDTO createTypeMaterialInvalid() {
-		return new InputDTO(1L, null, "Perfil de processo", 1L, "kg", 1L, "Sucata de alumínio", 7602000, 1L,
+		return new InputDTO(1L, "INVALID", "Perfil de processo", 1L, "kg", 1L, "Sucata de alumínio", 7602000, 1L,
 				"Sucata de alumínio");
 	}
 
@@ -55,8 +55,8 @@ public class InputFactory {
 		return new InputDTO(input);
 	}
 
-	public static ReportInputProjection create() {
-		return new ReportInputProjection() {
+	public static InputReportProjection create() {
+		return new InputReportProjection() {
 
 			@Override
 			public Long getId() {

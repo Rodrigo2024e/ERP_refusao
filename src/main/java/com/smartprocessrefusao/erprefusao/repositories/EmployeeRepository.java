@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.projections.EmployeeSectorProjection;
-import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeProjection;
+import com.smartprocessrefusao.erprefusao.projections.EmployeeReportProjection;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
@@ -91,7 +91,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             AND (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
         """,
         nativeQuery = true)
-    Page<ReportEmployeeProjection> searchPeopleNameByOrId(
+    Page<EmployeeReportProjection> searchPeopleNameByOrId(
             @Param("name") String name, @Param("peopleId") Long peopleId, Pageable pageable);
 
 }

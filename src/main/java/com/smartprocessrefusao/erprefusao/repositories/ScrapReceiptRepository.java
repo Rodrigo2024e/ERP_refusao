@@ -18,7 +18,6 @@ public interface ScrapReceiptRepository extends JpaRepository<ScrapReceipt, Long
 	@Query(value = """
 			SELECT
 			    m.id,
-			    sr.moment,
 			    m.type_material,
 			    i.id As InputId,
 			    i.description AS InputDescription,

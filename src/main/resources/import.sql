@@ -44,7 +44,7 @@ INSERT INTO tb_role (authority) VALUES ('ROLE_ADMIN');
 INSERT INTO tb_role (authority) VALUES ('ROLE_CLIENT');
 
 INSERT INTO tb_user_role (user_id, role_id) VALUES (1, 1);
-INSERT INTO tb_user_role (user_id, role_id) VALUES (2, 1);
+INSERT INTO tb_user_role (user_id, role_id) VALUES (2, 2);
 
 INSERT INTO tb_address (street, number_address, complement, neighborhood, zip_code, city_id, people_id) VALUES ('Rua Argentino Moreschi', 62, 'Casa B', 'Residencial Moreschi', '87.080-127', 2, 1);
 INSERT INTO tb_address (street, number_address, complement, neighborhood, zip_code, city_id, people_id) VALUES ('Rua Salomão Miguel Nasser', 731, 'AP23', 'Centro', '87.080-127', 3, 2);
@@ -91,13 +91,13 @@ INSERT INTO tb_product (description, alloy, billet_diameter, billet_length, id) 
 INSERT INTO tb_product (description, alloy, billet_diameter, billet_length, id) VALUES ('Tarugo de alumínio', 6063, 5, 6, 7);
 INSERT INTO tb_product (description, alloy, billet_diameter, billet_length, id) VALUES ('Tarugo de alumínio', 6005, 6, 6, 8);
 
-INSERT INTO tb_ticket (moment, num_ticket, date_ticket, number_plate, net_weight) VALUES (TIMESTAMP WITH TIME ZONE '2025-08-27T17:47:00Z', 34950,'2022-07-25', 'ABC-1245', 1000);
-INSERT INTO tb_ticket (moment, num_ticket, date_ticket, number_plate, net_weight) VALUES (TIMESTAMP WITH TIME ZONE '2025-08-27T17:47:00Z', 35280,'2025-08-20', 'ALU-2026', 10246);
+INSERT INTO tb_ticket (num_ticket, date_ticket, number_plate, net_weight) VALUES (34950,'2022-07-25', 'ABC-1245', 1000);
+INSERT INTO tb_ticket (num_ticket, date_ticket, number_plate, net_weight) VALUES (35280,'2025-08-20', 'ALU-2026', 10246);
 
-INSERT INTO tb_scrap_receipt (moment, num_ticket_id, partner_id, transaction, costs, input_id, amount_scrap, unit_value, total_value, metal_yield, metal_weight, slag) VALUES (TIMESTAMP WITH TIME ZONE '2025-08-27T17:47:00Z', 34950, 4, 'SENT_FOR_PROCESSING', 'NO_COSTS', 1, 200, 2.0, 400.0, 0.88, 176.0, 24.0);
-INSERT INTO tb_scrap_receipt (moment, num_ticket_id, partner_id, transaction, costs, input_id, amount_scrap, unit_value, total_value, metal_yield, metal_weight, slag) VALUES (TIMESTAMP WITH TIME ZONE '2025-08-27T17:47:00Z', 34950, 4, 'SENT_FOR_PROCESSING','NO_COSTS', 2, 300, 2.0, 600.0, 0.90, 270.0, 30.0);
-INSERT INTO tb_scrap_receipt (moment, num_ticket_id, partner_id, transaction, costs, input_id, amount_scrap, unit_value, total_value, metal_yield, metal_weight, slag) VALUES (TIMESTAMP WITH TIME ZONE '2025-08-27T17:47:00Z', 34950, 6, 'BUY','DIRECT_COSTS', 3, 500, 2.0, 1000.0, 0.97, 485.0, 15.0);
+INSERT INTO tb_scrap_receipt (num_ticket_id, partner_id, transaction, costs, input_id, amount_scrap, unit_value, total_value, metal_yield, metal_weight, slag) VALUES (34950, 4, 'SENT_FOR_PROCESSING', 'NO_COSTS', 1, 200, 2.0, 400.0, 0.88, 176.0, 24.0);
+INSERT INTO tb_scrap_receipt (num_ticket_id, partner_id, transaction, costs, input_id, amount_scrap, unit_value, total_value, metal_yield, metal_weight, slag) VALUES (34950, 4, 'SENT_FOR_PROCESSING','NO_COSTS', 2, 300, 2.0, 600.0, 0.90, 270.0, 30.0);
+INSERT INTO tb_scrap_receipt (num_ticket_id, partner_id, transaction, costs, input_id, amount_scrap, unit_value, total_value, metal_yield, metal_weight, slag) VALUES (34950, 6, 'BUY','DIRECT_COSTS', 3, 500, 2.0, 1000.0, 0.97, 485.0, 15.0);
 
-INSERT INTO tb_supplier_receipt (moment, partner_id, date_receipt, transaction, costs, input_id, amount_supplier, unit_value, total_value) VALUES (TIMESTAMP WITH TIME ZONE '2025-08-27T17:47:00Z', 6, '2022-07-25', 'BUY','DIRECT_COSTS', 4, 10500, 5.25, 55.125);
+INSERT INTO tb_supplier_receipt (partner_id, date_receipt, transaction, costs, input_id, amount_supplier, unit_value, total_value) VALUES (6, '2022-07-25', 'BUY','DIRECT_COSTS', 4, 10500, 5.25, 55125);
 
-INSERT INTO tb_product_dispatch (moment, num_ticket_id, partner_id, transaction, product_id, amount_product, unit_value, total_value) VALUES (TIMESTAMP WITH TIME ZONE '2025-08-27T17:47:00Z', 35280, 4, 'JOB_RETURN_TO_CUSTOMER', 6, 4158.76, 3.00, 30738);
+INSERT INTO tb_product_dispatch (num_ticket_id, partner_id, transaction, product_id, amount_product, unit_value, total_value) VALUES (35280, 4, 'JOB_RETURN_TO_CUSTOMER', 6, 4158.76, 3.00, 30738);

@@ -1,14 +1,13 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import com.smartprocessrefusao.erprefusao.audit.Auditable;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeCosts;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -21,14 +20,13 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_supplier_receipt")
-public class SupplierReceipt {
+public class SupplierReceipt extends Auditable<String> {
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-	private Instant moment;
 	private LocalDate dateReceipt;
 	private BigDecimal amountSupplier;
 	private BigDecimal unitValue;
@@ -52,11 +50,9 @@ public class SupplierReceipt {
 
 	}
 
-	public SupplierReceipt(Long id, Instant moment, LocalDate dateReceipt, BigDecimal amountSupplier,
-			BigDecimal unitValue, BigDecimal totalValue, Input input, People partner,
-			TypeTransactionReceipt transaction, TypeCosts costs) {
+	public SupplierReceipt(Long id, LocalDate dateReceipt, BigDecimal amountSupplier, BigDecimal unitValue,
+			BigDecimal totalValue, Input input, People partner, TypeTransactionReceipt transaction, TypeCosts costs) {
 		this.id = id;
-		this.moment = moment;
 		this.dateReceipt = dateReceipt;
 		this.amountSupplier = amountSupplier;
 		this.unitValue = unitValue;
@@ -73,14 +69,6 @@ public class SupplierReceipt {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Instant getMoment() {
-		return moment;
-	}
-
-	public void setMoment(Instant moment) {
-		this.moment = moment;
 	}
 
 	public LocalDate getDateReceipt() {

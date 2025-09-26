@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.smartprocessrefusao.erprefusao.dto.ReportTicketDTO;
+import com.smartprocessrefusao.erprefusao.dto.TicketReportDTO;
 import com.smartprocessrefusao.erprefusao.dto.TicketDTO;
 import com.smartprocessrefusao.erprefusao.entities.Ticket;
-import com.smartprocessrefusao.erprefusao.projections.ReportTicketProjection;
+import com.smartprocessrefusao.erprefusao.projections.TicketReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.TicketRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
@@ -33,11 +33,11 @@ public class TicketService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<ReportTicketDTO> reportTicket(Integer numTicketId, Pageable pageable) {
+	public Page<TicketReportDTO> reportTicket(Integer numTicketId, Pageable pageable) {
 
-		Page<ReportTicketProjection> page = ticketRepository.searchTicketWithScrapReceipt(numTicketId, pageable);
+		Page<TicketReportProjection> page = ticketRepository.searchTicketWithScrapReceipt(numTicketId, pageable);
 
-		return page.map(ReportTicketDTO::new);
+		return page.map(TicketReportDTO::new);
 	}
 
 	@Transactional(readOnly = true)
@@ -68,19 +68,16 @@ public class TicketService {
 
 	@Transactional
 	public TicketDTO update(Integer id, TicketDTO dto) {
-		try {
 
-			Ticket entity = ticketRepository.findByNumTicket(id)
-					.orElseThrow(() -> new ResourceNotFoundException("Ticket not found " + id));
+		Ticket entity = ticketRepository.findByNumTicket(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Ticket not found " + id));
 
-			entity.setDateTicket(dto.getDateTicket());
-			entity.setNumberPlate(dto.getNumberPlate().toUpperCase());
-			entity.setNetWeight(dto.getNetWeight());
-			entity = ticketRepository.save(entity);
-			return new TicketDTO(entity);
-		} catch (EntityNotFoundException e) {
-			throw new ResourceNotFoundException("Ticket not found " + id);
-		}
+		entity.setDateTicket(dto.getDateTicket());
+		entity.setNumberPlate(dto.getNumberPlate().toUpperCase());
+		entity.setNetWeight(dto.getNetWeight());
+		entity = ticketRepository.save(entity);
+		return new TicketDTO(entity);
+
 	}
 
 	@Transactional(propagation = Propagation.SUPPORTS)
@@ -96,7 +93,6 @@ public class TicketService {
 	}
 
 	public void copyDtoToEntity(TicketDTO dto, Ticket entity) {
-		entity.setMoment(dto.getMoment());
 		entity.setNumTicket(dto.getNumTicket());
 		entity.setDateTicket(dto.getDateTicket());
 		entity.setNumberPlate(dto.getNumberPlate().toUpperCase());

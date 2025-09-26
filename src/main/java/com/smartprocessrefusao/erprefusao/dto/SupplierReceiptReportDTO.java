@@ -1,18 +1,15 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSerializer;
-import com.smartprocessrefusao.erprefusao.projections.ReportSupplierReceiptProjection;
+import com.smartprocessrefusao.erprefusao.projections.SupplierReceiptReportProjection;
 
-public class ReportSupplierReceiptDTO {
+public class SupplierReceiptReportDTO {
 
 	private Long id;
-
-	private Instant moment;
 
 	private String typeMaterial;
 
@@ -39,15 +36,15 @@ public class ReportSupplierReceiptDTO {
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal totalValue;
 
-	public ReportSupplierReceiptDTO() {
+	public SupplierReceiptReportDTO() {
 
 	}
 
-	public ReportSupplierReceiptDTO(Long id, Instant moment, String typeMaterial, LocalDate dateReceipt, Long partnerId,
+	public SupplierReceiptReportDTO(Long id, String typeMaterial, LocalDate dateReceipt, Long partnerId,
 			String partnerName, Long supplierId, String supplierDescription, String transaction, String costs,
 			BigDecimal amountSupplier, BigDecimal unitValue, BigDecimal totalValue) {
 		this.id = id;
-		this.moment = moment;
+
 		this.typeMaterial = typeMaterial;
 		this.dateReceipt = dateReceipt;
 		this.partnerId = partnerId;
@@ -61,10 +58,9 @@ public class ReportSupplierReceiptDTO {
 		this.totalValue = totalValue;
 	}
 
-	public ReportSupplierReceiptDTO(ReportSupplierReceiptProjection projection) {
+	public SupplierReceiptReportDTO(SupplierReceiptReportProjection projection) {
 
 		id = projection.getId();
-		moment = projection.getMoment();
 		dateReceipt = projection.getDateReceipt();
 		typeMaterial = projection.getTypeMaterial();
 		partnerId = projection.getPartnerId();
@@ -81,10 +77,6 @@ public class ReportSupplierReceiptDTO {
 
 	public Long getId() {
 		return id;
-	}
-
-	public Instant getMoment() {
-		return moment;
 	}
 
 	public String getTypeMaterial() {

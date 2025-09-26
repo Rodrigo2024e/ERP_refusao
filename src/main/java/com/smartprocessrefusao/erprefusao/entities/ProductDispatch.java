@@ -1,12 +1,11 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.Objects;
 
+import com.smartprocessrefusao.erprefusao.audit.Auditable;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionOutGoing;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,14 +18,13 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_product_dispatch")
-public class ProductDispatch {
+public class ProductDispatch extends Auditable<String> {
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-	private Instant moment;
 	private BigDecimal amountProduct;
 	private BigDecimal unitValue;
 	private BigDecimal totalValue;
@@ -50,11 +48,9 @@ public class ProductDispatch {
 
 	}
 
-	public ProductDispatch(Long id, Instant moment, BigDecimal amountProduct, BigDecimal unitValue,
-			BigDecimal totalValue, Ticket numTicket, Product product, People partner,
-			TypeTransactionOutGoing transaction) {
+	public ProductDispatch(Long id, BigDecimal amountProduct, BigDecimal unitValue, BigDecimal totalValue,
+			Ticket numTicket, Product product, People partner, TypeTransactionOutGoing transaction) {
 		this.id = id;
-		this.moment = moment;
 		this.amountProduct = amountProduct;
 		this.unitValue = unitValue;
 		this.totalValue = totalValue;
@@ -70,14 +66,6 @@ public class ProductDispatch {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Instant getMoment() {
-		return moment;
-	}
-
-	public void setMoment(Instant moment) {
-		this.moment = moment;
 	}
 
 	public BigDecimal getAmountProduct() {

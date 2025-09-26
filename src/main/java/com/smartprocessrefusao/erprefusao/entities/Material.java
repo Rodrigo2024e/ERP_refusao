@@ -3,6 +3,7 @@ package com.smartprocessrefusao.erprefusao.entities;
 import java.io.Serializable;
 import java.util.Objects;
 
+import com.smartprocessrefusao.erprefusao.audit.Auditable;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeMaterial;
 
 import jakarta.persistence.Entity;
@@ -20,7 +21,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tb_material")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Material implements Serializable {
+public abstract class Material extends Auditable<String> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id

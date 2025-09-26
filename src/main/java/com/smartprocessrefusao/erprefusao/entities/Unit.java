@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import com.smartprocessrefusao.erprefusao.audit.Auditable;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,8 +15,10 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_uom")
-public class Unit {
-
+public class Unit extends Auditable<String> {
+	private static final long serialVersionUID = 1L;
+	
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

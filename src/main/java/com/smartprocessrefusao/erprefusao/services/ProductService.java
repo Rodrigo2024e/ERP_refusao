@@ -17,7 +17,7 @@ import com.smartprocessrefusao.erprefusao.entities.Product;
 import com.smartprocessrefusao.erprefusao.entities.TaxClassification;
 import com.smartprocessrefusao.erprefusao.entities.Unit;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeMaterial;
-import com.smartprocessrefusao.erprefusao.projections.ReportProductProjection;
+import com.smartprocessrefusao.erprefusao.projections.ProductReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.MaterialGroupRepository;
 import com.smartprocessrefusao.erprefusao.repositories.ProductRepository;
 import com.smartprocessrefusao.erprefusao.repositories.TaxClassificationRepository;
@@ -45,8 +45,7 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public Page<ReportProductDTO> reportProduct(Integer alloy, Long ProductId, Pageable pageable) {
 
-		Page<ReportProductProjection> page = productRepository.searchProductByNameOrId(alloy, ProductId,
-				pageable);
+		Page<ProductReportProjection> page = productRepository.searchProductByNameOrId(alloy, ProductId, pageable);
 
 		return page.map(ReportProductDTO::new);
 	}
@@ -97,13 +96,14 @@ public class ProductService {
 
 	public void copyDtoToEntity(ProductDTO dto, Product entity) {
 
-		if (dto.getTypeMaterial() != null) {
-		    try {
-		        TypeMaterial typeMaterial = TypeMaterial.fromDescription(dto.getTypeMaterial());
-		        entity.setTypeMaterial(typeMaterial);
-		    } catch (IllegalArgumentException e) {
-		        throw new ResourceNotFoundException("Tipo de material inválido: " + dto.getTypeMaterial());
-		    }
+		try {
+
+			TypeMaterial typeMaterial = TypeMaterial.fromDescription(dto.getTypeMaterial());
+			entity.setTypeMaterial(typeMaterial);
+
+		} catch (IllegalArgumentException e) {
+
+			throw new ResourceNotFoundException("Tipo de material inválido: " + dto.getTypeMaterial());
 		}
 
 		entity.setDescription(dto.getDescription().toUpperCase());
@@ -111,7 +111,9 @@ public class ProductService {
 		entity.setBilletDiameter(dto.getBilletDiameter());
 		entity.setBilletLength(dto.getBilletLength());
 
-		Optional.ofNullable(dto.getUnitId()).ifPresent(id -> {
+		Optional.ofNullable(dto.getUnitId()).ifPresent(id ->
+
+		{
 			Unit unit = unitRepository.findById(id)
 					.orElseThrow(() -> new ResourceNotFoundException("Unidade de medida não encontrada"));
 			entity.setUomMaterial(unit);

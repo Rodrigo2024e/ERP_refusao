@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.smartprocessrefusao.erprefusao.dto.ProductDispatchDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportProductDispatchDTO;
+import com.smartprocessrefusao.erprefusao.dto.ProductDispatchReportDTO;
 import com.smartprocessrefusao.erprefusao.services.ProductDispatchService;
 
 import jakarta.validation.Valid;
@@ -33,10 +33,10 @@ public class ProductDispatchResource {
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping
-	public ResponseEntity<Page<ReportProductDispatchDTO>> getReportMovement(
+	public ResponseEntity<Page<ProductDispatchReportDTO>> getReportMovement(
 			@RequestParam(required = false) Integer numTicketId, Pageable pageable) {
 
-		Page<ReportProductDispatchDTO> result = productDispatchService.reportDispatch(numTicketId, pageable);
+		Page<ProductDispatchReportDTO> result = productDispatchService.reportDispatch(numTicketId, pageable);
 		return ResponseEntity.ok(result);
 
 	}

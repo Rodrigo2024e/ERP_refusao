@@ -1,7 +1,6 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -15,7 +14,6 @@ import jakarta.validation.constraints.Size;
 
 public class TicketDTO {
 
-	private Instant moment;
 	@Column(unique = true)
 	@JsonSerialize(using = IntegerBrazilianSerializerWithoutDecimal.class)
 	private Integer numTicket;
@@ -34,9 +32,7 @@ public class TicketDTO {
 
 	}
 
-	public TicketDTO(Instant moment, Integer numTicket, LocalDate dateTicket, String numberPlate,
-			BigDecimal netWeight) {
-		this.moment = moment;
+	public TicketDTO(Integer numTicket, LocalDate dateTicket, String numberPlate, BigDecimal netWeight) {
 		this.numTicket = numTicket;
 		this.dateTicket = dateTicket;
 		this.numberPlate = numberPlate;
@@ -44,16 +40,11 @@ public class TicketDTO {
 	}
 
 	public TicketDTO(Ticket entity) {
-		moment = entity.getMoment();
 		numTicket = entity.getNumTicket();
 		dateTicket = entity.getDateTicket();
 		numberPlate = entity.getNumberPlate();
 		netWeight = entity.getNetWeight();
 
-	}
-
-	public Instant getMoment() {
-		return moment;
 	}
 
 	public Integer getNumTicket() {

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeReportDTO;
 import com.smartprocessrefusao.erprefusao.services.EmployeeService;
 
 import jakarta.validation.Valid;
@@ -43,10 +43,10 @@ public class EmployeeResource {
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/report")
-	public ResponseEntity<Page<ReportEmployeeDTO>> getReportEmployee(@RequestParam(required = false) String name,
+	public ResponseEntity<Page<EmployeeReportDTO>> getReportEmployee(@RequestParam(required = false) String name,
 			@RequestParam(required = false) Long peopleId, Pageable pageable) {
 
-		Page<ReportEmployeeDTO> result = employeeService.reportEmployee(name, peopleId, pageable);
+		Page<EmployeeReportDTO> result = employeeService.reportEmployee(name, peopleId, pageable);
 		return ResponseEntity.ok(result);
 
 	}

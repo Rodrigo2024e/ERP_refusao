@@ -11,11 +11,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeReportDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.Sector;
 import com.smartprocessrefusao.erprefusao.projections.EmployeeSectorProjection;
-import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeProjection;
+import com.smartprocessrefusao.erprefusao.projections.EmployeeReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.SectorRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
@@ -39,9 +39,9 @@ public class EmployeeService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<ReportEmployeeDTO> reportEmployee(String name, Long peopleId, Pageable pageable) {
-		Page<ReportEmployeeProjection> page = employeeRepository.searchPeopleNameByOrId(name, peopleId, pageable);
-		return page.map(ReportEmployeeDTO::new);
+	public Page<EmployeeReportDTO> reportEmployee(String name, Long peopleId, Pageable pageable) {
+		Page<EmployeeReportProjection> page = employeeRepository.searchPeopleNameByOrId(name, peopleId, pageable);
+		return page.map(EmployeeReportDTO::new);
 	}
 
 	@Transactional(readOnly = true)

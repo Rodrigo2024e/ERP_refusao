@@ -1,6 +1,6 @@
 package com.smartprocessrefusao.erprefusao.projections;
 
-public interface ReportProductProjection {
+public interface ProductReportProjection {
 
 	Long getId();
 

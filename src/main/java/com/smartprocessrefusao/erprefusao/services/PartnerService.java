@@ -12,9 +12,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.dto.PartnerDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportPartnerDTO;
+import com.smartprocessrefusao.erprefusao.dto.PartnerReportDTO;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
-import com.smartprocessrefusao.erprefusao.projections.ReportPartnerProjection;
+import com.smartprocessrefusao.erprefusao.projections.PartnerReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
@@ -34,11 +34,11 @@ public class PartnerService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<ReportPartnerDTO> reportPartner(String name, Long partnerId, Pageable pageable) {
+	public Page<PartnerReportDTO> reportPartner(String name, Long partnerId, Pageable pageable) {
 
-		Page<ReportPartnerProjection> page = partnerRepository.searchPeopleNameByOrId(name, partnerId, pageable);
+		Page<PartnerReportProjection> page = partnerRepository.searchPeopleNameByOrId(name, partnerId, pageable);
 
-		return page.map(ReportPartnerDTO::new);
+		return page.map(PartnerReportDTO::new);
 	}
 
 	@Transactional(readOnly = true)

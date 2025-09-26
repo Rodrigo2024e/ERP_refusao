@@ -1,7 +1,6 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -15,8 +14,6 @@ import jakarta.validation.constraints.Positive;
 public class SupplierReceiptDTO {
 
 	private Long id;
-
-	private Instant moment;
 
 	@NotNull(message = "Favor informar a data de recebimento do material")
 	private LocalDate dateReceipt;
@@ -52,11 +49,10 @@ public class SupplierReceiptDTO {
 
 	}
 
-	public SupplierReceiptDTO(Long id, Instant moment, LocalDate dateReceipt, Long partnerId, String partnerName,
+	public SupplierReceiptDTO(Long id, LocalDate dateReceipt, Long partnerId, String partnerName,
 			String transactionDescription, String costs, Long inputId, String inputDescription,
 			BigDecimal amountSupplier, BigDecimal unitValue, BigDecimal totalValue) {
 		this.id = id;
-		this.moment = moment;
 		this.dateReceipt = dateReceipt;
 		this.partnerId = partnerId;
 		this.partnerName = partnerName;
@@ -71,7 +67,6 @@ public class SupplierReceiptDTO {
 
 	public SupplierReceiptDTO(SupplierReceipt entity) {
 		id = entity.getId();
-		moment = entity.getMoment();
 		dateReceipt = entity.getDateReceipt();
 		partnerId = entity.getPartner().getId();
 		partnerName = entity.getPartner().getName();
@@ -86,10 +81,6 @@ public class SupplierReceiptDTO {
 
 	public Long getId() {
 		return id;
-	}
-
-	public Instant getMoment() {
-		return moment;
 	}
 
 	public LocalDate getDateReceipt() {

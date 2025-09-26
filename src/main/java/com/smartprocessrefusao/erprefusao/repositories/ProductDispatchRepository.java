@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.ProductDispatch;
-import com.smartprocessrefusao.erprefusao.projections.ReportProductDispatchProjection;
+import com.smartprocessrefusao.erprefusao.projections.ProductDispatchReportProjection;
 
 @Repository
 public interface ProductDispatchRepository extends JpaRepository<ProductDispatch, Long> {
@@ -18,7 +18,6 @@ public interface ProductDispatchRepository extends JpaRepository<ProductDispatch
 	@Query(value = """
 			SELECT
 			       m.id, m.type_material,
-			       pd.moment,
 			       t.num_ticket As numTicketId,
 			       pp.id AS partnerId, pp.name AS partnerName,
 			       pd.transaction As transactionDescription,
@@ -40,7 +39,7 @@ public interface ProductDispatchRepository extends JpaRepository<ProductDispatch
 			    JOIN tb_people pp ON pp.id = pd.partner_id
 			WHERE (:numTicketId IS NULL OR pd.num_ticket_id = :numTicketId)
 			""", nativeQuery = true)
-	Page<ReportProductDispatchProjection> searchProductDispatchByNumberTicket(@Param("numTicketId") Integer numTicketId,
+	Page<ProductDispatchReportProjection> searchProductDispatchByNumberTicket(@Param("numTicketId") Integer numTicketId,
 			Pageable pageable);
 
 	@Query("SELECT COALESCE(SUM(pd.amountProduct), 0) " + "FROM ProductDispatch pd "

@@ -2,6 +2,8 @@ package com.smartprocessrefusao.erprefusao.entities;
 
 import java.io.Serializable;
 
+import com.smartprocessrefusao.erprefusao.audit.Auditable;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,7 +15,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_address")
-public class Address implements Serializable {
+public class Address extends Auditable<String> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id

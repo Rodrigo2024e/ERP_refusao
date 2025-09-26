@@ -1,7 +1,6 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.smartprocessrefusao.erprefusao.entities.ProductDispatch;
@@ -14,8 +13,6 @@ import jakarta.validation.constraints.Positive;
 public class ProductDispatchDTO {
 
 	private Long id;
-
-	private Instant moment;
 
 	@NotNull(message = "Informar o número do ticket associado")
 	@JsonSerialize(using = IntegerBrazilianSerializerWithoutDecimal.class)
@@ -55,12 +52,11 @@ public class ProductDispatchDTO {
 
 	}
 
-	public ProductDispatchDTO(Long id, Instant moment, Integer numTicketId, Long partnerId, String partnerName,
+	public ProductDispatchDTO(Long id, Integer numTicketId, Long partnerId, String partnerName,
 			String transactionDescription, Long productId, String productDescription, Integer alloy,
 			Integer billetDiameter, Double billetLength, BigDecimal amountProduct, BigDecimal unitValue,
 			BigDecimal totalValue) {
 		this.id = id;
-		this.moment = moment;
 		this.numTicketId = numTicketId;
 		this.partnerId = partnerId;
 		this.partnerName = partnerName;
@@ -77,7 +73,6 @@ public class ProductDispatchDTO {
 
 	public ProductDispatchDTO(ProductDispatch entity) {
 		id = entity.getId();
-		moment = entity.getMoment();
 		numTicketId = entity.getNumTicket().getNumTicket();
 		partnerId = entity.getPartner().getId();
 		partnerName = entity.getPartner().getName();
@@ -95,10 +90,6 @@ public class ProductDispatchDTO {
 
 	public Long getId() {
 		return id;
-	}
-
-	public Instant getMoment() {
-		return moment;
 	}
 
 	public Integer getNumTicketId() {
@@ -148,5 +139,5 @@ public class ProductDispatchDTO {
 	public BigDecimal getTotalValue() {
 		return totalValue;
 	}
-	
+
 }

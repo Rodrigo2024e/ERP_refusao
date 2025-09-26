@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.smartprocessrefusao.erprefusao.dto.ReportSupplierReceiptDTO;
+import com.smartprocessrefusao.erprefusao.dto.SupplierReceiptReportDTO;
 import com.smartprocessrefusao.erprefusao.dto.SupplierReceiptDTO;
 import com.smartprocessrefusao.erprefusao.services.SupplierReceiptService;
 
@@ -33,10 +33,10 @@ public class SupplierReceiptResource {
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/report")
-	public ResponseEntity<Page<ReportSupplierReceiptDTO>> getReportSupplierReceipt(
+	public ResponseEntity<Page<SupplierReceiptReportDTO>> getReportSupplierReceipt(
 			@RequestParam(required = false) Long inputId, Pageable pageable) {
 
-		Page<ReportSupplierReceiptDTO> result = supplierReceiptService.reportSupplierReceipt(inputId, pageable);
+		Page<SupplierReceiptReportDTO> result = supplierReceiptService.reportSupplierReceipt(inputId, pageable);
 		return ResponseEntity.ok(result);
 
 	}

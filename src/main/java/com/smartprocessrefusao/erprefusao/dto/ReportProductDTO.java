@@ -1,6 +1,6 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
-import com.smartprocessrefusao.erprefusao.projections.ReportProductProjection;
+import com.smartprocessrefusao.erprefusao.projections.ProductReportProjection;
 
 public class ReportProductDTO {
 
@@ -22,7 +22,7 @@ public class ReportProductDTO {
 
 	}
 
-	public ReportProductDTO(ReportProductProjection projection) {
+	public ReportProductDTO(ProductReportProjection projection) {
 		id = projection.getId();
 		typeMaterial = projection.getTypeMaterial();
 		description = projection.getDescription();

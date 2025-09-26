@@ -1,7 +1,6 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.smartprocessrefusao.erprefusao.entities.ScrapReceipt;
@@ -16,8 +15,6 @@ import jakarta.validation.constraints.Positive;
 public class ScrapReceiptDTO {
 
 	private Long id;
-
-	private Instant moment;
 
 	@NotNull(message = "Informar o número do ticket associado")
 	@JsonSerialize(using = IntegerBrazilianSerializerWithoutDecimal.class)
@@ -65,12 +62,11 @@ public class ScrapReceiptDTO {
 
 	}
 
-	public ScrapReceiptDTO(Long id, Instant moment, Integer numTicketId, Long partnerId, String partnerName,
+	public ScrapReceiptDTO(Long id, Integer numTicketId, Long partnerId, String partnerName,
 			String transactionDescription, String costs, Long inputId, String inputDescription, BigDecimal amountScrap,
 			BigDecimal unitValue, BigDecimal totalValue, BigDecimal metalYield, BigDecimal metalWeight,
 			BigDecimal slag) {
 		this.id = id;
-		this.moment = moment;
 		this.numTicketId = numTicketId;
 		this.partnerId = partnerId;
 		this.partnerName = partnerName;
@@ -88,7 +84,6 @@ public class ScrapReceiptDTO {
 
 	public ScrapReceiptDTO(ScrapReceipt entity) {
 		id = entity.getId();
-		moment = entity.getMoment();
 		numTicketId = entity.getNumTicket().getNumTicket();
 		partnerId = entity.getPartner().getId();
 		partnerName = entity.getPartner().getName();
@@ -107,8 +102,10 @@ public class ScrapReceiptDTO {
 
 	public ScrapReceiptDTO(ScrapReceiptProjection projection) {
 		id = projection.getId();
-		moment = projection.getMoment();
-		numTicketId = projection.getNumTicketId();
+
+		if (projection.getNumTicketId() != null) {
+			numTicketId = projection.getNumTicketId();
+		}
 
 		if (projection.getPartnerId() != null) {
 			partnerId = projection.getPartnerId();
@@ -141,10 +138,6 @@ public class ScrapReceiptDTO {
 
 	public Long getId() {
 		return id;
-	}
-
-	public Instant getMoment() {
-		return moment;
 	}
 
 	public Integer getNumTicketId() {

@@ -1,6 +1,6 @@
 package com.smartprocessrefusao.erprefusao.projections;
 
-public interface ReportInputProjection {
+public interface InputReportProjection {
 
 	Long getId();
 	String getType_Material();

@@ -3,6 +3,7 @@ package com.smartprocessrefusao.erprefusao.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.smartprocessrefusao.erprefusao.audit.Auditable;
 import com.smartprocessrefusao.erprefusao.projections.IdProjection;
 
 import jakarta.persistence.Entity;
@@ -14,7 +15,8 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_sector")
-public class Sector implements IdProjection<Long> {
+public class Sector extends Auditable<String> implements IdProjection<Long> {
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

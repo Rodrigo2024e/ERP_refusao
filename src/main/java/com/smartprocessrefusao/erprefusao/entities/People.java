@@ -2,6 +2,8 @@ package com.smartprocessrefusao.erprefusao.entities;
 
 import java.io.Serializable;
 
+import com.smartprocessrefusao.erprefusao.audit.Auditable;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,27 +17,27 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table (name = "tb_people")
+@Table(name = "tb_people")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class People implements Serializable {
+public abstract class People extends Auditable<String> implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	private String name;
 	private String email;
 	private String cellPhone;
 	private String telephone;
-	
+
 //	@OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL)
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "address_id")
 	private Address address;
-	
+
 	public People() {
-		
+
 	}
 
 	public People(Long id, String name, String email, String cellPhone, String telephone, Address address) {
@@ -94,5 +96,5 @@ public abstract class People implements Serializable {
 	public void setAddress(Address address) {
 		this.address = address;
 	}
-	
+
 }

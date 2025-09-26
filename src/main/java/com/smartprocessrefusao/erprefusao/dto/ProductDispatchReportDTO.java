@@ -1,18 +1,15 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSerializer;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.IntegerBrazilianSerializerWithoutDecimal;
-import com.smartprocessrefusao.erprefusao.projections.ReportProductDispatchProjection;
+import com.smartprocessrefusao.erprefusao.projections.ProductDispatchReportProjection;
 
-public class ReportProductDispatchDTO {
+public class ProductDispatchReportDTO {
 
 	private Long id;
-
-	private Instant moment;
 
 	@JsonSerialize(using = IntegerBrazilianSerializerWithoutDecimal.class)
 	private Integer numTicketId;
@@ -40,16 +37,15 @@ public class ReportProductDispatchDTO {
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal totalValue;
 
-	public ReportProductDispatchDTO() {
+	public ProductDispatchReportDTO() {
 
 	}
 
-	public ReportProductDispatchDTO(Long id, Instant moment, Integer numTicketId, Long partnerId, String partnerName,
+	public ProductDispatchReportDTO(Long id, Integer numTicketId, Long partnerId, String partnerName,
 			String transactionDescription, Long productId, String productDescription, Integer alloy,
 			Integer billetDiameter, Double billetLength, BigDecimal amountProduct, BigDecimal unitValue,
 			BigDecimal totalValue) {
 		this.id = id;
-		this.moment = moment;
 		this.numTicketId = numTicketId;
 		this.partnerId = partnerId;
 		this.partnerName = partnerName;
@@ -64,9 +60,8 @@ public class ReportProductDispatchDTO {
 		this.totalValue = totalValue;
 	}
 
-	public ReportProductDispatchDTO(ReportProductDispatchProjection projection) {
+	public ProductDispatchReportDTO(ProductDispatchReportProjection projection) {
 		id = projection.getId();
-		moment = projection.getMoment();
 		numTicketId = projection.getNumTicketId();
 
 		if (projection.getPartnerId() != null) {
@@ -96,10 +91,6 @@ public class ReportProductDispatchDTO {
 
 	public Long getId() {
 		return id;
-	}
-
-	public Instant getMoment() {
-		return moment;
 	}
 
 	public Integer getNumTicketId() {

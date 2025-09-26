@@ -31,7 +31,7 @@ import com.smartprocessrefusao.erprefusao.entities.MaterialGroup;
 import com.smartprocessrefusao.erprefusao.entities.Product;
 import com.smartprocessrefusao.erprefusao.entities.TaxClassification;
 import com.smartprocessrefusao.erprefusao.entities.Unit;
-import com.smartprocessrefusao.erprefusao.projections.ReportProductProjection;
+import com.smartprocessrefusao.erprefusao.projections.ProductReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.MaterialGroupRepository;
 import com.smartprocessrefusao.erprefusao.repositories.ProductRepository;
 import com.smartprocessrefusao.erprefusao.repositories.TaxClassificationRepository;
@@ -49,7 +49,7 @@ import jakarta.persistence.EntityNotFoundException;
 public class ProductServiceTest {
 
 	@InjectMocks
-	private ProductService service;
+	private ProductService productService;
 
 	@Mock
 	private ProductRepository productRepository;
@@ -61,7 +61,7 @@ public class ProductServiceTest {
 	private TaxClassificationRepository taxRepository;
 
 	@Mock
-	private MaterialGroupRepository groupRepository;
+	private MaterialGroupRepository materialGroupRepository;
 
 	private Product product;
 	private ProductDTO productDTO;
@@ -86,11 +86,11 @@ public class ProductServiceTest {
 	// 1 - Report Product
 	@Test
 	void reportProductShouldReturnPagedReportDTO() {
-		ReportProductProjection projection = Mockito.mock(ReportProductProjection.class);
-		Page<ReportProductProjection> page = new PageImpl<>(List.of(projection));
+		ProductReportProjection projection = Mockito.mock(ProductReportProjection.class);
+		Page<ProductReportProjection> page = new PageImpl<>(List.of(projection));
 		when(productRepository.searchProductByNameOrId(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(page);
 
-		Page<ReportProductDTO> result = service.reportProduct(6060, 1L, PageRequest.of(0, 10));
+		Page<ReportProductDTO> result = productService.reportProduct(6060, 1L, PageRequest.of(0, 10));
 
 		Assertions.assertNotNull(result);
 	}
@@ -101,7 +101,7 @@ public class ProductServiceTest {
 
 		when(productRepository.findById(productExistingId)).thenReturn(Optional.of(product));
 
-		ProductDTO result = service.findById(productExistingId);
+		ProductDTO result = productService.findById(productExistingId);
 		assertNotNull(result);
 
 		assertEquals("FINISHED_PRODUCTS", result.getTypeMaterial());
@@ -115,20 +115,19 @@ public class ProductServiceTest {
 	@Test
 	public void findByIdShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
 
-		assertThrows(ResourceNotFoundException.class, () -> service.findById(productNonExistingId));
+		assertThrows(ResourceNotFoundException.class, () -> productService.findById(productNonExistingId));
 	}
 
 	// 4 - Insert Product
 	@Test
 	public void insertShouldReturnProductDTO() {
 
-		when(productRepository.findById(Mockito.any())).thenReturn(Optional.of(product));
 		when(unitRepository.findById(Mockito.any())).thenReturn(Optional.of(unit));
 		when(taxRepository.findById(Mockito.any())).thenReturn(Optional.of(tax));
-		when(groupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
+		when(materialGroupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
 		when(productRepository.save(any())).thenReturn(product);
 
-		ProductDTO result = service.insert(productDTO);
+		ProductDTO result = productService.insert(productDTO);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(6060, result.getAlloy());
@@ -141,7 +140,7 @@ public class ProductServiceTest {
 		ProductDTO dto = ProductFactory.createTypeMaterialInvalid();
 
 		assertThrows(ResourceNotFoundException.class, () -> {
-			service.insert(dto);
+			productService.insert(dto);
 		});
 	}
 
@@ -150,14 +149,14 @@ public class ProductServiceTest {
 	void copyDtoToEntityShoulNotFoundExceptionWhenTaxClassificationInvalid() {
 		when(productRepository.findById(Mockito.any())).thenReturn(Optional.of(product));
 		when(unitRepository.findById(Mockito.any())).thenReturn(Optional.of(unit));
-		when(groupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
-	  	 when(taxRepository.findById(1L)).thenReturn(Optional.empty());
+		when(materialGroupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
+		when(taxRepository.findById(1L)).thenReturn(Optional.empty());
 
-		 Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-		        service.insert(productDTO);
-		    });
+		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+			productService.insert(productDTO);
+		});
 	}
-		        
+
 	// 7 - Insert Group Material Invalid
 	@Test
 
@@ -165,59 +164,73 @@ public class ProductServiceTest {
 		when(productRepository.findById(Mockito.any())).thenReturn(Optional.of(product));
 		when(unitRepository.findById(Mockito.any())).thenReturn(Optional.of(unit));
 		when(taxRepository.findById(Mockito.any())).thenReturn(Optional.of(tax));
-	  	 when(groupRepository.findById(1L)).thenReturn(Optional.empty());
+		when(materialGroupRepository.findById(999L)).thenReturn(Optional.empty());
 
-		 Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-		        service.insert(productDTO);
-		    });
+		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+			productService.insert(productDTO);
+		});
 	}
 
-	// 8 - Update Product
+	// 8 - Insert Unit Invalid
+	@Test
+	void copyDtoToEntityShoulNotFoundExceptionWhenUnitDTOInvalid() {
+		when(productRepository.getReferenceById(1L)).thenReturn(product);
+		when(productRepository.save(product)).thenReturn(product);
+		when(unitRepository.findById(999L)).thenReturn(Optional.empty());
+		when(taxRepository.findById(Mockito.any())).thenReturn(Optional.of(tax));
+		when(materialGroupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
+
+		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+			productService.insert(productDTO);
+		});
+	}
+
+	// 9 - Update Product
 	@Test
 	public void updateShouldReturnProductDTOWhenIdExists() {
 		when(productRepository.getReferenceById(1L)).thenReturn(product);
 		when(unitRepository.findById(Mockito.any())).thenReturn(Optional.of(unit));
 		when(taxRepository.findById(Mockito.any())).thenReturn(Optional.of(tax));
-		when(groupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
+		when(materialGroupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
 		when(productRepository.save(product)).thenReturn(product);
 
-		ProductDTO result = service.update(1L, productDTO);
+		ProductDTO result = productService.update(1L, productDTO);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(6060, result.getAlloy());
 	}
 
-	// 9 - Update Product Invalid
+	// 10 - Update Product Invalid
 	@Test
 	public void updateShouldReturnResourceNotFoundExceptionWhenIdDoesNotExist() {
 		when(productRepository.getReferenceById(productNonExistingId)).thenThrow(EntityNotFoundException.class);
 
-		assertThrows(ResourceNotFoundException.class, () -> service.update(productNonExistingId, productDTO));
+		assertThrows(ResourceNotFoundException.class, () -> productService.update(productNonExistingId, productDTO));
 	}
 
-	// 10 - Delete Id exists
+	// 11 - Delete Id exists
 	@Test
 	public void deleteShouldDoNothingWhenIdExists() {
 		when(productRepository.existsById(productExistingId)).thenReturn(true);
 
-		assertDoesNotThrow(() -> service.delete(productExistingId));
+		assertDoesNotThrow(() -> productService.delete(productExistingId));
 		verify(productRepository).deleteById(productExistingId);
 	}
 
-	// 11 - Delete Id Does Not exists
+	// 12 - Delete Id Does Not exists
 	@Test
 	public void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesNotExists() {
 		when(productRepository.existsById(productNonExistingId)).thenReturn(false);
 
-		assertThrows(ResourceNotFoundException.class, () -> service.delete(productNonExistingId));
+		assertThrows(ResourceNotFoundException.class, () -> productService.delete(productNonExistingId));
 	}
 
-	// 12 - Delete Id Dependent
+	// 13 - Delete Id Dependent
 	@Test
 	public void deleteShouldThrowDataBaseExceptionWhenIdDependent() {
 		when(productRepository.existsById(productExistingId)).thenReturn(true);
 
 		doThrow(DataIntegrityViolationException.class).when(productRepository).deleteById(productExistingId);
-		assertThrows(DatabaseException.class, () -> service.delete(productExistingId));
+		assertThrows(DatabaseException.class, () -> productService.delete(productExistingId));
 	}
 }

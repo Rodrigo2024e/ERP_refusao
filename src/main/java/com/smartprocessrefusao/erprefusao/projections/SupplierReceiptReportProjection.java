@@ -1,19 +1,16 @@
 package com.smartprocessrefusao.erprefusao.projections;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
 
-public interface ReportSupplierReceiptProjection extends IdProjection<Long> {
+public interface SupplierReceiptReportProjection extends IdProjection<Long> {
 
 	Long getId();
-	
-	Instant getMoment();
 
 	LocalDate getDateReceipt();
-	
+
 	String getTypeMaterial();
-	
+
 	Long getPartnerId();
 
 	String getPartnerName();
@@ -21,7 +18,7 @@ public interface ReportSupplierReceiptProjection extends IdProjection<Long> {
 	Long getSupplierId();
 
 	String getSupplierDescription();
-	
+
 	String getTransactionDescription();
 
 	String getCosts();

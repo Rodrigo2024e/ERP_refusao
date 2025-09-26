@@ -26,12 +26,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.smartprocessrefusao.erprefusao.dto.InputDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportInputDTO;
+import com.smartprocessrefusao.erprefusao.dto.InputReportDTO;
 import com.smartprocessrefusao.erprefusao.entities.Input;
 import com.smartprocessrefusao.erprefusao.entities.MaterialGroup;
 import com.smartprocessrefusao.erprefusao.entities.TaxClassification;
 import com.smartprocessrefusao.erprefusao.entities.Unit;
-import com.smartprocessrefusao.erprefusao.projections.ReportInputProjection;
+import com.smartprocessrefusao.erprefusao.projections.InputReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.InputRepository;
 import com.smartprocessrefusao.erprefusao.repositories.MaterialGroupRepository;
 import com.smartprocessrefusao.erprefusao.repositories.TaxClassificationRepository;
@@ -49,10 +49,10 @@ import jakarta.persistence.EntityNotFoundException;
 public class InputServiceTest {
 
 	@InjectMocks
-	private InputService service;
+	private InputService inputService;
 
 	@Mock
-	private InputRepository MaterialRepository;
+	private InputRepository inputRepository;
 
 	@Mock
 	private UnitRepository unitRepository;
@@ -61,7 +61,7 @@ public class InputServiceTest {
 	private TaxClassificationRepository taxRepository;
 
 	@Mock
-	private MaterialGroupRepository groupRepository;
+	private MaterialGroupRepository materialGroupRepository;
 
 	private Input input;
 	private InputDTO inputDTO;
@@ -87,23 +87,23 @@ public class InputServiceTest {
 	// 1 - Report Input
 	@Test
 	void reportMaterialShouldReturnPagedReportDTO() {
-		ReportInputProjection projection = Mockito.mock(ReportInputProjection.class);
-		Page<ReportInputProjection> page = new PageImpl<>(List.of(projection));
-		when(MaterialRepository.searchMaterialByNameOrGroup(Mockito.any(), Mockito.any(), Mockito.any()))
+		InputReportProjection projection = Mockito.mock(InputReportProjection.class);
+		Page<InputReportProjection> page = new PageImpl<>(List.of(projection));
+		when(inputRepository.searchMaterialByNameOrGroup(Mockito.any(), Mockito.any(), Mockito.any()))
 				.thenReturn(page);
 
-		Page<ReportInputDTO> result = service.reportInput("Perfil de processo", 1L, PageRequest.of(0, 10));
+		Page<InputReportDTO> result = inputService.reportInput("Perfil de processo", 1L, PageRequest.of(0, 10));
 
 		Assertions.assertNotNull(result);
 	}
 
 	// 2 - FindById
 	@Test
-	public void findByIdShouldReturnMaterialDTOWhenIdExists() {
+	public void findByIdShouldReturnInputDTOWhenIdExists() {
 
-		when(MaterialRepository.findById(inputExistingId)).thenReturn(Optional.of(input));
+		when(inputRepository.findById(inputExistingId)).thenReturn(Optional.of(input));
 
-		InputDTO result = service.findById(inputExistingId);
+		InputDTO result = inputService.findById(inputExistingId);
 		assertNotNull(result);
 		assertEquals("SCRAP", result.getTypeMaterial());
 		assertEquals("PERFIL DE PROCESSO", result.getDescription());
@@ -117,123 +117,124 @@ public class InputServiceTest {
 	@Test
 	public void findByIdShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
 
-		assertThrows(ResourceNotFoundException.class, () -> service.findById(inputNonExistingId));
+		assertThrows(ResourceNotFoundException.class, () -> inputService.findById(inputNonExistingId));
 	}
 
-	// 4 - Insert Material
+	// 4 - Insert Input
 	@Test
-	public void insertShouldReturnMaterialDTO() {
+	public void insertShouldReturnInputDTO() {
 
 		when(unitRepository.findById(Mockito.any())).thenReturn(Optional.of(unit));
 		when(taxRepository.findById(Mockito.any())).thenReturn(Optional.of(tax));
-		when(groupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
-		when(MaterialRepository.save(any())).thenReturn(input);
+		when(materialGroupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
+		when(inputRepository.save(any())).thenReturn(input);
 
-		InputDTO result = service.insert(inputDTO);
+		InputDTO result = inputService.insert(inputDTO);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals("PERFIL DE PROCESSO", result.getDescription());
-		verify(MaterialRepository).save(Mockito.any());
+		verify(inputRepository).save(Mockito.any());
 	}
 
-	// 5 - Insert Type Material Invalid
+	// 5 - Insert Type Input Invalid
 	@Test
-	void insertShouldThrowWhenTypeMaterialIsInvalid() {
+	void insertShouldThrowWhenTypeInputIsInvalid() {
 		InputDTO dto = InputFactory.createTypeMaterialInvalid();
 
 		assertThrows(ResourceNotFoundException.class, () -> {
-			service.insert(dto);
+			inputService.insert(dto);
 		});
 	}
 
 	// 6 - Insert Unit Invalid
 	@Test
 	void copyDtoToEntityShoulNotFoundExceptionWhenUnitDTOInvalid() {
-		when(MaterialRepository.getReferenceById(1L)).thenReturn(input);
-		when(MaterialRepository.save(input)).thenReturn(input);
+		when(inputRepository.getReferenceById(1L)).thenReturn(input);
+		when(inputRepository.save(input)).thenReturn(input);
 		when(unitRepository.findById(999L)).thenReturn(Optional.empty());
 		when(taxRepository.findById(Mockito.any())).thenReturn(Optional.of(tax));
-		when(groupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
+		when(materialGroupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
 
 		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-			service.insert(inputDTO);
+			inputService.insert(inputDTO);
 		});
 	}
 
 	// 7 - Insert TaxClassification Invalid
 	@Test
 	void copyDtoToEntityShoulNotFoundExceptionWhenTaxClassificationDTOInvalid() {
-		when(MaterialRepository.getReferenceById(1L)).thenReturn(input);
-		when(MaterialRepository.save(input)).thenReturn(input);
+		when(inputRepository.getReferenceById(1L)).thenReturn(input);
+		when(inputRepository.save(input)).thenReturn(input);
 		when(unitRepository.findById(Mockito.any())).thenReturn(Optional.of(unit));
 		when(taxRepository.findById(999L)).thenReturn(Optional.empty());
-		when(groupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
+		when(materialGroupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
 
 		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-			service.insert(inputDTO);
+			inputService.insert(inputDTO);
 		});
 	}
 
-	// 8 - Insert Material Group Invalid
+	// 8 - Insert Input Group Invalid
 	@Test
 	void copyDtoToEntityShoulNotFoundExceptionWhenMaterialGroupDTOInvalid() {
-		when(MaterialRepository.getReferenceById(1L)).thenReturn(input);
-		when(MaterialRepository.save(input)).thenReturn(input);
+		when(inputRepository.getReferenceById(1L)).thenReturn(input);
 		when(unitRepository.findById(Mockito.any())).thenReturn(Optional.of(unit));
 		when(taxRepository.findById(Mockito.any())).thenReturn(Optional.of(tax));
-		when(groupRepository.findById(999L)).thenReturn(Optional.empty());
-
+		when(materialGroupRepository.findById(999L)).thenReturn(Optional.empty());
+		when(inputRepository.save(input)).thenReturn(input);
+		
 		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-			service.insert(inputDTO);
+			inputService.insert(inputDTO);
 		});
 	}
 
-	// 9 - Update Material
+	// 9 - Update Input
 	@Test
 	public void updateShouldReturnMaterialDTOWhenIdExists() {
-		when(MaterialRepository.getReferenceById(1L)).thenReturn(input);
-		when(MaterialRepository.save(input)).thenReturn(input);
+		when(inputRepository.getReferenceById(1L)).thenReturn(input);
+		when(inputRepository.save(input)).thenReturn(input);
 		when(unitRepository.findById(Mockito.any())).thenReturn(Optional.of(unit));
 		when(taxRepository.findById(Mockito.any())).thenReturn(Optional.of(tax));
-		when(groupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
+		when(materialGroupRepository.findById(Mockito.any())).thenReturn(Optional.of(group));
 
-		InputDTO result = service.update(1L, inputDTO);
+		InputDTO result = inputService.update(1L, inputDTO);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals("PERFIL DE PROCESSO", result.getDescription());
 	}
 
-	// 10 - Update Material Invalid
+	// 10 - Update Input Invalid
 	@Test
 	public void updateShouldReturnResourceNotFoundExceptionWhenIdDoesNotExist() {
-		when(MaterialRepository.getReferenceById(inputNonExistingId)).thenThrow(EntityNotFoundException.class);
+		when(inputRepository.getReferenceById(inputNonExistingId)).thenThrow(EntityNotFoundException.class);
 
-		assertThrows(ResourceNotFoundException.class, () -> service.update(inputNonExistingId, inputDTO));
+		assertThrows(ResourceNotFoundException.class, () -> inputService.update(inputNonExistingId, inputDTO));
 	}
 
 	// 11 - Delete Id exists
 	@Test
 	public void deleteShouldDoNothingWhenIdExists() {
-		when(MaterialRepository.existsById(inputExistingId)).thenReturn(true);
+		when(inputRepository.existsById(inputExistingId)).thenReturn(true);
 
-		assertDoesNotThrow(() -> service.delete(inputExistingId));
-		verify(MaterialRepository).deleteById(inputExistingId);
+		assertDoesNotThrow(() -> inputService.delete(inputExistingId));
+		verify(inputRepository).deleteById(inputExistingId);
 	}
 
 	// 12 - Delete Id Does Not exists
 	@Test
 	public void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesNotExists() {
-		when(MaterialRepository.existsById(inputNonExistingId)).thenReturn(false);
+		when(inputRepository.existsById(inputNonExistingId)).thenReturn(false);
 
-		assertThrows(ResourceNotFoundException.class, () -> service.delete(inputNonExistingId));
+		assertThrows(ResourceNotFoundException.class, () -> inputService.delete(inputNonExistingId));
 	}
 
 	// 13 - Delete Id Dependent
 	@Test
 	public void deleteShouldThrowDataBaseExceptionWhenIdDependent() {
-		when(MaterialRepository.existsById(dependentId)).thenReturn(true);
+		when(inputRepository.existsById(dependentId)).thenReturn(true);
 
-		doThrow(DataIntegrityViolationException.class).when(MaterialRepository).deleteById(dependentId);
-		assertThrows(DatabaseException.class, () -> service.delete(dependentId));
+		doThrow(DataIntegrityViolationException.class).when(inputRepository).deleteById(dependentId);
+		assertThrows(DatabaseException.class, () -> inputService.delete(dependentId));
 	}
+
 }

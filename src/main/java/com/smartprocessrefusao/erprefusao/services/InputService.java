@@ -11,13 +11,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.dto.InputDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportInputDTO;
+import com.smartprocessrefusao.erprefusao.dto.InputReportDTO;
 import com.smartprocessrefusao.erprefusao.entities.Input;
 import com.smartprocessrefusao.erprefusao.entities.MaterialGroup;
 import com.smartprocessrefusao.erprefusao.entities.TaxClassification;
 import com.smartprocessrefusao.erprefusao.entities.Unit;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeMaterial;
-import com.smartprocessrefusao.erprefusao.projections.ReportInputProjection;
+import com.smartprocessrefusao.erprefusao.projections.InputReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.InputRepository;
 import com.smartprocessrefusao.erprefusao.repositories.MaterialGroupRepository;
 import com.smartprocessrefusao.erprefusao.repositories.TaxClassificationRepository;
@@ -43,9 +43,9 @@ public class InputService {
 	private MaterialGroupRepository materialGroupRepository;
 
 	   @Transactional(readOnly = true) 
-	    public Page<ReportInputDTO> reportInput(String description, Long groupId, Pageable pageable) {
-	        Page<ReportInputProjection> page = inputRepository.searchMaterialByNameOrGroup(description, groupId, pageable);
-	        return page.map(ReportInputDTO::new);
+	    public Page<InputReportDTO> reportInput(String description, Long groupId, Pageable pageable) {
+	        Page<InputReportProjection> page = inputRepository.searchMaterialByNameOrGroup(description, groupId, pageable);
+	        return page.map(InputReportDTO::new);
 	    }
 	
 	@Transactional(readOnly = true)
@@ -98,11 +98,12 @@ public class InputService {
 	public void copyDtoToEntity(InputDTO dto, Input entity) {
 		
 		try {
-			if (dto.getTypeMaterial() != null) {
-				TypeMaterial typeMaterial = TypeMaterial.valueOf(dto.getTypeMaterial());
-				entity.setTypeMaterial(typeMaterial);
-			}
+
+			TypeMaterial typeMaterial = TypeMaterial.fromDescription(dto.getTypeMaterial());
+			entity.setTypeMaterial(typeMaterial);
+
 		} catch (IllegalArgumentException e) {
+
 			throw new ResourceNotFoundException("Tipo de material inválido: " + dto.getTypeMaterial());
 		}
 		

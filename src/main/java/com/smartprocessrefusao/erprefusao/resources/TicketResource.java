@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.smartprocessrefusao.erprefusao.dto.ReportTicketDTO;
+import com.smartprocessrefusao.erprefusao.dto.TicketReportDTO;
 import com.smartprocessrefusao.erprefusao.dto.TicketDTO;
 import com.smartprocessrefusao.erprefusao.services.TicketService;
 
@@ -40,11 +40,11 @@ public class TicketResource {
 	}
 
 	@GetMapping(value = "/report")
-	public ResponseEntity<Page<ReportTicketDTO>> getReportTicket(@RequestParam(required = false) Integer numTicketId,
+	public ResponseEntity<Page<TicketReportDTO>> getReportTicket(@RequestParam(required = false) Integer numTicketId,
 
 			Pageable pageable) {
 
-		Page<ReportTicketDTO> result = ticketService.reportTicket(numTicketId, pageable);
+		Page<TicketReportDTO> result = ticketService.reportTicket(numTicketId, pageable);
 		return ResponseEntity.ok(result);
 
 	}

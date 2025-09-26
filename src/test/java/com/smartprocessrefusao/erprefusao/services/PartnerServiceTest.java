@@ -29,9 +29,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.smartprocessrefusao.erprefusao.dto.PartnerDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportPartnerDTO;
+import com.smartprocessrefusao.erprefusao.dto.PartnerReportDTO;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
-import com.smartprocessrefusao.erprefusao.projections.ReportPartnerProjection;
+import com.smartprocessrefusao.erprefusao.projections.PartnerReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
@@ -73,14 +73,14 @@ class PartnerServiceTest {
 	// 2 - Report Partner
 	@Test
 	void reportPartnerShouldReturnPagedDTOs() {
-		ReportPartnerProjection projection = mock(ReportPartnerProjection.class);
+		PartnerReportProjection projection = mock(PartnerReportProjection.class);
 		when(projection.getName()).thenReturn("JOÃO CARLOS");
 
-		Page<ReportPartnerProjection> page = new PageImpl<>(List.of(projection));
+		Page<PartnerReportProjection> page = new PageImpl<>(List.of(projection));
 		when(repository.searchPeopleNameByOrId(any(), any(), any())).thenReturn(page);
 
 		Pageable pageable = PageRequest.of(0, 10);
-		Page<ReportPartnerDTO> result = service.reportPartner("JOÃO", 1L, pageable);
+		Page<PartnerReportDTO> result = service.reportPartner("JOÃO", 1L, pageable);
 
 		assertNotNull(result);
 		assertEquals(1, result.getTotalElements());

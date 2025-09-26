@@ -3,7 +3,7 @@ package com.smartprocessrefusao.erprefusao.tests;
 import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.Sector;
-import com.smartprocessrefusao.erprefusao.projections.ReportEmployeeProjection;
+import com.smartprocessrefusao.erprefusao.projections.EmployeeReportProjection;
 
 public class EmployeeFactory {
 
@@ -35,8 +35,8 @@ public class EmployeeFactory {
 		return employee;
 	}
 
-	public static ReportEmployeeProjection create() {
-		return new ReportEmployeeProjection() {
+	public static EmployeeReportProjection create() {
+		return new EmployeeReportProjection() {
 
 			@Override
 			public Long getIdPessoa() {

@@ -2,9 +2,9 @@ package com.smartprocessrefusao.erprefusao.dto;
 
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.enumerados.StateBrazil;
-import com.smartprocessrefusao.erprefusao.projections.ReportPartnerProjection;
+import com.smartprocessrefusao.erprefusao.projections.PartnerReportProjection;
 
-public class ReportPartnerDTO {
+public class PartnerReportDTO {
 
 	private Long id;
 	private String name;
@@ -28,11 +28,11 @@ public class ReportPartnerDTO {
     private String nameState; 
     private String country;   
     
-    public ReportPartnerDTO() {
+    public PartnerReportDTO() {
     	
     }
 
-	public ReportPartnerDTO(Partner entity) {
+	public PartnerReportDTO(Partner entity) {
 		id = entity.getId();
 		name = entity.getName();
 		cnpj = entity.getCnpj();
@@ -57,7 +57,7 @@ public class ReportPartnerDTO {
 	    		
 	}
 
-	public ReportPartnerDTO(ReportPartnerProjection projection) {
+	public PartnerReportDTO(PartnerReportProjection projection) {
 		this.id = projection.getId();
 		this.name = projection.getName();
 		this.cnpj = projection.getCnpj();

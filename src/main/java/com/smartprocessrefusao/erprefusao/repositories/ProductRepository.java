@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.Product;
-import com.smartprocessrefusao.erprefusao.projections.ReportProductProjection;
+import com.smartprocessrefusao.erprefusao.projections.ProductReportProjection;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -48,6 +48,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 				AND (:alloy IS NULL OR LOWER(pr.alloy) LIKE LOWER(CONCAT('%', :alloy, '%')))
 		""",
 		nativeQuery = true)
-	Page<ReportProductProjection> searchProductByNameOrId(
+	Page<ProductReportProjection> searchProductByNameOrId(
 			@Param("alloy") Integer alloy, @Param("productId") Long productId, Pageable pageable);
 }

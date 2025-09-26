@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.Partner;
-import com.smartprocessrefusao.erprefusao.projections.ReportPartnerProjection;
+import com.smartprocessrefusao.erprefusao.projections.PartnerReportProjection;
 
 @Repository
 public interface PartnerRepository extends JpaRepository<Partner, Long> {
@@ -50,6 +50,6 @@ public interface PartnerRepository extends JpaRepository<Partner, Long> {
 			    WHERE (:partnerId IS NULL OR p.id = :partnerId)
 			    AND (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
 			""", nativeQuery = true)
-	Page<ReportPartnerProjection> searchPeopleNameByOrId(@Param("name") String name, @Param("partnerId") Long partnerId,
+	Page<PartnerReportProjection> searchPeopleNameByOrId(@Param("name") String name, @Param("partnerId") Long partnerId,
 			Pageable pageable);
 }
