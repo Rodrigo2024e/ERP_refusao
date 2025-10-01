@@ -25,7 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.smartprocessrefusao.erprefusao.dto.TicketDTO;
-import com.smartprocessrefusao.erprefusao.dto.TicketReportDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportTicketDTO;
 import com.smartprocessrefusao.erprefusao.entities.Ticket;
 import com.smartprocessrefusao.erprefusao.projections.TicketReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.TicketRepository;
@@ -66,7 +66,7 @@ class TicketServiceTest {
 
 		when(ticketRepository.searchTicketWithScrapReceipt(eq(1), eq(pageable))).thenReturn(page);
 
-		Page<TicketReportDTO> result = ticketService.reportTicket(1, pageable);
+		Page<ReportTicketDTO> result = ticketService.reportTicket(1, pageable);
 
 		assertThat(result).isNotEmpty();
 		assertThat(result.getContent().get(0).getNumTicket()).isEqualTo(projection.getNumTicket());

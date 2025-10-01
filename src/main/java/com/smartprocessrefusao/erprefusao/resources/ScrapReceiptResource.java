@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.smartprocessrefusao.erprefusao.dto.ReportScrapReceiptDTO;
 import com.smartprocessrefusao.erprefusao.dto.ScrapReceiptDTO;
 import com.smartprocessrefusao.erprefusao.services.ScrapReceiptService;
 
@@ -31,11 +32,11 @@ public class ScrapReceiptResource {
 	private ScrapReceiptService scrapReceiptService;
 	
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-	@GetMapping
-	 public ResponseEntity<Page<ScrapReceiptDTO>> getReportMovement(
+	@GetMapping(value = "/report")
+	 public ResponseEntity<Page<ReportScrapReceiptDTO>> getReportMovement(
 			 @RequestParam(required = false) Integer numTicketId, Pageable pageable) {
 	        
-	        Page<ScrapReceiptDTO> result = scrapReceiptService.reportMovement(numTicketId, pageable);
+	        Page<ReportScrapReceiptDTO> result = scrapReceiptService.reportMovement(numTicketId, pageable);
 	        return ResponseEntity.ok(result);
 	    
 	}

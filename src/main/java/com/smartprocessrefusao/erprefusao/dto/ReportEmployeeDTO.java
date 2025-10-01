@@ -4,7 +4,7 @@ import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.enumerados.StateBrazil;
 import com.smartprocessrefusao.erprefusao.projections.EmployeeReportProjection;
 
-public class EmployeeReportDTO {
+public class ReportEmployeeDTO {
 
 	private Long idPessoa;
 	private String name;
@@ -29,11 +29,11 @@ public class EmployeeReportDTO {
 	private String nameState;
 	private String country;
 
-	public EmployeeReportDTO() {
+	public ReportEmployeeDTO() {
 
 	}
 
-	public EmployeeReportDTO(Employee entity) {
+	public ReportEmployeeDTO(Employee entity) {
 		idPessoa = entity.getId();
 		name = entity.getName();
 		cpf = entity.getCpf();
@@ -59,7 +59,7 @@ public class EmployeeReportDTO {
 
 	}
 
-	public EmployeeReportDTO(EmployeeReportProjection projection) {
+	public ReportEmployeeDTO(EmployeeReportProjection projection) {
 		this.idPessoa = projection.getIdPessoa();
 		this.name = projection.getName();
 		this.cpf = projection.getCpf();

@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSerializer;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.IntegerBrazilianSerializerWithoutDecimal;
-import com.smartprocessrefusao.erprefusao.projections.ProductDispatchReportProjection;
+import com.smartprocessrefusao.erprefusao.projections.ProductDispatchProjection;
 
-public class ProductDispatchReportDTO {
+public class ReportProductDispatchDTO {
 
 	private Long id;
 
@@ -37,11 +37,11 @@ public class ProductDispatchReportDTO {
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal totalValue;
 
-	public ProductDispatchReportDTO() {
+	public ReportProductDispatchDTO() {
 
 	}
 
-	public ProductDispatchReportDTO(Long id, Integer numTicketId, Long partnerId, String partnerName,
+	public ReportProductDispatchDTO(Long id, Integer numTicketId, Long partnerId, String partnerName,
 			String transactionDescription, Long productId, String productDescription, Integer alloy,
 			Integer billetDiameter, Double billetLength, BigDecimal amountProduct, BigDecimal unitValue,
 			BigDecimal totalValue) {
@@ -60,7 +60,7 @@ public class ProductDispatchReportDTO {
 		this.totalValue = totalValue;
 	}
 
-	public ProductDispatchReportDTO(ProductDispatchReportProjection projection) {
+	public ReportProductDispatchDTO(ProductDispatchProjection projection) {
 		id = projection.getId();
 		numTicketId = projection.getNumTicketId();
 

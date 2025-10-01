@@ -14,13 +14,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.dto.ProductDispatchDTO;
-import com.smartprocessrefusao.erprefusao.dto.ProductDispatchReportDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportProductDispatchDTO;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.entities.Product;
 import com.smartprocessrefusao.erprefusao.entities.ProductDispatch;
 import com.smartprocessrefusao.erprefusao.entities.Ticket;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionOutGoing;
-import com.smartprocessrefusao.erprefusao.projections.ProductDispatchReportProjection;
+import com.smartprocessrefusao.erprefusao.projections.ProductDispatchProjection;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
 import com.smartprocessrefusao.erprefusao.repositories.ProductDispatchRepository;
 import com.smartprocessrefusao.erprefusao.repositories.ProductRepository;
@@ -46,12 +46,12 @@ public class ProductDispatchService {
 	private PartnerRepository partnerRepository;
 
 	@Transactional(readOnly = true)
-	public Page<ProductDispatchReportDTO> reportDispatch(Integer numberTicketId, Pageable pageable) {
+	public Page<ReportProductDispatchDTO> reportDispatch(Integer numberTicketId, Pageable pageable) {
 
-		Page<ProductDispatchReportProjection> page = productDispatchRepository
+		Page<ProductDispatchProjection> page = productDispatchRepository
 				.searchProductDispatchByNumberTicket(numberTicketId, pageable);
 
-		return page.map(ProductDispatchReportDTO::new);
+		return page.map(ReportProductDispatchDTO::new);
 	}
 
 	@Transactional(readOnly = true)

@@ -3,7 +3,7 @@ package com.smartprocessrefusao.erprefusao.dto;
 import com.smartprocessrefusao.erprefusao.entities.Input;
 import com.smartprocessrefusao.erprefusao.projections.InputReportProjection;
 
-public class InputReportDTO {
+public class ReportInputDTO {
 
 	private Long id;
 	private String typeMaterial;
@@ -15,11 +15,11 @@ public class InputReportDTO {
 	private Long matGroupId;
 	private String material_Group;
 
-	public InputReportDTO() {
+	public ReportInputDTO() {
 
 	}
 
-	public InputReportDTO(Input entity) {
+	public ReportInputDTO(Input entity) {
 		id = entity.getId();
 		typeMaterial = entity.getTypeMaterial().toString();
 		description = entity.getDescription();
@@ -32,7 +32,7 @@ public class InputReportDTO {
 
 	}
 
-	public InputReportDTO(InputReportProjection projection) {
+	public ReportInputDTO(InputReportProjection projection) {
 		this.id = projection.getId();
 		this.typeMaterial = projection.getType_Material();
 		this.description = projection.getDescription();

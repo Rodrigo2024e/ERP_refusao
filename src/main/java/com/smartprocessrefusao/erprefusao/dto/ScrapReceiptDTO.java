@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.smartprocessrefusao.erprefusao.entities.ScrapReceipt;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSerializer;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.IntegerBrazilianSerializerWithoutDecimal;
-import com.smartprocessrefusao.erprefusao.projections.ScrapReceiptProjection;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -97,42 +96,6 @@ public class ScrapReceiptDTO {
 		metalYield = entity.getMetalYield();
 		metalWeight = entity.getMetalWeight();
 		slag = entity.getSlag();
-
-	}
-
-	public ScrapReceiptDTO(ScrapReceiptProjection projection) {
-		id = projection.getId();
-
-		if (projection.getNumTicketId() != null) {
-			numTicketId = projection.getNumTicketId();
-		}
-
-		if (projection.getPartnerId() != null) {
-			partnerId = projection.getPartnerId();
-			partnerName = projection.getPartnerName();
-		}
-
-		if (projection.getTransactionDescription() != null) {
-			transactionDescription = projection.getTransactionDescription();
-
-		}
-
-		if (projection.getCosts() != null) {
-			costs = projection.getCosts().toString();
-
-		}
-
-		if (projection.getInputId() != null) {
-			inputId = projection.getInputId();
-			inputDescription = projection.getInputDescription();
-		}
-
-		amountScrap = projection.getAmountScrap();
-		unitValue = projection.getUnitValue();
-		totalValue = projection.getTotalValue();
-		metalYield = projection.getMetalYield();
-		metalWeight = projection.getMetalWeight();
-		slag = projection.getSlag();
 
 	}
 

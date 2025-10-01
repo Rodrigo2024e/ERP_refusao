@@ -8,7 +8,7 @@ import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSe
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.IntegerBrazilianSerializerWithoutDecimal;
 import com.smartprocessrefusao.erprefusao.projections.TicketReportProjection;
 
-public class TicketReportDTO {
+public class ReportTicketDTO {
 
 	@JsonSerialize(using = IntegerBrazilianSerializerWithoutDecimal.class)
 	private Integer numTicket;
@@ -33,11 +33,11 @@ public class TicketReportDTO {
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal amountScrap;
 
-	public TicketReportDTO() {
+	public ReportTicketDTO() {
 
 	}
 
-	public TicketReportDTO(Integer numTicket, LocalDate dateTicket, String numberPlate, BigDecimal netWeight,
+	public ReportTicketDTO(Integer numTicket, LocalDate dateTicket, String numberPlate, BigDecimal netWeight,
 			Integer numTicketId, Long partnerId, String namePartner, Long scrapId, String scrapDescription,
 			BigDecimal amountScrap) {
 		this.numTicket = numTicket;
@@ -52,7 +52,7 @@ public class TicketReportDTO {
 		this.amountScrap = amountScrap;
 	}
 
-	public TicketReportDTO(TicketReportProjection projection) {
+	public ReportTicketDTO(TicketReportProjection projection) {
 		numTicket = projection.getNumTicket();
 		dateTicket = projection.getDateTicket();
 		numberPlate = projection.getNumberPlate();

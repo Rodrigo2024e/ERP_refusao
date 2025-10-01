@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.smartprocessrefusao.erprefusao.dto.InputDTO;
-import com.smartprocessrefusao.erprefusao.dto.InputReportDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportInputDTO;
 import com.smartprocessrefusao.erprefusao.services.InputService;
 
 import jakarta.validation.Valid;
@@ -33,10 +33,10 @@ public class InputResource {
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/report")
-	public ResponseEntity<Page<InputReportDTO>> getReportMaterial(@RequestParam(required = false) String description,
+	public ResponseEntity<Page<ReportInputDTO>> getReportMaterial(@RequestParam(required = false) String description,
 			@RequestParam(required = false) Long groupId, Pageable pageable) {
 
-		Page<InputReportDTO> result = inputService.reportInput(description, groupId, pageable);
+		Page<ReportInputDTO> result = inputService.reportInput(description, groupId, pageable);
 		return ResponseEntity.ok(result);
 
 	}

@@ -30,6 +30,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.smartprocessrefusao.erprefusao.dto.ReportScrapReceiptDTO;
 import com.smartprocessrefusao.erprefusao.dto.ScrapReceiptDTO;
 import com.smartprocessrefusao.erprefusao.entities.Input;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
@@ -79,9 +80,9 @@ public class ScrapReceiptServiceTest {
 	void setUp() {
 		existingId = 1L;
 		nonExistingId = 999L;
-		existingTicketId = 12345;
-		nonExistingTicketId = 98765;
-		existingPartnerId = 3L;
+		existingTicketId = 34950;
+		nonExistingTicketId = 9999;
+		existingPartnerId = 4L;
 		nonExistingPartnerId = 999L;
 		nonExistingInputId = 999L;
 
@@ -124,7 +125,7 @@ public class ScrapReceiptServiceTest {
 						new BigDecimal("0.80"), new BigDecimal("80.00"), new BigDecimal("20.00")))));
 
 		Pageable pageable = PageRequest.of(0, 10);
-		Page<ScrapReceiptDTO> result = service.reportMovement(existingTicketId, pageable);
+		Page<ReportScrapReceiptDTO> result = service.reportMovement(existingTicketId, pageable);
 
 		assertNotNull(result);
 		assertFalse(result.isEmpty());

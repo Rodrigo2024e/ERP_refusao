@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.SupplierReceipt;
-import com.smartprocessrefusao.erprefusao.projections.SupplierReceiptReportProjection;
+import com.smartprocessrefusao.erprefusao.projections.SupplierReceiptProjection;
 
 @Repository
 public interface SupplierReceiptRepository extends JpaRepository<SupplierReceipt, Long> {
@@ -38,7 +38,7 @@ public interface SupplierReceiptRepository extends JpaRepository<SupplierReceipt
 			JOIN tb_people p ON p.id = sr.partner_id
 				WHERE (:inputId IS NULL OR sr.input_id = :inputId)
 			""", nativeQuery = true)
-	Page<SupplierReceiptReportProjection> searchSupplierReceiptByinputId(@Param("inputId") Long input,
+	Page<SupplierReceiptProjection> searchSupplierReceiptByinputId(@Param("inputId") Long input,
 			Pageable pageable);
 
 }

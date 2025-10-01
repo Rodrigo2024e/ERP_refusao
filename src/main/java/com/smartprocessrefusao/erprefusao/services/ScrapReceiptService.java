@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.smartprocessrefusao.erprefusao.dto.ReportScrapReceiptDTO;
 import com.smartprocessrefusao.erprefusao.dto.ScrapReceiptDTO;
 import com.smartprocessrefusao.erprefusao.entities.Input;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
@@ -46,12 +47,12 @@ public class ScrapReceiptService {
 	private PartnerRepository partnerRepository;
 
 	@Transactional(readOnly = true)
-	public Page<ScrapReceiptDTO> reportMovement(Integer numberTicketId, Pageable pageable) {
+	public Page<ReportScrapReceiptDTO> reportMovement(Integer numberTicketId, Pageable pageable) {
 
 		Page<ScrapReceiptProjection> page = scrapReceiptRepository.searchScrapReceiptByNumberTicket(numberTicketId,
 				pageable);
 
-		return page.map(ScrapReceiptDTO::new);
+		return page.map(ReportScrapReceiptDTO::new);
 	}
 
 	@Transactional(readOnly = true)

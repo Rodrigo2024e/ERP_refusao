@@ -29,13 +29,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.smartprocessrefusao.erprefusao.dto.ProductDispatchDTO;
-import com.smartprocessrefusao.erprefusao.dto.ProductDispatchReportDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportProductDispatchDTO;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.entities.Product;
 import com.smartprocessrefusao.erprefusao.entities.ProductDispatch;
 import com.smartprocessrefusao.erprefusao.entities.Ticket;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionOutGoing;
-import com.smartprocessrefusao.erprefusao.projections.ProductDispatchReportProjection;
+import com.smartprocessrefusao.erprefusao.projections.ProductDispatchProjection;
 import com.smartprocessrefusao.erprefusao.repositories.InputRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
 import com.smartprocessrefusao.erprefusao.repositories.ProductDispatchRepository;
@@ -80,23 +80,23 @@ class ProductDispatchServiceTest {
 	void setUp() {
 		existingId = 1L;
 		nonExistingTicketId = 9999;
-		existingTicketId = 35000;
+		existingTicketId = 35280;
 		ticket = ProductDispatchFactory.createTicket();
 		partner = ProductDispatchFactory.createPartner();
 		product = ProductDispatchFactory.createProduct();
-		productDispatch = ProductDispatchFactory.createEntity(ticket, partner, product);
-		productDispatchDTO = ProductDispatchFactory.createDTO();
+		productDispatch = ProductDispatchFactory.createProductDispatch();
+		productDispatchDTO = ProductDispatchFactory.createProductDispatchDTO();
 	}
 
 	@Test
 	void reportDispatch_ShouldReturnPageOfDTO() {
 		Pageable pageable = PageRequest.of(0, 10);
-		ProductDispatchReportProjection projection = ProductDispatchFactory.createProjection();
-		Page<ProductDispatchReportProjection> page = new PageImpl<>(List.of(projection));
+		ProductDispatchProjection projection = ProductDispatchFactory.createProjection();
+		Page<ProductDispatchProjection> page = new PageImpl<>(List.of(projection));
 
 		when(productDispatchRepository.searchProductDispatchByNumberTicket(1, pageable)).thenReturn(page);
 
-		Page<ProductDispatchReportDTO> result = service.reportDispatch(1, pageable);
+		Page<ReportProductDispatchDTO> result = service.reportDispatch(1, pageable);
 
 		assertEquals(1, result.getTotalElements());
 		assertEquals(projection.getPartnerName(), result.getContent().get(0).getPartnerName());
@@ -147,9 +147,9 @@ class ProductDispatchServiceTest {
 	@Test
 	public void insert_ShouldHandleNullSumAndPersist_WhenNoPreviousProductExists() {
 
-		when(productDispatchRepository.sumAmountProductByNumTicket(35000)).thenReturn(null);
+		when(productDispatchRepository.sumAmountProductByNumTicket(35280)).thenReturn(null);
 
-		when(ticketRepository.findByNumTicket(35000)).thenReturn(Optional.of(ticket));
+		when(ticketRepository.findByNumTicket(35280)).thenReturn(Optional.of(ticket));
 		when(partnerRepository.findById(anyLong())).thenReturn(Optional.of(partner));
 		when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
 		when(productDispatchRepository.save(any(ProductDispatch.class))).thenReturn(productDispatch);
@@ -164,7 +164,7 @@ class ProductDispatchServiceTest {
 
 	@Test
 	public void insert_ShouldThrowResourceNotFoundException_WhenTicketDoesNotExist() {
-		productDispatchDTO = ProductDispatchFactory.createInvalidTicketDTO();
+		productDispatchDTO = ProductDispatchFactory.createProductDispatchInvalidTicketDTO();
 
 		when(ticketRepository.findByNumTicket(9999)).thenReturn(Optional.empty());
 
@@ -189,7 +189,6 @@ class ProductDispatchServiceTest {
 		assertEquals(productDispatchDTO.getAmountProduct(), result.getAmountProduct());
 	}
 
-	/////////
 	// --- update --- id found
 	@Test
 	public void update_ShouldPersistAndReturnUpdatedScrapReceiptDTO_WhenDataIsValid() {
@@ -222,7 +221,7 @@ class ProductDispatchServiceTest {
 	// Peso de ticket excedido
 	@Test
 	public void update_ShouldThrowIllegalArgumentException_WhenAmountExceedsTicketWeight() {
-		productDispatchDTO = ProductDispatchFactory.createAmountExceedsTicketWeightDTO();
+		productDispatchDTO = ProductDispatchFactory.createProductDispatchAmountExceedsTicketWeightDTO();
 
 		when(productDispatchRepository.getReferenceById(existingId)).thenReturn(productDispatch);
 		when(productDispatchRepository.sumAmountProductByNumTicketExcludingId(anyInt(), anyLong()))
@@ -236,7 +235,7 @@ class ProductDispatchServiceTest {
 	// WhenTicketDoesNotExist
 	@Test
 	public void update_ShouldThrowResourceNotFoundException_WhenTicketDoesNotExist() {
-		productDispatchDTO = ProductDispatchFactory.createInvalidTicketDTO();
+		productDispatchDTO = ProductDispatchFactory.createProductDispatchInvalidTicketDTO();
 
 		when(ticketRepository.findByNumTicket(nonExistingTicketId)).thenReturn(Optional.empty());
 
@@ -296,7 +295,7 @@ class ProductDispatchServiceTest {
 
 	@Test
 	void copyDtoToEntity_ShouldThrowResourceNotFoundException_WhenTransactionEnumInvalid() {
-		ProductDispatchDTO dto = ProductDispatchFactory.createInvalidTransactionDTO();
+		ProductDispatchDTO dto = ProductDispatchFactory.createProductDispatchInvalidTransactionDTO();
 
 		when(ticketRepository.findByNumTicket(anyInt())).thenReturn(Optional.of(new Ticket()));
 		when(partnerRepository.findById(anyLong())).thenReturn(Optional.of(new Partner()));
@@ -309,9 +308,9 @@ class ProductDispatchServiceTest {
 
 	@Test
 	public void copyDtoToEntity_ShouldThrowResourceNotFoundException_WhenPartnerDoesNotExist() {
-		productDispatchDTO = ProductDispatchFactory.createInvalidPartnerDTO();
+		productDispatchDTO = ProductDispatchFactory.createProductDispatchInvalidPartnerDTO();
 
-		when(ticketRepository.findByNumTicket(35000)).thenReturn(Optional.of(new Ticket()));
+		when(ticketRepository.findByNumTicket(35280)).thenReturn(Optional.of(new Ticket()));
 		when(partnerRepository.findById(999L)).thenReturn(Optional.empty());
 
 		assertThrows(ResourceNotFoundException.class,
@@ -323,10 +322,10 @@ class ProductDispatchServiceTest {
 
 	@Test
 	public void copyDtoToEntity_ShouldThrowResourceNotFoundException_WhenProductDoesNotExist() {
-		productDispatchDTO = ProductDispatchFactory.createInvalidProductDTO();
+		productDispatchDTO = ProductDispatchFactory.createProductDispatchInvalidProductDTO();
 
-		when(ticketRepository.findByNumTicket(35000)).thenReturn(Optional.of(new Ticket()));
-		when(partnerRepository.findById(1L)).thenReturn(Optional.of(partner));
+		when(ticketRepository.findByNumTicket(35280)).thenReturn(Optional.of(new Ticket()));
+		when(partnerRepository.findById(4L)).thenReturn(Optional.of(partner));
 		when(productRepository.findById(999L)).thenReturn(Optional.empty());
 
 		assertThrows(ResourceNotFoundException.class,
@@ -339,7 +338,7 @@ class ProductDispatchServiceTest {
 	// WhenTicketDoesNotExist
 	@Test
 	public void copyDtoToEntity_ShouldThrowResourceNotFoundException_WhenTicketDoesNotExist() {
-		productDispatchDTO = ProductDispatchFactory.createInvalidTicketDTO();
+		productDispatchDTO = ProductDispatchFactory.createProductDispatchInvalidTicketDTO();
 		
 		// Ticket não existe
 		when(ticketRepository.findByNumTicket(nonExistingTicketId)).thenReturn(Optional.empty());

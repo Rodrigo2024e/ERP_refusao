@@ -2,7 +2,7 @@ package com.smartprocessrefusao.erprefusao.projections;
 
 import java.math.BigDecimal;
 
-public interface ProductDispatchReportProjection {
+public interface ProductDispatchProjection {
 
 	Long getId();
 

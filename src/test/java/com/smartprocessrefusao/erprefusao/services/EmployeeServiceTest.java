@@ -21,7 +21,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
-import com.smartprocessrefusao.erprefusao.dto.EmployeeReportDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.Sector;
 import com.smartprocessrefusao.erprefusao.projections.EmployeeSectorProjection;
@@ -66,7 +66,7 @@ class EmployeeServiceTest {
 		Page<EmployeeReportProjection> page = new PageImpl<>(List.of(projection));
 		when(employeeRepository.searchPeopleNameByOrId(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(page);
 
-		Page<EmployeeReportDTO> result = service.reportEmployee("João", 1L, PageRequest.of(0, 10));
+		Page<ReportEmployeeDTO> result = service.reportEmployee("João", 1L, PageRequest.of(0, 10));
 
 		Assertions.assertNotNull(result);
 	}

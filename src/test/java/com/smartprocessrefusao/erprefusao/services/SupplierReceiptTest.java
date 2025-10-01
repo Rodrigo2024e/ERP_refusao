@@ -29,13 +29,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.smartprocessrefusao.erprefusao.dto.SupplierReceiptDTO;
-import com.smartprocessrefusao.erprefusao.dto.SupplierReceiptReportDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportSupplierReceiptDTO;
 import com.smartprocessrefusao.erprefusao.entities.Input;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.entities.SupplierReceipt;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeCosts;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
-import com.smartprocessrefusao.erprefusao.projections.SupplierReceiptReportProjection;
+import com.smartprocessrefusao.erprefusao.projections.SupplierReceiptProjection;
 import com.smartprocessrefusao.erprefusao.repositories.InputRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
 import com.smartprocessrefusao.erprefusao.repositories.SupplierReceiptRepository;
@@ -96,12 +96,12 @@ class SupplierReceiptServiceTest {
 	@Test
 	void reportSupplierReceipt_ShouldReturnPageOfDTO() {
 		Pageable pageable = PageRequest.of(0, 10);
-		SupplierReceiptReportProjection projection = Mockito.mock(SupplierReceiptReportProjection.class);
-		Page<SupplierReceiptReportProjection> page = new PageImpl<>(List.of(projection));
+		SupplierReceiptProjection projection = Mockito.mock(SupplierReceiptProjection.class);
+		Page<SupplierReceiptProjection> page = new PageImpl<>(List.of(projection));
 
 		when(supplierReceiptRepository.searchSupplierReceiptByinputId(existingId, pageable)).thenReturn(page);
 
-		Page<SupplierReceiptReportDTO> result = service.reportSupplierReceipt(existingId, pageable);
+		Page<ReportSupplierReceiptDTO> result = service.reportSupplierReceipt(existingId, pageable);
 
 		assertNotNull(result);
 		assertEquals(1, result.getContent().size());
@@ -221,7 +221,7 @@ class SupplierReceiptServiceTest {
 	@Test
 	void copyDtoToEntity_ShouldThrow_WhenPartnerNotFound() {
 		when(partnerRepository.findById(anyLong())).thenReturn(Optional.empty());
-		SupplierReceiptDTO dto = SupplierReceiptFactory.createSupplierReceiptInvalidPartnerDTO();
+		SupplierReceiptDTO dto = SupplierReceiptFactory.createSupplierReceiptInValidPartnerDTO();
 		SupplierReceipt entity = new SupplierReceipt();
 
 		assertThrows(ResourceNotFoundException.class, () -> service.copyDtoToEntity(dto, entity));

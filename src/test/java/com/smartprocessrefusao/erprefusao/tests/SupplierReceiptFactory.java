@@ -14,7 +14,6 @@ public class SupplierReceiptFactory {
 
 	private static final long EXISTING_ID = 1L;
 	private static final long EXISTING_PARTNER_ID = 3L;
-	private static final long NON_EXISTING_PARTNER_ID = 999L;
 	private static final long NON_EXISTING_INPUT_ID = 999L;
 
 	public static SupplierReceiptDTO createDTO() {
@@ -64,8 +63,15 @@ public class SupplierReceiptFactory {
 				new BigDecimal("5000.00"));
 	}
 
-	public static SupplierReceiptDTO createSupplierReceiptInvalidPartnerDTO() {
-		return new SupplierReceiptDTO(EXISTING_ID, LocalDate.now(), NON_EXISTING_PARTNER_ID, "INVALID",
+	
+	public static SupplierReceiptDTO createSupplierReceiptValidPartnerDTO() {
+		return new SupplierReceiptDTO(EXISTING_ID, LocalDate.now(), 4L, "ECOALUMI ALUMÍNIO S/A",
+				TypeTransactionReceipt.SENT_FOR_PROCESSING.toString(), TypeCosts.DIRECT_COSTS.toString(), 1L,
+				"Input Teste", new BigDecimal("1000.00"), new BigDecimal("5.00"), new BigDecimal("5000.00"));
+	}
+	
+	public static SupplierReceiptDTO createSupplierReceiptInValidPartnerDTO() {
+		return new SupplierReceiptDTO(EXISTING_ID, LocalDate.now(), 99L, "INVALID",
 				TypeTransactionReceipt.SENT_FOR_PROCESSING.toString(), TypeCosts.DIRECT_COSTS.toString(), 1L,
 				"Input Teste", new BigDecimal("1000.00"), new BigDecimal("5.00"), new BigDecimal("5000.00"));
 	}

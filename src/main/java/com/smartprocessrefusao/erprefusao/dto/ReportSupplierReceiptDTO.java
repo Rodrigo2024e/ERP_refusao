@@ -5,9 +5,9 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSerializer;
-import com.smartprocessrefusao.erprefusao.projections.SupplierReceiptReportProjection;
+import com.smartprocessrefusao.erprefusao.projections.SupplierReceiptProjection;
 
-public class SupplierReceiptReportDTO {
+public class ReportSupplierReceiptDTO {
 
 	private Long id;
 
@@ -36,29 +36,11 @@ public class SupplierReceiptReportDTO {
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal totalValue;
 
-	public SupplierReceiptReportDTO() {
+	public ReportSupplierReceiptDTO() {
 
 	}
 
-	public SupplierReceiptReportDTO(Long id, String typeMaterial, LocalDate dateReceipt, Long partnerId,
-			String partnerName, Long supplierId, String supplierDescription, String transaction, String costs,
-			BigDecimal amountSupplier, BigDecimal unitValue, BigDecimal totalValue) {
-		this.id = id;
-
-		this.typeMaterial = typeMaterial;
-		this.dateReceipt = dateReceipt;
-		this.partnerId = partnerId;
-		this.partnerName = partnerName;
-		this.supplierId = supplierId;
-		this.supplierDescription = supplierDescription;
-		this.transaction = transaction;
-		this.costs = costs;
-		this.amountSupplier = amountSupplier;
-		this.unitValue = unitValue;
-		this.totalValue = totalValue;
-	}
-
-	public SupplierReceiptReportDTO(SupplierReceiptReportProjection projection) {
+	public ReportSupplierReceiptDTO(SupplierReceiptProjection projection) {
 
 		id = projection.getId();
 		dateReceipt = projection.getDateReceipt();

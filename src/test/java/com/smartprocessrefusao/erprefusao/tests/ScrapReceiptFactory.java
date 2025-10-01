@@ -14,18 +14,16 @@ import com.smartprocessrefusao.erprefusao.projections.ScrapReceiptProjection;
 public class ScrapReceiptFactory {
 
 	private static final long EXISTING_ID = 1L;
-//	private static final long NON_EXISTING_ID = 999L;
-	private static final int EXISTING_TICKET_ID = 12345;
-//	private static final int NON_EXISTING_TICKET_ID = 98765;
+	private static final int EXISTING_TICKET_ID = 34950;
 	private static final long EXISTING_PARTNER_ID = 3L;
 	private static final long NON_EXISTING_PARTNER_ID = 999L;
-	private static final long EXISTING_INPUT_ID = 200L;
-//	private static final long NON_EXISTING_INPUT_ID = 999L;
+	private static final long EXISTING_INPUT_ID = 1L;
 
 	public static ScrapReceipt createScrapReceipt() {
 		// Objeto ScrapReceipt usa setters por ser uma Entidade JPA
 		ScrapReceipt scrapReceipt = new ScrapReceipt();
 		scrapReceipt.setId(EXISTING_ID);
+		scrapReceipt.setPartner(new Partner());
 		scrapReceipt.setAmountScrap(new BigDecimal("100.00"));
 		scrapReceipt.setUnitValue(new BigDecimal("5.00"));
 		scrapReceipt.setTotalValue(null);
@@ -43,12 +41,12 @@ public class ScrapReceiptFactory {
 	public static ScrapReceiptDTO createScrapReceiptDTO() {
 		return new ScrapReceiptDTO(EXISTING_ID, 
 				EXISTING_TICKET_ID, 
-				EXISTING_PARTNER_ID, 
-				"Partner Test",
+				4L, 
+				"Ecoalumi Aluminio S/A",
 				TypeTransactionReceipt.BUY.toString(), 
 				TypeCosts.DIRECT_COSTS.toString(), 
 				EXISTING_INPUT_ID,
-				"Input Test", 
+				"PERFIL DE PROCESSO", 
 				new BigDecimal("100.00"), 
 				new BigDecimal("5.00"), 
 				null,
@@ -58,16 +56,20 @@ public class ScrapReceiptFactory {
 				);
 	}
 	
+	public static ScrapReceiptDTO createWithoutArgumentsScrapReceiptDTO() {
+		ScrapReceipt scrapReceipt = createScrapReceipt();
+		return new ScrapReceiptDTO(scrapReceipt);
+	}
 	
 	public static ScrapReceiptDTO createInvalidScrapReceiptDTO() {
 		return new ScrapReceiptDTO(EXISTING_ID, 
 				EXISTING_TICKET_ID, 
-				EXISTING_PARTNER_ID, 
-				"Partner Test",
+				4L, 
+				"Ecoalumi Aluminio S/A",
 				TypeTransactionReceipt.BUY.toString(), 
 				TypeCosts.DIRECT_COSTS.toString(), 
 				EXISTING_INPUT_ID,
-				"Input Test", 
+				"PERFIL DE PROCESSO", 
 				null, 
 				null, 
 				null,
@@ -80,12 +82,12 @@ public class ScrapReceiptFactory {
 	    return new ScrapReceiptDTO(
 	            EXISTING_ID,
 	            EXISTING_TICKET_ID,
-	            EXISTING_PARTNER_ID,
-	            "Partner Test",
+	            4L,
+	            "Ecoalumi Aluminio S/A",
 	            TypeTransactionReceipt.BUY.toString(),
 	            TypeCosts.DIRECT_COSTS.toString(),
 	            EXISTING_INPUT_ID,
-	            "Input Test",
+	            "PERFIL DE PROCESSO",
 	            new BigDecimal("100.00"),
 	            new BigDecimal("5.00"),
 	            null,
@@ -96,9 +98,9 @@ public class ScrapReceiptFactory {
 	}
 	
 	public static ScrapReceiptDTO createScrapReceiptDTOWithNulAmountAndlUnitValue() {
-		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, EXISTING_PARTNER_ID, "Partner Test",
+		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, 4L, "Ecoalumi Aluminio S/A",
 				TypeTransactionReceipt.BUY.toString(), TypeCosts.DIRECT_COSTS.toString(), EXISTING_INPUT_ID,
-				"Input Test", null, null, null, // <-- unitValue agora é nulo
+				"PERFIL DE PROCESSO", null, null, null, // <-- unitValue agora é nulo
 				null, null, null);
 	}
 
@@ -107,12 +109,12 @@ public class ScrapReceiptFactory {
 	    return new ScrapReceiptDTO(
 	        EXISTING_ID, 
 	        EXISTING_TICKET_ID, 
-	        EXISTING_PARTNER_ID, 
-	        "Partner Test",
+	        4L, 
+	        "Ecoalumi Aluminio S/A",
 	        TypeTransactionReceipt.BUY.toString(), 
 	        TypeCosts.DIRECT_COSTS.toString(), 
 	        EXISTING_INPUT_ID,
-	        "Input Test", 
+	        "PERFIL DE PROCESSO", 
 	        new BigDecimal("100.00"), // amountScrap
 	        new BigDecimal("5.00"),   // unitValue
 	        null,                     // totalValue (vai ser calculado)
@@ -127,12 +129,12 @@ public class ScrapReceiptFactory {
 	    return new ScrapReceiptDTO(
 	        EXISTING_ID, 
 	        EXISTING_TICKET_ID, 
-	        EXISTING_PARTNER_ID, 
-	        "Partner Test",
+	        4L, 
+	        "Ecoalumi Aluminio S/A",
 	        TypeTransactionReceipt.BUY.toString(), 
 	        TypeCosts.DIRECT_COSTS.toString(), 
 	        EXISTING_INPUT_ID,
-	        "Input Test", 
+	        "PERFIL DE PROCESSO", 
 	        null, // amountScrap
 	        null, // unitValue
 	        null, // totalValue
@@ -144,47 +146,54 @@ public class ScrapReceiptFactory {
 
 
 	public static ScrapReceiptDTO createScrapReceiptPartnerDoesNotExistsDTO() {
-		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, NON_EXISTING_PARTNER_ID, "Partner Test",
+		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, NON_EXISTING_PARTNER_ID, "INVALID",
 				TypeTransactionReceipt.BUY.toString(), TypeCosts.DIRECT_COSTS.toString(), EXISTING_INPUT_ID,
-				"Input Test", new BigDecimal("100.00"), new BigDecimal("5.00"), new BigDecimal("500.00"),
+				"PERFIL DE PROCESSO", new BigDecimal("100.00"), new BigDecimal("5.00"), new BigDecimal("500.00"),
+				new BigDecimal("0.80"), new BigDecimal("80.00"), new BigDecimal("20.00"));
+	}
+	
+	public static ScrapReceiptDTO createScrapReceiptInputDoesNotExistsDTO() {
+		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, EXISTING_PARTNER_ID, "ECOALUMI ALUMÍNIO S/A",
+				TypeTransactionReceipt.BUY.toString(), TypeCosts.DIRECT_COSTS.toString(), 999L,
+				"INVALID", new BigDecimal("100.00"), new BigDecimal("5.00"), new BigDecimal("500.00"),
 				new BigDecimal("0.80"), new BigDecimal("80.00"), new BigDecimal("20.00"));
 	}
 
 	public static ScrapReceiptDTO createScrapReceiptInvalidCostsDTO() {
-		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, EXISTING_PARTNER_ID, "Partner Test",
-				TypeTransactionReceipt.BUY.toString(), "INVALID", EXISTING_PARTNER_ID, "Partner Test",
+		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, EXISTING_PARTNER_ID, "ECOALUMI ALUMÍNIO S/A",
+				TypeTransactionReceipt.BUY.toString(), "INVALID", EXISTING_INPUT_ID, "PERFIL DE PROCESSO",
 				new BigDecimal("100.00"), new BigDecimal("5.00"), new BigDecimal("500.00"), new BigDecimal("0.80"),
 				new BigDecimal("80.00"), new BigDecimal("20.00"));
 	}
 
 	public static ScrapReceiptDTO createScrapReceiptInvalidTranscationDTO() {
-		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, EXISTING_PARTNER_ID, "Partner Test", "INVALID",
-				TypeCosts.DIRECT_COSTS.toString(), EXISTING_PARTNER_ID, "Partner Test", new BigDecimal("100.00"),
+		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, EXISTING_PARTNER_ID, "ECOALUMI ALUMÍNIO S/A", "INVALID",
+				TypeCosts.DIRECT_COSTS.toString(), EXISTING_INPUT_ID, "PERFIL DE PROCESSO", new BigDecimal("100.00"),
 				new BigDecimal("5.00"), new BigDecimal("500.00"), new BigDecimal("0.80"), new BigDecimal("80.00"),
 				new BigDecimal("20.00"));
 	}
 
 	public static ScrapReceiptDTO createScrapReceiptDTOWithNegativeAmount() {
-		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, EXISTING_PARTNER_ID, "Partner Test",
+		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, EXISTING_PARTNER_ID, "ECOALUMI ALUMÍNIO S/A",
 				TypeTransactionReceipt.BUY.toString(), TypeCosts.DIRECT_COSTS.toString(), EXISTING_INPUT_ID,
-				"Input Test", new BigDecimal("-100.00"), // Valor negativo
+				"PERFIL DE PROCESSO", new BigDecimal("-100.00"), // Valor negativo
 				new BigDecimal("5.00"), new BigDecimal("500.00"), new BigDecimal("0.80"), new BigDecimal("80.00"),
 				new BigDecimal("20.00"));
 	}
 
 	// Outros métodos de fábrica ajustados para criar DTOs com valores específicos
 	public static ScrapReceiptDTO createScrapReceiptDTOWithNegativeYield() {
-		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, EXISTING_PARTNER_ID, "Partner Test",
+		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, EXISTING_PARTNER_ID, "ECOALUMI ALUMÍNIO S/A",
 				TypeTransactionReceipt.BUY.toString(), TypeCosts.DIRECT_COSTS.toString(), EXISTING_INPUT_ID,
-				"Input Test", new BigDecimal("100.00"), new BigDecimal("5.00"), new BigDecimal("500.00"),
+				"PERFIL DE PROCESSO", new BigDecimal("100.00"), new BigDecimal("5.00"), new BigDecimal("500.00"),
 				new BigDecimal("-0.80"), // Valor negativo
 				new BigDecimal("80.00"), new BigDecimal("20.00"));
 	}
 
 	public static ScrapReceiptDTO createScrapReceiptDTOWithNegativeUnitValue() {
-		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, EXISTING_PARTNER_ID, "Partner Test",
+		return new ScrapReceiptDTO(EXISTING_ID, EXISTING_TICKET_ID, EXISTING_PARTNER_ID, "ECOALUMI ALUMÍNIO S/A",
 				TypeTransactionReceipt.BUY.toString(), TypeCosts.DIRECT_COSTS.toString(), EXISTING_INPUT_ID,
-				"Input Test", new BigDecimal("100.00"), new BigDecimal("-5.00"), // Valor negativo
+				"PERFIL DE PROCESSO", new BigDecimal("100.00"), new BigDecimal("-5.00"), // Valor negativo
 				new BigDecimal("500.00"), new BigDecimal("0.80"), new BigDecimal("80.00"), new BigDecimal("20.00"));
 	}
 
@@ -198,14 +207,14 @@ public class ScrapReceiptFactory {
 	public static Partner createPartner() {
 		Partner partner = new Partner();
 		partner.setId(EXISTING_PARTNER_ID);
-		partner.setName("Partner Test");
+		partner.setName("ECOALUMI ALUMÍNIO S/A");
 		return partner;
 	}
 
 	public static Input createInput() {
 		Input input = new Input();
 		input.setId(EXISTING_INPUT_ID);
-		input.setDescription("Input Test");
+		input.setDescription("PERFIL DE PROCESSO");
 		return input;
 	}
 

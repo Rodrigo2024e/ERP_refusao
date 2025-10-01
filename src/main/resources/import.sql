@@ -91,7 +91,7 @@ INSERT INTO tb_product (description, alloy, billet_diameter, billet_length, id) 
 INSERT INTO tb_product (description, alloy, billet_diameter, billet_length, id) VALUES ('Tarugo de alumínio', 6063, 5, 6, 7);
 INSERT INTO tb_product (description, alloy, billet_diameter, billet_length, id) VALUES ('Tarugo de alumínio', 6005, 6, 6, 8);
 
-INSERT INTO tb_ticket (num_ticket, date_ticket, number_plate, net_weight) VALUES (34950,'2022-07-25', 'ABC-1245', 1000);
+INSERT INTO tb_ticket (num_ticket, date_ticket, number_plate, net_weight) VALUES (34950,'2022-07-25', 'ABC-1245', 10000);
 INSERT INTO tb_ticket (num_ticket, date_ticket, number_plate, net_weight) VALUES (35280,'2025-08-20', 'ALU-2026', 10246);
 
 INSERT INTO tb_scrap_receipt (num_ticket_id, partner_id, transaction, costs, input_id, amount_scrap, unit_value, total_value, metal_yield, metal_weight, slag) VALUES (34950, 4, 'SENT_FOR_PROCESSING', 'NO_COSTS', 1, 200, 2.0, 400.0, 0.88, 176.0, 24.0);

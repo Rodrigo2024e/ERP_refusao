@@ -13,14 +13,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.smartprocessrefusao.erprefusao.dto.SupplierReceiptReportDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportSupplierReceiptDTO;
 import com.smartprocessrefusao.erprefusao.dto.SupplierReceiptDTO;
 import com.smartprocessrefusao.erprefusao.entities.Input;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.entities.SupplierReceipt;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeCosts;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
-import com.smartprocessrefusao.erprefusao.projections.SupplierReceiptReportProjection;
+import com.smartprocessrefusao.erprefusao.projections.SupplierReceiptProjection;
 import com.smartprocessrefusao.erprefusao.repositories.InputRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
 import com.smartprocessrefusao.erprefusao.repositories.SupplierReceiptRepository;
@@ -42,12 +42,12 @@ public class SupplierReceiptService {
 	private PartnerRepository partnerRepository;
 
 	@Transactional(readOnly = true)
-	public Page<SupplierReceiptReportDTO> reportSupplierReceipt(Long inputId, Pageable pageable) {
+	public Page<ReportSupplierReceiptDTO> reportSupplierReceipt(Long inputId, Pageable pageable) {
 
-		Page<SupplierReceiptReportProjection> page = supplierReceiptRepository.searchSupplierReceiptByinputId(inputId,
+		Page<SupplierReceiptProjection> page = supplierReceiptRepository.searchSupplierReceiptByinputId(inputId,
 				pageable);
 
-		return page.map(SupplierReceiptReportDTO::new);
+		return page.map(ReportSupplierReceiptDTO::new);
 	}
 
 	@Transactional(readOnly = true)

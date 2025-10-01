@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.smartprocessrefusao.erprefusao.dto.PartnerDTO;
-import com.smartprocessrefusao.erprefusao.dto.PartnerReportDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportPartnerDTO;
 import com.smartprocessrefusao.erprefusao.services.PartnerService;
 
 import jakarta.validation.Valid;
@@ -41,10 +41,10 @@ public class PartnerResource {
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/report")
-	public ResponseEntity<Page<PartnerReportDTO>> getReportPartner(@RequestParam(required = false) String name,
+	public ResponseEntity<Page<ReportPartnerDTO>> getReportPartner(@RequestParam(required = false) String name,
 			@RequestParam(required = false) Long partnerId, Pageable pageable) {
 
-		Page<PartnerReportDTO> result = partnerService.reportPartner(name, partnerId, pageable);
+		Page<ReportPartnerDTO> result = partnerService.reportPartner(name, partnerId, pageable);
 		return ResponseEntity.ok(result);
 
 	}

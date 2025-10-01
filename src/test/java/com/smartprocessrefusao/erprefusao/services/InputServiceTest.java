@@ -26,7 +26,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.smartprocessrefusao.erprefusao.dto.InputDTO;
-import com.smartprocessrefusao.erprefusao.dto.InputReportDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportInputDTO;
 import com.smartprocessrefusao.erprefusao.entities.Input;
 import com.smartprocessrefusao.erprefusao.entities.MaterialGroup;
 import com.smartprocessrefusao.erprefusao.entities.TaxClassification;
@@ -92,7 +92,7 @@ public class InputServiceTest {
 		when(inputRepository.searchMaterialByNameOrGroup(Mockito.any(), Mockito.any(), Mockito.any()))
 				.thenReturn(page);
 
-		Page<InputReportDTO> result = inputService.reportInput("Perfil de processo", 1L, PageRequest.of(0, 10));
+		Page<ReportInputDTO> result = inputService.reportInput("Perfil de processo", 1L, PageRequest.of(0, 10));
 
 		Assertions.assertNotNull(result);
 	}

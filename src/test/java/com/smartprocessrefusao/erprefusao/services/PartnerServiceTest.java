@@ -29,7 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.smartprocessrefusao.erprefusao.dto.PartnerDTO;
-import com.smartprocessrefusao.erprefusao.dto.PartnerReportDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReportPartnerDTO;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.projections.PartnerReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
@@ -80,7 +80,7 @@ class PartnerServiceTest {
 		when(repository.searchPeopleNameByOrId(any(), any(), any())).thenReturn(page);
 
 		Pageable pageable = PageRequest.of(0, 10);
-		Page<PartnerReportDTO> result = service.reportPartner("JOÃO", 1L, pageable);
+		Page<ReportPartnerDTO> result = service.reportPartner("JOÃO", 1L, pageable);
 
 		assertNotNull(result);
 		assertEquals(1, result.getTotalElements());

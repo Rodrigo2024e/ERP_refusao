@@ -4,7 +4,7 @@ import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.enumerados.StateBrazil;
 import com.smartprocessrefusao.erprefusao.projections.PartnerReportProjection;
 
-public class PartnerReportDTO {
+public class ReportPartnerDTO {
 
 	private Long id;
 	private String name;
@@ -28,11 +28,11 @@ public class PartnerReportDTO {
     private String nameState; 
     private String country;   
     
-    public PartnerReportDTO() {
+    public ReportPartnerDTO() {
     	
     }
 
-	public PartnerReportDTO(Partner entity) {
+	public ReportPartnerDTO(Partner entity) {
 		id = entity.getId();
 		name = entity.getName();
 		cnpj = entity.getCnpj();
@@ -57,7 +57,7 @@ public class PartnerReportDTO {
 	    		
 	}
 
-	public PartnerReportDTO(PartnerReportProjection projection) {
+	public ReportPartnerDTO(PartnerReportProjection projection) {
 		this.id = projection.getId();
 		this.name = projection.getName();
 		this.cnpj = projection.getCnpj();

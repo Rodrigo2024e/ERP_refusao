@@ -10,15 +10,23 @@ import com.smartprocessrefusao.erprefusao.projections.TicketReportProjection;
 public class TicketFactory {
 
 	public static Ticket createTicket() {
-		return new Ticket(1001, LocalDate.of(2024, 9, 8), "ABC-1234", new BigDecimal("500.00"));
+		return new Ticket(34950, LocalDate.of(2024, 9, 8), "ABC-1234", new BigDecimal("10000.00"));
+	}
+	
+	public static Ticket createTicketProductDispatch() {
+		return new Ticket(35280, LocalDate.of(2024, 9, 8), "ABC-1234", new BigDecimal("10000.00"));
 	}
 
+	public static TicketDTO createNewTicketDTO() {
+		return new TicketDTO(34951, LocalDate.of(2024, 9, 8), "ABC-1234", new BigDecimal("500.00"));
+	}
+	
 	public static TicketDTO createTicketDTO() {
-		return new TicketDTO(1001, LocalDate.of(2024, 9, 8), "ABC-1234", new BigDecimal("500.00"));
+		return new TicketDTO(34950, LocalDate.of(2024, 9, 8), "ABC-1234", new BigDecimal("10000.00"));
 	}
 
 	public static TicketDTO createTicketNoExistis() {
-		return new TicketDTO(999, LocalDate.of(2024, 9, 8), "ABC-1234", new BigDecimal("500.00"));
+		return new TicketDTO(999, LocalDate.of(2024, 9, 8), "ABC-1234", new BigDecimal("10000.00"));
 	}
 	
 	public static TicketReportProjection createTicketProjection() {
@@ -26,7 +34,7 @@ public class TicketFactory {
 
 			@Override
 			public Integer getNumTicket() {
-				return 1001;
+				return 34950;
 			}
 
 			@Override
@@ -41,17 +49,17 @@ public class TicketFactory {
 
 			@Override
 			public Integer getNumTicketId() {
-				return 1001;
+				return 34950;
 			}
 
 			@Override
 			public Long getPartnerId() {
-				return 5L;
+				return 4L;
 			}
 
 			@Override
 			public String getNamePartner() {
-				return "Alunova";
+				return "Ecoalumi Alumínio S/A";
 			}
 
 			@Override
@@ -71,8 +79,7 @@ public class TicketFactory {
 
 			@Override
 			public String getNumberPlate() {
-				// TODO Auto-generated method stub
-				return null;
+				return "ABX-1200";
 			}
 
 		};
