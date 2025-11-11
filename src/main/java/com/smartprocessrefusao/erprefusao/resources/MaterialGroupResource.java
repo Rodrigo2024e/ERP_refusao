@@ -22,7 +22,7 @@ import com.smartprocessrefusao.erprefusao.services.MaterialGroupService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/matGroups")
+@RequestMapping(value = "/api/matGroups")
 public class MaterialGroupResource {
 
 	@Autowired

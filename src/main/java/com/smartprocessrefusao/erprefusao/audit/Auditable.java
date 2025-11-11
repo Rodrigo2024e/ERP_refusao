@@ -2,6 +2,7 @@ package com.smartprocessrefusao.erprefusao.audit;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,52 +20,69 @@ public abstract class Auditable<U> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@CreatedBy
-    @Column(name = "created_by", updatable = false)
-    protected U createdBy;
+	@Column(name = "created_by", updatable = false)
+	protected U createdBy;
 
-    @CreatedDate
-    @Column(name = "created_date", updatable = false)
-    protected LocalDateTime createdDate;
+	@CreatedDate
+	@Column(name = "created_date", updatable = false)
+	protected LocalDateTime createdDate;
 
-    @LastModifiedBy
-    @Column(name = "last_modified_by")
-    protected U lastModifiedBy;
+	@LastModifiedBy
+	@Column(name = "last_modified_by")
+	protected U lastModifiedBy;
 
-    @LastModifiedDate
-    @Column(name = "last_modified_date")
-    protected LocalDateTime lastModifiedDate;
+	@LastModifiedDate
+	@Column(name = "last_modified_date")
+	protected LocalDateTime lastModifiedDate;
 
-    // Getters e setters
+	
+	public U getCreatedBy() {
+		return createdBy;
+	}
 
-    public U getCreatedBy() {
-        return createdBy;
-    }
+	public void setCreatedBy(U createdBy) {
+		this.createdBy = createdBy;
+	}
 
-    public void setCreatedBy(U createdBy) {
-        this.createdBy = createdBy;
-    }
+	public LocalDateTime getCreatedDate() {
+		return createdDate;
+	}
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
+	public void setCreatedDate(LocalDateTime createdDate) {
+		this.createdDate = createdDate;
+	}
 
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
+	public U getLastModifiedBy() {
+		return lastModifiedBy;
+	}
 
-    public U getLastModifiedBy() {
-        return lastModifiedBy;
-    }
+	public void setLastModifiedBy(U lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
 
-    public void setLastModifiedBy(U lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-    }
+	public LocalDateTime getLastModifiedDate() {
+		return lastModifiedDate;
+	}
 
-    public LocalDateTime getLastModifiedDate() {
-        return lastModifiedDate;
-    }
+	public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
 
-    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Auditable<?> auditable = (Auditable<?>) o;
+		return Objects.equals(createdBy, auditable.createdBy) && Objects.equals(createdDate, auditable.createdDate)
+				&& Objects.equals(lastModifiedBy, auditable.lastModifiedBy)
+				&& Objects.equals(lastModifiedDate, auditable.lastModifiedDate);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(createdBy, createdDate, lastModifiedBy, lastModifiedDate);
+	}
 }

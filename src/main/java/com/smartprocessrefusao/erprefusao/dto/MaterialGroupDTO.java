@@ -25,6 +25,7 @@ public class MaterialGroupDTO {
 	public MaterialGroupDTO(MaterialGroup entity) {
 		id = entity.getId();
 		description = entity.getDescription();
+
 	}
 
 	public Long getId() {

@@ -43,17 +43,17 @@ public class ReportPartnerDTO {
 		supplier = entity.getSupplier();
 		client = entity.getClient();
 		active = entity.getActive();
-		id_address = entity.getAddress().getIdAddress();
+		id_address = entity.getAddress().getId();
 		street = entity.getAddress().getStreet();
-		numberAddress = entity.getAddress().getNumberAddress();
+		numberAddress = entity.getAddress().getNumber();
 		complement = entity.getAddress().getComplement();
 		neighborhood = entity.getAddress().getNeighborhood();
 		zipCode = entity.getAddress().getZipCode();
 		cityId = entity.getAddress().getCity().getId();
-		nameCity = entity.getAddress().getCity().getNameCity();
-		ufState = entity.getAddress().getCity().getUfState().getUf();
-	    nameState = entity.getAddress().getCity().getUfState().getNameState();
-	    country = entity.getAddress().getCity().getUfState().getCountry();
+		nameCity = entity.getAddress().getCity().getName();
+		ufState = entity.getAddress().getCity().getState().getUf();
+	    nameState = entity.getAddress().getCity().getState().getNameState();
+	    country = entity.getAddress().getCity().getState().getCountry();
 	    		
 	}
 

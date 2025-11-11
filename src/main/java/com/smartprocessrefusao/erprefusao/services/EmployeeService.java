@@ -10,14 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeDepartamentDTO;
 import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
-import com.smartprocessrefusao.erprefusao.entities.Sector;
-import com.smartprocessrefusao.erprefusao.projections.EmployeeSectorProjection;
+import com.smartprocessrefusao.erprefusao.entities.Departament;
+import com.smartprocessrefusao.erprefusao.projections.EmployeeDepartamentProjection;
 import com.smartprocessrefusao.erprefusao.projections.EmployeeReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
-import com.smartprocessrefusao.erprefusao.repositories.SectorRepository;
+import com.smartprocessrefusao.erprefusao.repositories.DepartamentRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
 
@@ -30,12 +30,13 @@ public class EmployeeService {
 	private EmployeeRepository employeeRepository;
 
 	@Autowired
-	private SectorRepository sectorRepository;
+	private DepartamentRepository departamentRepository;
 
 	@Transactional(readOnly = true)
-	public Page<EmployeeSectorDTO> reportEmployeeBySector(String name, Long sectorId, Pageable pageable) {
-		Page<EmployeeSectorProjection> page = employeeRepository.searchEmployeeBySector(name, sectorId, pageable);
-		return page.map(EmployeeSectorDTO::new);
+	public Page<EmployeeDepartamentDTO> reportEmployeeBySector(String name, Long sectorId, Pageable pageable) {
+		Page<EmployeeDepartamentProjection> page = employeeRepository.searchEmployeeByDepartament(name, sectorId,
+				pageable);
+		return page.map(EmployeeDepartamentDTO::new);
 	}
 
 	@Transactional(readOnly = true)
@@ -45,11 +46,11 @@ public class EmployeeService {
 	}
 
 	@Transactional(readOnly = true)
-	public EmployeeSectorDTO findById(Long id) {
+	public EmployeeDepartamentDTO findById(Long id) {
 		try {
 			Optional<Employee> obj = employeeRepository.findById(id);
 			Employee entity = obj.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
-			return new EmployeeSectorDTO(entity);
+			return new EmployeeDepartamentDTO(entity);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
 		}
@@ -57,20 +58,28 @@ public class EmployeeService {
 	}
 
 	@Transactional
-	public EmployeeSectorDTO insert(EmployeeSectorDTO dto) {
+	public EmployeeDepartamentDTO insert(EmployeeDepartamentDTO dto) {
+		if (employeeRepository.existsByEmail(dto.getEmail())) {
+			throw new IllegalArgumentException("E-mail já cadastrado!");
+		}
+
 		Employee entity = new Employee();
 		copyDtoToEntity(dto, entity);
 		entity = employeeRepository.save(entity);
-		return new EmployeeSectorDTO(entity);
+		return new EmployeeDepartamentDTO(entity);
 	}
 
 	@Transactional
-	public EmployeeSectorDTO update(Long id, EmployeeSectorDTO dto) {
+	public EmployeeDepartamentDTO update(Long id, EmployeeDepartamentDTO dto) {
+		if (employeeRepository.existsByEmail(dto.getEmail())) {
+			throw new IllegalArgumentException("E-mail já cadastrado!");
+		}
+
 		try {
 			Employee entity = employeeRepository.getReferenceById(id);
 			copyDtoToEntity(dto, entity);
 			entity = employeeRepository.save(entity);
-			return new EmployeeSectorDTO(entity);
+			return new EmployeeDepartamentDTO(entity);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
 		}
@@ -88,19 +97,17 @@ public class EmployeeService {
 		}
 	}
 
-	public void copyDtoToEntity(EmployeeSectorDTO dto, Employee entity) {
+	public void copyDtoToEntity(EmployeeDepartamentDTO dto, Employee entity) {
 		entity.setName(dto.getName().toUpperCase());
-		entity.setEmail(dto.getEmail().toUpperCase());
+		entity.setEmail(dto.getEmail().toLowerCase());
 		entity.setCellPhone(dto.getCellPhone());
 		entity.setTelephone(dto.getTelephone());
 		entity.setCpf(dto.getCpf());
-		entity.setRg(dto.getRg());
-		entity.setSysUser(dto.isSysUser());
 
-		Optional.ofNullable(dto.getSectorId()).ifPresent(id -> {
-			Sector sector = sectorRepository.findById(id)
+		Optional.ofNullable(dto.getDepartamentId()).ifPresent(id -> {
+			Departament departament = departamentRepository.findById(id)
 					.orElseThrow(() -> new ResourceNotFoundException("Setor não encontrado"));
-			entity.setSector(sector);
+			entity.setDepartament(departament);
 		});
 
 	}

@@ -22,7 +22,7 @@ import com.smartprocessrefusao.erprefusao.services.UnitService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/units")
+@RequestMapping(value = "/api/units")
 public class UnitResource {
 
 	@Autowired

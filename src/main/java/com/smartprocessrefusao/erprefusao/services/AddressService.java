@@ -39,11 +39,17 @@ public class AddressService {
     
 
     @Transactional(readOnly = true)
-    public Page<AddressDTO> searchAddresses(String nameCity, Long addressId, Pageable pageable) {
-        Page<AddressProjection> result = addressRepository.searchAddressesByCityNameOrId(nameCity, addressId, pageable);
+    public Page<AddressDTO> searchAddresses(String city, Long addressId, Pageable pageable) {
+        Page<AddressProjection> result = addressRepository.searchAddressesByCityNameOrId(city, addressId, pageable);
         return result.map(AddressDTO::new);
     }
 
+	@Transactional(readOnly = true)
+	public AddressDTO findById(Long id) {
+		Optional<Address> obj = addressRepository.findById(id);
+		Address entity = obj.orElseThrow(() -> new ResourceNotFoundException("Id not found " + id));
+		return new AddressDTO(entity);
+	}
     
     @Transactional
     public AddressDTO insert(AddressDTO dto) {
@@ -81,7 +87,7 @@ public class AddressService {
     
     private void copyDtoToEntity(AddressDTO dto, Address entity) {
         entity.setStreet(dto.getStreet().toUpperCase());
-        entity.setNumberAddress(dto.getNumberAddress());
+        entity.setNumber(dto.getNumber());
         entity.setComplement(dto.getComplement().toUpperCase());
         entity.setNeighborhood(dto.getNeighborhood().toUpperCase());
         entity.setZipCode(dto.getZipCode());

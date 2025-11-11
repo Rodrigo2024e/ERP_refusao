@@ -10,9 +10,9 @@ import com.smartprocessrefusao.erprefusao.entities.Address;
 
 	    public static Address createAddress() {
 	        Address address = new Address();
-	        address.setIdAddress(1L);
+	        address.setId(1L);
 	        address.setStreet("RUA A");
-	        address.setNumberAddress(123);
+	        address.setNumber(123);
 	        address.setComplement("CASA");
 	        address.setNeighborhood("CENTRO");
 	        address.setZipCode("12345-678");

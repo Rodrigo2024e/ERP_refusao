@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.smartprocessrefusao.erprefusao.audit.Auditable;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,8 +30,7 @@ public class User extends Auditable<String> implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(unique = true)
-	private String email;
+	private String username;
 	private String password;
 
 	@OneToOne
@@ -46,10 +44,10 @@ public class User extends Auditable<String> implements UserDetails {
 	public User() {
 	}
 
-	public User(Long id, String email, String password, Employee employee) {
+	public User(Long id, String username, String password, Employee employee) {
 		super();
 		this.id = id;
-		this.email = email;
+		this.username = username;
 		this.password = password;
 		this.employee = employee;
 
@@ -63,12 +61,8 @@ public class User extends Auditable<String> implements UserDetails {
 		this.id = id;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getPassword() {
@@ -90,6 +84,7 @@ public class User extends Auditable<String> implements UserDetails {
 	public void addRole(Role role) {
 		roles.add(role);
 	}
+
 
 	public boolean hasRole(String roleName) {
 		for (Role role : roles) {
@@ -126,9 +121,8 @@ public class User extends Auditable<String> implements UserDetails {
 		return roles;
 	}
 
-	@Override
 	public String getUsername() {
-		return email;
+		return username;
 	}
 
 	@Override

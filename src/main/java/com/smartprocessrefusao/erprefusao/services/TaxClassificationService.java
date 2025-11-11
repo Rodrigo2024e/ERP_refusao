@@ -75,7 +75,7 @@ public class TaxClassificationService {
 
 	public void copyDtoToEntity(TaxClassificationDTO dto, TaxClassification entity) {
 		entity.setDescription(dto.getDescription().toUpperCase());
-		entity.setNumber(dto.getNumber());
+		entity.setNcmCode(dto.getNcmCode());
 
 	}
 }

@@ -2,36 +2,43 @@ package com.smartprocessrefusao.erprefusao.entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 import com.smartprocessrefusao.erprefusao.audit.Auditable;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_ticket")
-public class Ticket extends Auditable<String> {
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Ticket extends Auditable<String> {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	private Integer numTicket;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@Column(unique = true)
+	private Long numTicket;
+
 	private LocalDate dateTicket;
 	private String numberPlate;
-	private BigDecimal netWeight;
 
-	@OneToMany(mappedBy = "numTicket")
-	private Set<ScrapReceipt> scrapReceipts = new HashSet<>();
+	private BigDecimal netWeight;
 
 	public Ticket() {
 
 	}
 
-	public Ticket(Integer numTicket,  LocalDate dateTicket, String numberPlate, BigDecimal netWeight) {
+	public Ticket(Long id, Long numTicket, LocalDate dateTicket, String numberPlate, BigDecimal netWeight) {
+		this.id = id;
 		this.numTicket = numTicket;
 		this.dateTicket = dateTicket;
 		this.numberPlate = numberPlate;
@@ -39,14 +46,21 @@ public class Ticket extends Auditable<String> {
 
 	}
 
-	public Integer getNumTicket() {
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getNumTicket() {
 		return numTicket;
 	}
 
-	public void setNumTicket(Integer numTicket) {
+	public void setNumTicket(Long numTicket) {
 		this.numTicket = numTicket;
 	}
-
 
 	public LocalDate getDateTicket() {
 		return dateTicket;
@@ -72,25 +86,24 @@ public class Ticket extends Auditable<String> {
 		this.netWeight = netWeight;
 	}
 
-	public Set<ScrapReceipt> getScrapReceipts() {
-		return scrapReceipts;
-	}
-
 	@Override
 	public int hashCode() {
-		return Objects.hash(numTicket);
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(id, numTicket);
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		Ticket other = (Ticket) obj;
-		return Objects.equals(numTicket, other.numTicket);
+		return Objects.equals(id, other.id) && Objects.equals(numTicket, other.numTicket);
 	}
 
 }

@@ -53,7 +53,7 @@ public class UserResourceIT {
 
 		existingId = 1L;
 
-		dto = new UserDTO(null, "alunova@alunova.com.br", (long) 1, "João Carlos");
+		dto = new UserDTO(null, "nomeUsuario", (long) 1, "João Carlos");
 
 		clientUsername = "michele@alunova.com";
 		clientPassword = "123456";
@@ -68,7 +68,7 @@ public class UserResourceIT {
 	@Test
 	public void insertShouldReturn401WhenInvalidToken() throws Exception {
 
-		UserDTO dto = new UserDTO(null, "alunova@alunova.com.br", (long) 1, "João Carlos");
+		UserDTO dto = new UserDTO(null, "nomeUsuario", (long) 1, "João Carlos");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/users").header("Authorization", "Bearer " + invalidToken)
@@ -81,7 +81,7 @@ public class UserResourceIT {
 	@Test
 	public void insertShouldReturn403WhenClientLogged() throws Exception {
 
-		UserDTO dto = new UserDTO(null, "alunova@alunova.com.br", (long) 1, "João Carlos");
+		UserDTO dto = new UserDTO(null, "nomeUsuario", (long) 1, "João Carlos");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/users").header("Authorization", "Bearer " + clientToken)
@@ -137,7 +137,7 @@ public class UserResourceIT {
 	// 6 - AdminLoggedAndBlankEmail
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndBlankEmail() throws Exception {
-		UserDTO dto = new UserDTO(null, "", (long) 1, "João Carlos");
+		UserDTO dto = new UserDTO(null, "nomeUsuario", (long) 1, "João Carlos");
 
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
@@ -153,7 +153,7 @@ public class UserResourceIT {
 	// 7 - AdminLoggedAndInvalidDescriptionUser
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndInvalidDescription() throws Exception {
-		UserDTO dto = new UserDTO(null, "alunova.lunova.com.br", (long) 1, "João Carlos");
+		UserDTO dto = new UserDTO(null, "nomeUsuario", (long) 1, "João Carlos");
 
 		String jsonBody = objectMapper.writeValueAsString(dto);
 

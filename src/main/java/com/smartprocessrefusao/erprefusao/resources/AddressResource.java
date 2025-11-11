@@ -23,45 +23,50 @@ import com.smartprocessrefusao.erprefusao.services.AddressService;
 
 import jakarta.validation.Valid;
 
-@RestController 
-@RequestMapping(value = "/addresses") 
+@RestController
+@RequestMapping(value = "/api/addresses")
 public class AddressResource {
 
-    @Autowired
-    private AddressService addressService;
+	@Autowired
+	private AddressService addressService;
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
-    @GetMapping(value = "/search")
-    public ResponseEntity<Page<AddressDTO>> searchAddresses(
-            @RequestParam(required = false) String nameCity,
-            @RequestParam(required = false) Long addressId,
-            Pageable pageable) {
-        Page<AddressDTO> page = addressService.searchAddresses(nameCity, addressId, pageable);
-        return ResponseEntity.ok(page);
-    }
-   
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @PostMapping
-    public ResponseEntity<AddressDTO> insert(@Valid @RequestBody AddressDTO dto) {
-      
-        AddressDTO newDto = addressService.insert(dto);
-   
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(newDto.getIdAddress()).toUri();
-        return ResponseEntity.created(uri).body(newDto);
-    }
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @PutMapping(value = "/{id}")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+	@GetMapping(value = "/search")
+	public ResponseEntity<Page<AddressDTO>> searchAddresses(@RequestParam(required = false) String city,
+			@RequestParam(required = false) Long addressId, Pageable pageable) {
+		Page<AddressDTO> page = addressService.searchAddresses(city, addressId, pageable);
+		return ResponseEntity.ok(page);
+	}
+
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+	@GetMapping(value = "/{id}")
+	public ResponseEntity<AddressDTO> findById(@PathVariable Long id) {
+		AddressDTO dto = addressService.findById(id);
+		return ResponseEntity.ok().body(dto);
+	}
+
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@PostMapping
+	public ResponseEntity<AddressDTO> insert(@Valid @RequestBody AddressDTO dto) {
+
+		AddressDTO newDto = addressService.insert(dto);
+
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newDto.getId()).toUri();
+		return ResponseEntity.created(uri).body(newDto);
+	}
+
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@PutMapping(value = "/{id}")
 	public ResponseEntity<AddressDTO> update(@PathVariable Long id, @Valid @RequestBody AddressDTO dto) {
 		dto = addressService.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}
-    
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @DeleteMapping(value = "/{id}")
+
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
-    	addressService.delete(id);
+		addressService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-	
+
 }

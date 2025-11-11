@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeDepartamentDTO;
 import com.smartprocessrefusao.erprefusao.tests.EmployeeFactory.Factory;
 import com.smartprocessrefusao.erprefusao.tests.TokenUtil;
 
@@ -58,9 +58,8 @@ public class EmployeeResourceIT {
 	@Test
 	public void insertShouldReturn401WhenInvalidToken() throws Exception {
 
-		EmployeeSectorDTO dto = new EmployeeSectorDTO(null, "Giovana Gonçalves", "giovana@alunova.com", "44-99737-8851",
-				"44-1000-1001", "520.123.255-49", "20.513.347.42", true, (long) 11, "Administração",
-				"Balança Rodoviária");
+		EmployeeDepartamentDTO dto = new EmployeeDepartamentDTO(null, "Giovana Gonçalves", "giovana@alunova.com", "44-99737-8851",
+				"44-1000-1001", "520.123.255-49", (long) 11, "Administração", "Balança Rodoviária");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/employees").header("Authorization", "Bearer " + invalidToken)
@@ -73,17 +72,16 @@ public class EmployeeResourceIT {
 	@Test
 	public void insertShouldReturn403WhenClientLogged() throws Exception {
 
-		EmployeeSectorDTO dto = new EmployeeSectorDTO(null, "Giovana Gonçalves", "giovana@alunova.com", "44-99737-8851",
-				"44-1000-1001", "198.149.318-29", "20.513.347.42", true, (long) 11, "Administração",
+		EmployeeDepartamentDTO dto = new EmployeeDepartamentDTO(null, "Giovana Gonçalves", "giovana@alunova.com", "44-99737-8851",
+				"44-1000-1001", "198.149.318-29", (long) 11, "Administração",
 				"Balança Rodoviária");
 		String jsonBody = objectMapper.writeValueAsString(dto);
-		
 
 		ResultActions result = mockMvc.perform(post("/employees").header("Authorization", "Bearer " + clientToken)
 				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
-			
+
 		result.andExpect(status().isForbidden());
-		
+
 	}
 
 	// 3 - SortedByNameEmployee
@@ -111,7 +109,7 @@ public class EmployeeResourceIT {
 	// 5 - AdminLoggedAndCorrectData
 	@Test
 	public void insertShouldReturnCreatedWhenAdminInsertValidData() throws Exception {
-		EmployeeSectorDTO dto = Factory.createEmployeeDTO();
+		EmployeeDepartamentDTO dto = Factory.createEmployeeDTO();
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		mockMvc.perform(post("/employees").header("Authorization", "Bearer " + adminToken).content(jsonBody)
@@ -122,7 +120,7 @@ public class EmployeeResourceIT {
 	// 6 - ForbiddenWhenClientTriesToInsert
 	@Test
 	public void insertShouldReturnForbiddenWhenClientTriesToInsert() throws Exception {
-		EmployeeSectorDTO dto = Factory.createEmployeeDTO();
+		EmployeeDepartamentDTO dto = Factory.createEmployeeDTO();
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		System.out.println("==== JSON enviado ====");
@@ -141,8 +139,8 @@ public class EmployeeResourceIT {
 	// 7 - AdminLoggedAndInvalidName
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndInvalidName() throws Exception {
-		EmployeeSectorDTO dto = new EmployeeSectorDTO(null, "Jo", "jonathas@alunova.com", "44-12345-7652",
-				"01-1000-1000", "058.651.619-03", "20.533.347-45", true, 12L, "Administração", "Comercial");
+		EmployeeDepartamentDTO dto = new EmployeeDepartamentDTO(null, "Jo", "jonathas@alunova.com", "44-12345-7652",
+				"01-1000-1000", "058.651.619-03", 12L, "Administração", "Comercial");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/employees").header("Authorization", "Bearer " + adminToken)
@@ -157,8 +155,8 @@ public class EmployeeResourceIT {
 	// 8 - AdminLoggedAndInvalidEmail
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndInvalidEmail() throws Exception {
-		EmployeeSectorDTO dto = new EmployeeSectorDTO(null, "Jonathas Junio", "jonathas@", "44-12345-7652",
-				"01-1000-1000", "058.651.619-03", "20.533.347-45", true, 12L, "Administração", "Comercial");
+		EmployeeDepartamentDTO dto = new EmployeeDepartamentDTO(null, "Jonathas Junio", "jonathas@", "44-12345-7652",
+				"01-1000-1000", "058.651.619-03", 12L, "Administração", "Comercial");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/employees").header("Authorization", "Bearer " + adminToken)
@@ -173,8 +171,8 @@ public class EmployeeResourceIT {
 	// 9 - AdminLoggedAndInvalidCellPhone
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndInvalidCellPhone() throws Exception {
-		EmployeeSectorDTO dto = new EmployeeSectorDTO(null, "Jonathas Junio", "jonathas@alunova.com", "44-2345-7652",
-				"01-1000-1000", "058.651.619-03", "20.533.347-45", true, 12L, "Administração", "Comercial");
+		EmployeeDepartamentDTO dto = new EmployeeDepartamentDTO(null, "Jonathas Junio", "jonathas@alunova.com", "44-2345-7652",
+				"01-1000-1000", "058.651.619-03", 12L, "Administração", "Comercial");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/employees").header("Authorization", "Bearer " + adminToken)
@@ -189,8 +187,8 @@ public class EmployeeResourceIT {
 	// 10 - AdminLoggedAndInvalidTelephone
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndInvalidTelephone() throws Exception {
-		EmployeeSectorDTO dto = new EmployeeSectorDTO(null, "Jonathas Junio", "jonathas@alunova.com", "44-12345-7652",
-				"01-000-1000", "058.651.619-03", "20.533.347-45", true, 12L, "Administração", "Comercial");
+		EmployeeDepartamentDTO dto = new EmployeeDepartamentDTO(null, "Jonathas Junio", "jonathas@alunova.com", "44-12345-7652",
+				"01-000-1000", "058.651.619-03", 12L, "Administração", "Comercial");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/employees").header("Authorization", "Bearer " + adminToken)
@@ -205,8 +203,8 @@ public class EmployeeResourceIT {
 	// 11 - AdminLoggedAndInvalidCpf
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndInvalidCpf() throws Exception {
-		EmployeeSectorDTO dto = new EmployeeSectorDTO(null, "Jonathas Junio", "jonathas@alunova.com", "44-12345-7652",
-				"01-1000-1000", "058.651.619", "20.533.347-45", true, 12L, "Administração", "Comercial");
+		EmployeeDepartamentDTO dto = new EmployeeDepartamentDTO(null, "Jonathas Junio", "jonathas@alunova.com", "44-12345-7652",
+				"01-1000-1000", "058.651.619", 12L, "Administração", "Comercial");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/employees").header("Authorization", "Bearer " + adminToken)
@@ -214,16 +212,17 @@ public class EmployeeResourceIT {
 
 		result.andExpect(status().isUnprocessableEntity());
 		result.andExpect(jsonPath("$.errors[0].fieldName").value("cpf"));
-		result.andExpect(jsonPath("$.errors[0].message").value("invalid Brazilian individual taxpayer registry number (CPF)"));
+		result.andExpect(
+				jsonPath("$.errors[0].message").value("invalid Brazilian individual taxpayer registry number (CPF)"));
 
 	}
 
 	// 12 - AdminLoggedAndBlankRg
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndBlankRg() throws Exception {
-		
-		EmployeeSectorDTO dto = new EmployeeSectorDTO(null, "Jonathas Junio", "jonathas@alunova.com", "44-12345-7652",
-				"01-1000-1000", "058.651.619-03", "", true, 12L, "Administração", "Comercial");
+
+		EmployeeDepartamentDTO dto = new EmployeeDepartamentDTO(null, "Jonathas Junio", "jonathas@alunova.com", "44-12345-7652",
+				"01-1000-1000", "058.651.619-03", 12L, "Administração", "Comercial");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/employees").header("Authorization", "Bearer " + adminToken)
@@ -238,8 +237,8 @@ public class EmployeeResourceIT {
 	// 13 - AdminLoggedAndIsUser
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndIsUser() throws Exception {
-		EmployeeSectorDTO dto = new EmployeeSectorDTO(null, "JONATHAS JUNIO", "jonathas@alunova.com", "44-12345-7652",
-				"01-1000-1000", "058.651.619-03", "20.533.347-45", null, 12L, "Administração", "Comercial");
+		EmployeeDepartamentDTO dto = new EmployeeDepartamentDTO(null, "JONATHAS JUNIO", "jonathas@alunova.com", "44-12345-7652",
+				"01-1000-1000", "058.651.619-03", 12L, "Administração", "Comercial");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/employees").header("Authorization", "Bearer " + adminToken)
@@ -254,8 +253,8 @@ public class EmployeeResourceIT {
 	// 14 - AdminLoggedAndNullSector
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndNullSector() throws Exception {
-		EmployeeSectorDTO dto = new EmployeeSectorDTO(null, "Jonathas Junio", "jonathas@alunova.com", "44-12345-7652",
-				"01-1000-1000", "058.651.619-03", "20.533.347-45", true, null, "Administração", "Comercial");
+		EmployeeDepartamentDTO dto = new EmployeeDepartamentDTO(null, "Jonathas Junio", "jonathas@alunova.com", "44-12345-7652",
+				"01-1000-1000", "058.651.619-03", null, "Administração", "Comercial");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/employees").header("Authorization", "Bearer " + adminToken)
@@ -280,11 +279,13 @@ public class EmployeeResourceIT {
 	// 16 - SectorShouldReturnOkForAdminAndUser
 	@Test
 	public void reportBySectorShouldReturnOkForAdminAndUser() throws Exception {
-		mockMvc.perform(get("/employees").header("Authorization", "Bearer " + adminToken)
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+		mockMvc.perform(
+				get("/employees").header("Authorization", "Bearer " + adminToken).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
 
-		mockMvc.perform(get("/employees").header("Authorization", "Bearer " + adminToken)
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+		mockMvc.perform(
+				get("/employees").header("Authorization", "Bearer " + adminToken).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
 	}
 
 }

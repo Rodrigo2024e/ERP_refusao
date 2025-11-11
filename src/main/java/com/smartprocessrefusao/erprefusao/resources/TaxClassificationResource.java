@@ -22,7 +22,7 @@ import com.smartprocessrefusao.erprefusao.services.TaxClassificationService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/taxclass")
+@RequestMapping(value = "/api/taxclass")
 public class TaxClassificationResource {
 
 	@Autowired

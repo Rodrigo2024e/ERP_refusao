@@ -9,7 +9,7 @@ public class TaxClassificationFactory {
 		TaxClassification tax = new TaxClassification();
 		tax.setId(1L);
 		tax.setDescription("TARUGO DE ALUMÍNIO");
-		tax.setNumber(7604000);
+		tax.setNcmCode(7604000);
 		return tax;
 	}
 	

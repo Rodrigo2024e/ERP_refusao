@@ -1,20 +1,20 @@
 package com.smartprocessrefusao.erprefusao.tests;
 
-import com.smartprocessrefusao.erprefusao.dto.SectorDTO;
-import com.smartprocessrefusao.erprefusao.entities.Sector;
+import com.smartprocessrefusao.erprefusao.dto.DepartamentDTO;
+import com.smartprocessrefusao.erprefusao.entities.Departament;
 
 public class SectorFactory {
 
-	public static Sector createSector() {
-		Sector sector = new Sector();
+	public static Departament createSector() {
+		Departament sector = new Departament();
 		sector.setId(1L);
-		sector.setNameSector("PRODUÇÃO");
+		sector.setName("PRODUÇÃO");
 		sector.setProcess("Corte de tarugos");
 		return sector;
 	}
 
-	public static SectorDTO createSectorDTO() {
-		return new SectorDTO(createSector());
+	public static DepartamentDTO createSectorDTO() {
+		return new DepartamentDTO(createSector());
 	}
 
 }

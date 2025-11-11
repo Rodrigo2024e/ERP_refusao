@@ -1,15 +1,15 @@
 package com.smartprocessrefusao.erprefusao.projections;
 
 public interface AddressProjection {
-	    Long getIdAddress();
+	    Long getId();
 	    String getStreet();
-	    Integer getNumberAddress();
+	    Integer getNumber();
 	    String getComplement();
 	    String getNeighborhood();
 	    String getZipCode();
 	    Long getCityId();
-	    String getNameCity();
-	    String getUfState();
+	    String getName();
+	    String getState();
 	    Long getPeopleId();
 }
 

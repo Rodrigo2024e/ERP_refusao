@@ -26,7 +26,7 @@ public class CityService {
 
 	@Transactional(readOnly = true)
 	public List<CityDTO> findAll() {
-		List<City> list = cityRepository.findAllByOrderByNameCityAsc();
+		List<City> list = cityRepository.findAllByOrderByNameAsc();
 		return list.stream().map(CityDTO::new).toList();
 	}
 
@@ -71,13 +71,13 @@ public class CityService {
 	}
 
 	public void copyDtoToEntity(CityDTO dto, City entity) {
-		entity.setNameCity(dto.getNameCity().toUpperCase());
+		entity.setName(dto.getName().toUpperCase());
 
 		try {
-			StateBrazil state = StateBrazil.fromUf(dto.getUfState());
-			entity.setUfState(state);
+			StateBrazil state = StateBrazil.fromUf(dto.getState());
+			entity.setState(state);
 		} catch (IllegalArgumentException e) {
-			throw new ResourceNotFoundException("UF inválida: " + dto.getUfState());
+			throw new ResourceNotFoundException("UF inválida: " + dto.getState());
 		}
 	}
 

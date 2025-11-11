@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.dto.RoleDTO;
@@ -70,8 +69,13 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public UserDTO insert(UserInsertDTO dto) {
+		if (repository.existsByUsername(dto.getUsername())) {
+			throw new IllegalArgumentException("Usuário já cadastrado!");
+		}
+
 		User entity = new User();
 		copyDtoToEntity(dto, entity);
+		entity.setUsername(dto.getUsername());
 		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
 		entity = repository.save(entity);
 		return new UserDTO(entity);
@@ -79,9 +83,14 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public UserDTO update(Long id, UserUpdateDTO dto) {
+		if (repository.existsByUsername(dto.getUsername())) {
+			throw new IllegalArgumentException("Usuário já cadastrado!");
+		}
+		
 		try {
 			User entity = repository.getReferenceById(id);
 			copyDtoToEntity(dto, entity);
+			entity.setUsername(dto.getUsername());
 			entity = repository.save(entity);
 			return new UserDTO(entity);
 		} catch (EntityNotFoundException e) {
@@ -89,20 +98,23 @@ public class UserService implements UserDetailsService {
 		}
 	}
 
-	@Transactional(propagation = Propagation.SUPPORTS)
+	@Transactional
 	public void delete(Long id) {
-		if (!repository.existsById(id)) {
-			throw new ResourceNotFoundException("Id not found " + id);
+		User entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Id not found " + id));
+
+		if (entity.getEmployee() != null) {
+			entity.getEmployee().setUser(null);
+			entity.setEmployee(null);
 		}
+
 		try {
-			repository.deleteById(id);
+			repository.delete(entity);
 		} catch (DataIntegrityViolationException e) {
 			throw new DatabaseException("Integrity violation");
 		}
 	}
 
 	private void copyDtoToEntity(UserDTO dto, User entity) {
-		entity.setEmail(dto.getEmail().toUpperCase());
 
 		Optional.ofNullable(dto.getEmployee_id()).ifPresent(id -> {
 			Employee employee = employeeRepository.findById(id)
@@ -120,13 +132,13 @@ public class UserService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-		List<UserDetailsProjection> result = repository.searchUserAndRolesByEmail(username);
+		List<UserDetailsProjection> result = repository.searchUserAndRolesByUsername(username);
 		if (result.size() == 0) {
-			throw new UsernameNotFoundException("Email not found");
+			throw new UsernameNotFoundException("Username not found");
 		}
 
 		User user = new User();
-		user.setEmail(result.get(0).getUsername());
+		user.setUsername(result.get(0).getUsername());
 		user.setPassword(result.get(0).getPassword());
 		for (UserDetailsProjection projection : result) {
 			user.addRole(new Role(projection.getRoleId(), projection.getAuthority()));
@@ -138,7 +150,7 @@ public class UserService implements UserDetailsService {
 	protected User authenticated() {
 		try {
 			String username = customUserUtil.getLoggedUsername();
-			return repository.findByEmail(username).get();
+			return repository.findByUsername(username).get();
 		} catch (Exception e) {
 			throw new UsernameNotFoundException("Invalid user");
 		}

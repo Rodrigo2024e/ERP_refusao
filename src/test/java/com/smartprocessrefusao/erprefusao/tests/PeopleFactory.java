@@ -1,6 +1,6 @@
 package com.smartprocessrefusao.erprefusao.tests;
 
-import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeDepartamentDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.People;
 
@@ -13,13 +13,13 @@ public class PeopleFactory {
 	        return people;
 	    }
 
-	   public static EmployeeSectorDTO createPeopleDTOWithInvalidSectorId() {
+	   public static EmployeeDepartamentDTO createPeopleDTOWithInvalidSectorId() {
 		    People people = new Employee();
 		    people.setId(1L);
 		    people.setName("João da Silva");
 		    people.setEmail("joao@email.com");
 
-		    return new EmployeeSectorDTO();
+		    return new EmployeeDepartamentDTO();
 		} 
 
 

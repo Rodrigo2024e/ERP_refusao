@@ -1,10 +1,12 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import com.smartprocessrefusao.erprefusao.projections.IdProjection;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -20,24 +22,23 @@ public class Partner extends People implements IdProjection<Long> {
 	private Boolean client;
 	private Boolean active;
 
-	@OneToMany(mappedBy = "partner")
-	private Set<ScrapReceipt> scrapReceipts = new HashSet<>();
+	@OneToMany(mappedBy = "id.partner", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ReceiptItem> receiptItems = new ArrayList<>();
 
-	@OneToMany(mappedBy = "partner")
-	private Set<SupplierReceipt> supplierReceipts = new HashSet<>();
 
 	public Partner() {
 
 	}
 
-	public Partner(Long id, String people, String email, String cellPhone, String telephone, Address address,
-			String cnpj, String ie, Boolean supplier, Boolean client, Boolean active) {
-		super(id, people, email, cellPhone, telephone, address);
+	public Partner(Long id, String name, String email, String cellPhone, String telephone, Address address, String cnpj,
+			String ie, Boolean supplier, Boolean client, Boolean active) {
+		super(id, name, email, cellPhone, telephone, address);
 		this.cnpj = cnpj;
 		this.ie = ie;
 		this.supplier = supplier;
 		this.client = client;
 		this.active = active;
+
 	}
 
 	public String getCnpj() {
@@ -80,12 +81,28 @@ public class Partner extends People implements IdProjection<Long> {
 		this.active = active;
 	}
 
-	public Set<ScrapReceipt> getScrapReceipts() {
-		return scrapReceipts;
+	public List<ReceiptItem> getReceiptItems() {
+		return receiptItems;
 	}
 
-	public Set<SupplierReceipt> getSupplierReceipts() {
-		return supplierReceipts;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(cnpj);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Partner other = (Partner) obj;
+		return Objects.equals(cnpj, other.cnpj);
 	}
 
 }

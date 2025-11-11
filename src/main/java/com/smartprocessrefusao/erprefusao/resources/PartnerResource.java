@@ -26,7 +26,7 @@ import com.smartprocessrefusao.erprefusao.services.PartnerService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/partners")
+@RequestMapping(value = "/api/partners")
 public class PartnerResource {
 
 	@Autowired

@@ -1,6 +1,7 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import com.smartprocessrefusao.erprefusao.audit.Auditable;
@@ -28,11 +29,11 @@ public class City extends Auditable<String> implements IdProjection<Long> {
 	private Long id;
 
 	@Column(nullable = false)
-	private String nameCity;
+	private String name;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private StateBrazil ufState;
+	private StateBrazil state;
 
 	@OneToMany(mappedBy = "city")
 	Set<Address> addresses = new HashSet<>();
@@ -41,10 +42,10 @@ public class City extends Auditable<String> implements IdProjection<Long> {
 
 	}
 
-	public City(Long id, String nameCity, StateBrazil ufState) {
+	public City(Long id, String name, StateBrazil state) {
 		this.id = id;
-		this.nameCity = nameCity;
-		this.ufState = ufState;
+		this.name = name;
+		this.state = state;
 	}
 
 	public Long getId() {
@@ -55,24 +56,44 @@ public class City extends Auditable<String> implements IdProjection<Long> {
 		this.id = id;
 	}
 
-	public String getNameCity() {
-		return nameCity;
+	public String getName() {
+		return name;
 	}
 
-	public void setNameCity(String nameCity) {
-		this.nameCity = nameCity;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public StateBrazil getUfState() {
-		return ufState;
+	public StateBrazil getState() {
+		return state;
 	}
 
-	public void setUfState(StateBrazil ufState) {
-		this.ufState = ufState;
+	public void setState(StateBrazil state) {
+		this.state = state;
 	}
 
 	public Set<Address> getAddresses() {
 		return addresses;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(id);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		City other = (City) obj;
+		return Objects.equals(id, other.id);
 	}
 
 }

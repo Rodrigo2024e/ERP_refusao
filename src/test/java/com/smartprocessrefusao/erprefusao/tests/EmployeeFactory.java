@@ -1,30 +1,30 @@
 package com.smartprocessrefusao.erprefusao.tests;
 
-import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeDepartamentDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
-import com.smartprocessrefusao.erprefusao.entities.Sector;
+import com.smartprocessrefusao.erprefusao.entities.Departament;
 import com.smartprocessrefusao.erprefusao.projections.EmployeeReportProjection;
 
 public class EmployeeFactory {
 
 	public class Factory {
 
-		public static Sector createSector() {
-			Sector sector = new Sector();
-			sector.setId(1L);
-			sector.setNameSector("PRODUÇÃO");
-			return sector;
+		public static Departament createSector() {
+			Departament departament = new Departament();
+			departament.setId(1L);
+			departament.setName("PRODUÇÃO");
+			return departament;
 		}
 
 		public static Employee createEmployee() {
 			Employee employee = new Employee(1L, "JONATHAS JUNIO", "jonathas@gmail.com", "44-12345-7652",
-					"00-0000-0000", null, "123.456.789-00", "MG-12.345.678", true, null, createSector());
+					"00-0000-0000", null, "123.456.789-00", null, createSector());
 			return employee;
 		}
 
-		public static EmployeeSectorDTO createEmployeeDTO() {
-			return new EmployeeSectorDTO(null, "JONATHAS JUNIO", "jonathas@alunova.com", "44-12345-7652",
-					"01-1000-1000", "058.651.619-03", "20.533.347-45", true, 12L, "Administração", "Comercial");
+		public static EmployeeDepartamentDTO createEmployeeDTO() {
+			return new EmployeeDepartamentDTO(null, "JONATHAS JUNIO", "jonathas@alunova.com", "44-12345-7652",
+					"01-1000-1000", "058.651.619-03", 12L, "Administração", "Comercial");
 		}
 	}
 
@@ -39,7 +39,7 @@ public class EmployeeFactory {
 		return new EmployeeReportProjection() {
 
 			@Override
-			public Long getIdPessoa() {
+			public Long getId() {
 				return 1L;
 			}
 
@@ -79,12 +79,12 @@ public class EmployeeFactory {
 			}
 
 			@Override
-			public Long getSectorId() {
+			public Long getDepartamentId() {
 				return 12L;
 			}
 
 			@Override
-			public String getNameSector() {
+			public String getDepartament() {
 				return "Administração";
 			}
 
@@ -129,12 +129,12 @@ public class EmployeeFactory {
 			}
 
 			@Override
-			public String getNameCity() {
+			public String getCity() {
 				return "MARINGÁ";
 			}
 
 			@Override
-			public String getUfState() {
+			public String getState() {
 				return "PR";
 			}
 

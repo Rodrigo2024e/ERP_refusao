@@ -13,22 +13,22 @@ public class TaxClassificationDTO {
 	private String description;
 	
 	@NotNull(message = "A numeração fiscal deve ser composta de 7 dígitos")
-	private Integer number;
+	private Integer ncmCode;
 	
 	public TaxClassificationDTO() {
 		
 	}
 
-	public TaxClassificationDTO(Long id, String description, Integer number) {
+	public TaxClassificationDTO(Long id, String description, Integer ncmCode) {
 		this.id = id;
 		this.description = description;
-		this.number = number;
+		this.ncmCode = ncmCode;
 	}
 	
 	public TaxClassificationDTO(TaxClassification entity) {
 		id = entity.getId();
 		description = entity.getDescription();
-		number = entity.getNumber();
+		ncmCode = entity.getNcmCode();
 	}
 
 	public Long getId() {
@@ -39,8 +39,8 @@ public class TaxClassificationDTO {
 		return description;
 	}
 
-	public Integer getNumber() {
-		return number;
+	public Integer getNcmCode() {
+		return ncmCode;
 	}
 	
 }

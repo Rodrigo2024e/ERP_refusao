@@ -22,7 +22,7 @@ import com.smartprocessrefusao.erprefusao.services.CityService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/cities")
+@RequestMapping(value = "/api/cities")
 public class CityResource {
 
 	@Autowired

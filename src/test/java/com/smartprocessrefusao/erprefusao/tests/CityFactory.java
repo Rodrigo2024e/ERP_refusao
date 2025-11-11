@@ -9,16 +9,16 @@ public class CityFactory {
 	public static City createCity() {
 		City city = new City();
 		city.setId(1L);
-		city.setNameCity("SÃO PAULO");
-		city.setUfState(StateBrazil.SP);
+		city.setName("SÃO PAULO");
+		city.setState(StateBrazil.SP);
 		return city;
 	}
 
 	public static City createUpdatedCity() {
 		City city = new City();
 		city.setId(1L);
-		city.setNameCity("CAMPINAS");
-		city.setUfState(StateBrazil.SP);
+		city.setName("CAMPINAS");
+		city.setState(StateBrazil.SP);
 		return city;
 	}
 

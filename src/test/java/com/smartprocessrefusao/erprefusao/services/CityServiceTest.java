@@ -51,12 +51,12 @@ public class CityServiceTest {
 	@Test
 	void findAllShouldReturnListOfDTOs() {
 		List<City> cities = List.of(CityFactory.createCity(), CityFactory.createUpdatedCity());
-		when(cityRepository.findAllByOrderByNameCityAsc()).thenReturn(cities);
+		when(cityRepository.findAllByOrderByNameAsc()).thenReturn(cities);
 
 		List<CityDTO> result = service.findAll();
 
 		assertEquals(2, result.size());
-		assertEquals("SÃO PAULO", result.get(0).getNameCity());
+		assertEquals("SÃO PAULO", result.get(0).getName());
 	}
 
 	// 2 - FindById
@@ -66,8 +66,8 @@ public class CityServiceTest {
 
 		CityDTO result = service.findById(1L);
 
-		assertEquals("SÃO PAULO", result.getNameCity());
-		assertEquals("SP", result.getUfState());
+		assertEquals("SÃO PAULO", result.getName());
+		assertEquals("SP", result.getState());
 	}
 
 	// 3 - FindById-EntityNotFoundException
@@ -85,8 +85,8 @@ public class CityServiceTest {
 
 		CityDTO result = service.insert(cityDTO);
 
-		assertEquals(cityDTO.getNameCity(), result.getNameCity());
-		assertEquals(cityDTO.getUfState(), result.getUfState());
+		assertEquals(cityDTO.getName(), result.getName());
+		assertEquals(cityDTO.getState(), result.getState());
 	}
 
 	//5 - Insert Uf Invalid 
@@ -108,8 +108,8 @@ public class CityServiceTest {
 
 		CityDTO result = service.update(1L, cityDTO);
 
-		assertEquals(cityDTO.getNameCity(), result.getNameCity());
-		assertEquals(cityDTO.getUfState(), result.getUfState());
+		assertEquals(cityDTO.getName(), result.getName());
+		assertEquals(cityDTO.getState(), result.getState());
 	}
 
 	//7 - Update City Invalid

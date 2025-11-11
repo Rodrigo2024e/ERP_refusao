@@ -11,13 +11,13 @@ import jakarta.validation.constraints.Size;
 
 public class AddressDTO {
 
-	private Long idAddress;
+	private Long id;
 
 	@Size(min = 3, max = 30, message = "O nome deve ter entre 3 a 30 caracteres")
 	private String street;
 
 	@NotNull(message = "O numero é obrigatório")
-	private Integer numberAddress;
+	private Integer number;
 
 	private String complement;
 
@@ -29,9 +29,8 @@ public class AddressDTO {
 
 	@NotNull(message = "O campo cidade não pode ser nulo")
 	private Long cityId;
-
-	private String nameCity;
-	private String ufState;
+	private String name;
+	private String state;
 	private String nameState;
 	private String country;
 
@@ -41,53 +40,52 @@ public class AddressDTO {
 	public AddressDTO() {
 	}
 
-	public AddressDTO(Long idAddress, String street, Integer numberAddress, String complement, String neighborhood,
-			String zipCode, Long cityId, String nameCity, String ufState, String nameState, String country,
-			Long peopleId) {
-		this.idAddress = idAddress;
+	public AddressDTO(Long id, String street, Integer number, String complement, String neighborhood, String zipCode,
+			Long cityId, String name, String state, String nameState, String country, Long peopleId) {
+		this.id = id;
 		this.street = street;
-		this.numberAddress = numberAddress;
+		this.number = number;
 		this.complement = complement;
 		this.neighborhood = neighborhood;
 		this.zipCode = zipCode;
 		this.cityId = cityId;
-		this.nameCity = nameCity;
-		this.ufState = ufState;
+		this.name = name;
+		this.state = state;
 		this.nameState = nameState;
 		this.country = country;
 		this.peopleId = peopleId;
 	}
 
 	public AddressDTO(Address entity) {
-		this.idAddress = entity.getIdAddress();
+		this.id = entity.getId();
 		this.street = entity.getStreet();
-		this.numberAddress = entity.getNumberAddress();
+		this.number = entity.getNumber();
 		this.complement = entity.getComplement();
 		this.neighborhood = entity.getNeighborhood();
 		this.zipCode = entity.getZipCode();
 		this.cityId = entity.getCity().getId();
-		this.nameCity = entity.getCity().getNameCity();
-		this.ufState = entity.getCity().getUfState().getUf();
-		this.nameState = entity.getCity().getUfState().getNameState();
-		this.country = entity.getCity().getUfState().getCountry();
+		this.name = entity.getCity().getName();
+		this.state = entity.getCity().getState().getUf().toString();
+		this.nameState = entity.getCity().getState().getNameState().toString();
+		this.country = entity.getCity().getState().getCountry().toString();
 		this.peopleId = entity.getPeople().getId();
 
 	}
 
 	public AddressDTO(AddressProjection projection) {
-		this.idAddress = projection.getIdAddress();
+		this.id = projection.getId();
 		this.street = projection.getStreet();
-		this.numberAddress = projection.getNumberAddress();
+		this.number = projection.getNumber();
 		this.complement = projection.getComplement();
 		this.neighborhood = projection.getNeighborhood();
 		this.zipCode = projection.getZipCode();
 		this.cityId = projection.getCityId();
-		this.nameCity = projection.getNameCity();
-		this.ufState = projection.getUfState();
+		this.name = projection.getName();
+		this.state = projection.getState();
 		this.peopleId = projection.getPeopleId();
 
-		if (projection.getUfState() != null) {
-			StateBrazil stateEnum = StateBrazil.fromUf(projection.getUfState());
+		if (projection.getState() != null) {
+			StateBrazil stateEnum = StateBrazil.fromUf(projection.getState());
 			if (stateEnum != null) {
 				this.nameState = stateEnum.getNameState();
 				this.country = stateEnum.getCountry();
@@ -104,16 +102,16 @@ public class AddressDTO {
 		}
 	}
 
-	public Long getIdAddress() {
-		return idAddress;
+	public Long getId() {
+		return id;
 	}
 
 	public String getStreet() {
 		return street;
 	}
 
-	public Integer getNumberAddress() {
-		return numberAddress;
+	public Integer getNumber() {
+		return number;
 	}
 
 	public String getComplement() {
@@ -132,12 +130,12 @@ public class AddressDTO {
 		return cityId;
 	}
 
-	public String getNameCity() {
-		return nameCity;
+	public String getName() {
+		return name;
 	}
 
-	public String getUfState() {
-		return ufState;
+	public String getState() {
+		return state;
 	}
 
 	public String getNameState() {

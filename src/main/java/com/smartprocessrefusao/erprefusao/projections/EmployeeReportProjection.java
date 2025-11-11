@@ -2,7 +2,7 @@ package com.smartprocessrefusao.erprefusao.projections;
 
 public interface EmployeeReportProjection {
 
-		Long getIdPessoa();
+		Long getId();
 		String getName();
 		String getCpf();
 		String getRg();
@@ -10,8 +10,8 @@ public interface EmployeeReportProjection {
 		String getCellPhone();
 		String getTelephone();
 		boolean isSysUser();
-		Long getSectorId();
-		String getNameSector();
+		Long getDepartamentId();
+		String getDepartament();
 		String getProcess();
 		Long getIdAddress();
 		String getStreet();
@@ -20,8 +20,8 @@ public interface EmployeeReportProjection {
 		String getNeighborhood();
 		String getZipCode();
 		Long getCityId();
-		String getNameCity();
-		String getUfState(); 
+		String getCity();
+		String getState(); 
 		String getNameState(); 
 		String getCountry();   
 }

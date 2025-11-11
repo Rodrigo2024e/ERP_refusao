@@ -14,18 +14,17 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "tb_uom")
+@Table(name = "tb_unit")
 public class Unit extends Auditable<String> {
 	private static final long serialVersionUID = 1L;
-	
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String description;
 	private String acronym;
 
-	@OneToMany(mappedBy = "uomMaterial")
+	@OneToMany(mappedBy = "unit")
 	private Set<Material> materials = new HashSet<>();
 
 	public Unit() {
@@ -68,14 +67,17 @@ public class Unit extends Auditable<String> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id);
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(id);
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;

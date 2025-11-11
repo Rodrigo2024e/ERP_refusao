@@ -25,15 +25,15 @@ public interface PartnerRepository extends JpaRepository<Partner, Long> {
 			        pa.supplier AS supplier,
 			        pa.client AS client,
 			        pa.active AS active,
-			        a.id_address AS idAddress,
+			        a.id AS idAddress,
 			        a.street AS street,
-			        a.number_address AS numberAddress,
+			        a.number AS numberAddress,
 			        a.complement AS complement,
 			        a.neighborhood AS neighborhood,
 			        a.zip_code AS zipCode,
 			        a.city_id AS cityId,
-			        c.name_city AS nameCity,
-			        c.uf_state AS ufState
+			        c.name AS nameCity,
+			        c.state AS ufState
 			    FROM tb_people p
 			    INNER JOIN tb_partner pa ON pa.id = p.id
 			    INNER JOIN tb_address a ON a.people_id = p.id

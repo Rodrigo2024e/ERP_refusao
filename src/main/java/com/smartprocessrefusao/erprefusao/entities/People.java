@@ -1,10 +1,12 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.smartprocessrefusao.erprefusao.audit.Auditable;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +17,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 
 @Entity
 @Table(name = "tb_people")
@@ -25,13 +28,14 @@ public abstract class People extends Auditable<String> implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 	private String name;
+
+	@Email(message = "E-mail inválido")
+	@Column(nullable = false, unique = true)
 	private String email;
 	private String cellPhone;
 	private String telephone;
 
-//	@OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL)
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "address_id")
 	private Address address;
@@ -95,6 +99,26 @@ public abstract class People extends Auditable<String> implements Serializable {
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(id);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		People other = (People) obj;
+		return Objects.equals(id, other.id);
 	}
 
 }

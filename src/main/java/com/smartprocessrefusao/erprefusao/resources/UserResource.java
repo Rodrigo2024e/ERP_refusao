@@ -25,7 +25,7 @@ import com.smartprocessrefusao.erprefusao.services.UserService;
 import jakarta.validation.Valid;
 
 	@RestController
-	@RequestMapping("/users")
+	@RequestMapping("/api/users")
 	public class UserResource {
 
 	    @Autowired

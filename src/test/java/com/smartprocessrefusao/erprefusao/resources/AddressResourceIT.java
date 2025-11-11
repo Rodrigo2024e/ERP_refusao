@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartprocessrefusao.erprefusao.dto.AddressDTO;
-import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeDepartamentDTO;
 import com.smartprocessrefusao.erprefusao.tests.AddressFactory;
 import com.smartprocessrefusao.erprefusao.tests.TokenUtil;
 
@@ -47,16 +47,15 @@ public class AddressResourceIT {
 	private Long existingId;
 
 	@SuppressWarnings("unused")
-	private EmployeeSectorDTO employeeDTO;
+	private EmployeeDepartamentDTO employeeDTO;
 
 	@BeforeEach
 	void setUp() throws Exception {
 
 		existingId = 1L;
 
-		employeeDTO = new EmployeeSectorDTO(null, "Luciano R Carvalho", "luciano@gmail.com.br", "44-14244-1222",
-				"44-1442-2222", "111.000.111-49", "10.113.147.42", true, 1L, "Produção",
-				"Recebimento e classificação de sucata");
+		employeeDTO = new EmployeeDepartamentDTO(null, "Luciano R Carvalho", "luciano@gmail.com.br", "44-14244-1222",
+				"44-1442-2222", "111.000.111-49", 1L, "Produção", "Recebimento e classificação de sucata");
 
 		clientUsername = "michele@alunova.com";
 		clientPassword = "123456";

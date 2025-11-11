@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeDepartamentDTO;
 import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
 import com.smartprocessrefusao.erprefusao.services.EmployeeService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/employees")
+@RequestMapping(value = "/api/employees")
 public class EmployeeResource {
 
 	@Autowired
@@ -33,10 +33,10 @@ public class EmployeeResource {
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping
-	public ResponseEntity<Page<EmployeeSectorDTO>> findEmployeeBySetor(@RequestParam(required = false) String name,
+	public ResponseEntity<Page<EmployeeDepartamentDTO>> findEmployeeBySetor(@RequestParam(required = false) String name,
 			@RequestParam(required = false) Long sectorId, Pageable pageable) {
 
-		Page<EmployeeSectorDTO> list = employeeService.reportEmployeeBySector(name, sectorId, pageable);
+		Page<EmployeeDepartamentDTO> list = employeeService.reportEmployeeBySector(name, sectorId, pageable);
 
 		return ResponseEntity.ok(list);
 	}
@@ -53,23 +53,23 @@ public class EmployeeResource {
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<EmployeeSectorDTO> findById(@PathVariable Long id) {
-		EmployeeSectorDTO dto = employeeService.findById(id);
+	public ResponseEntity<EmployeeDepartamentDTO> findById(@PathVariable Long id) {
+		EmployeeDepartamentDTO dto = employeeService.findById(id);
 		return ResponseEntity.ok().body(dto);
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PostMapping
-	public ResponseEntity<EmployeeSectorDTO> insert(@Valid @RequestBody EmployeeSectorDTO dto) {
+	public ResponseEntity<EmployeeDepartamentDTO> insert(@Valid @RequestBody EmployeeDepartamentDTO dto) {
 		dto = employeeService.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getIdPessoa())
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId())
 				.toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<EmployeeSectorDTO> update(@PathVariable Long id, @Valid @RequestBody EmployeeSectorDTO dto) {
+	public ResponseEntity<EmployeeDepartamentDTO> update(@PathVariable Long id, @Valid @RequestBody EmployeeDepartamentDTO dto) {
 		dto = employeeService.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}

@@ -1,20 +1,19 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
-import com.smartprocessrefusao.erprefusao.projections.ProductReportProjection;
+import com.smartprocessrefusao.erprefusao.projections.ReportProductProjection;
 
 public class ReportProductDTO {
 
-	private Long id;
-	private String typeMaterial;
+	private Long code;
 	private String description;
-	private Integer alloy;
+	private String type;
+	private String alloy;
 	private Integer billetDiameter;
-	private double BilletLength;
-	private Long unitId;
+	private Double billetLength;
 	private String acronym;
 	private Long taxClassId;
 	private String description_taxclass;
-	private Integer number;
+	private Integer ncmCode;
 	private Long matGroupId;
 	private String description_matGroup;
 
@@ -22,36 +21,35 @@ public class ReportProductDTO {
 
 	}
 
-	public ReportProductDTO(ProductReportProjection projection) {
-		id = projection.getId();
-		typeMaterial = projection.getTypeMaterial();
+	public ReportProductDTO(ReportProductProjection projection) {
+		code = projection.getCode();
 		description = projection.getDescription();
+		type = projection.getType();
 		alloy = projection.getAlloy();
 		billetDiameter = projection.getBilletDiameter();
-		BilletLength = projection.getBilletLength();
-		unitId = projection.getUnitId();
+		billetLength = projection.getBilletLength();
 		acronym = projection.getAcronym();
 		taxClassId = projection.getTaxClassId();
 		description_taxclass = projection.getDescription_taxclass();
-		number = projection.getNumber();
+		ncmCode = projection.getNcmCode();
 		matGroupId = projection.getMatGroupId();
 		description_matGroup = projection.getDescription_matGroup();
 
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public String getTypeMaterial() {
-		return typeMaterial;
+	public Long getCode() {
+		return code;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public Integer getAlloy() {
+	public String getType() {
+		return type;
+	}
+
+	public String getAlloy() {
 		return alloy;
 	}
 
@@ -59,13 +57,10 @@ public class ReportProductDTO {
 		return billetDiameter;
 	}
 
-	public double getBilletLength() {
-		return BilletLength;
+	public Double getBilletLength() {
+		return billetLength;
 	}
 
-	public Long getUnitId() {
-		return unitId;
-	}
 
 	public String getAcronym() {
 		return acronym;
@@ -79,8 +74,8 @@ public class ReportProductDTO {
 		return description_taxclass;
 	}
 
-	public Integer getNumber() {
-		return number;
+	public Integer getNcmCode() {
+		return ncmCode;
 	}
 
 	public Long getMatGroupId() {

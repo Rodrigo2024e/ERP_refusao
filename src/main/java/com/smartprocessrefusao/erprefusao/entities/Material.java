@@ -1,11 +1,14 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import com.smartprocessrefusao.erprefusao.audit.Auditable;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeMaterial;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,45 +19,55 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_material")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Material extends Auditable<String> implements Serializable {
+public class Material extends Auditable<String> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	private Long code;
+	private String description;
+	private Double recoveryYield;
+
 	@Enumerated(EnumType.STRING)
-	private TypeMaterial typeMaterial;
+	private TypeMaterial type;
 
 	@ManyToOne
-	@JoinColumn(name = "uom_material_id")
-	private Unit uomMaterial;
+	@JoinColumn(name = "unit_id")
+	private Unit unit;
 
 	@ManyToOne
-	@JoinColumn(name = "tax_class_material_id")
-	private TaxClassification taxClassMaterial;
+	@JoinColumn(name = "tax_class_id")
+	private TaxClassification taxClass;
 
 	@ManyToOne
 	@JoinColumn(name = "material_group_id")
 	private MaterialGroup materialGroup;
 
+	@OneToMany(mappedBy = "id.material", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ReceiptItem> receiptItems = new ArrayList<>();
+
 	public Material() {
 
 	}
 
-	public Material(Long id, TypeMaterial typeMaterial, Unit uomMaterial, TaxClassification taxClassMaterial,
-			MaterialGroup materialGroup) {
+	public Material(Long id, Long code, String description, Double recoveryYield, TypeMaterial type, Unit unit,
+			TaxClassification taxClass, MaterialGroup materialGroup) {
 		this.id = id;
-		this.typeMaterial = typeMaterial;
-		this.uomMaterial = uomMaterial;
-		this.taxClassMaterial = taxClassMaterial;
+		this.code = code;
+		this.description = description;
+		this.recoveryYield = recoveryYield;
+		this.type = type;
+		this.unit = unit;
+		this.taxClass = taxClass;
 		this.materialGroup = materialGroup;
-
 	}
 
 	public Long getId() {
@@ -65,28 +78,52 @@ public abstract class Material extends Auditable<String> implements Serializable
 		this.id = id;
 	}
 
-	public TypeMaterial getTypeMaterial() {
-		return typeMaterial;
+	public Long getCode() {
+		return code;
 	}
 
-	public void setTypeMaterial(TypeMaterial typeMaterial) {
-		this.typeMaterial = typeMaterial;
+	public void setCode(Long code) {
+		this.code = code;
 	}
 
-	public Unit getUomMaterial() {
-		return uomMaterial;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setUomMaterial(Unit uomMaterial) {
-		this.uomMaterial = uomMaterial;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public TaxClassification getTaxClassMaterial() {
-		return taxClassMaterial;
+	public Double getRecoveryYield() {
+		return recoveryYield;
 	}
 
-	public void setTaxClassMaterial(TaxClassification taxClassMaterial) {
-		this.taxClassMaterial = taxClassMaterial;
+	public void setRecoveryYield(Double recoveryYield) {
+		this.recoveryYield = recoveryYield;
+	}
+
+	public TypeMaterial getType() {
+		return type;
+	}
+
+	public void setType(TypeMaterial type) {
+		this.type = type;
+	}
+
+	public Unit getUnit() {
+		return unit;
+	}
+
+	public void setUnit(Unit unit) {
+		this.unit = unit;
+	}
+
+	public TaxClassification getTaxClass() {
+		return taxClass;
+	}
+
+	public void setTaxClass(TaxClassification taxClass) {
+		this.taxClass = taxClass;
 	}
 
 	public MaterialGroup getMaterialGroup() {
@@ -97,21 +134,28 @@ public abstract class Material extends Auditable<String> implements Serializable
 		this.materialGroup = materialGroup;
 	}
 
+	public List<ReceiptItem> getReceiptItems() {
+		return receiptItems;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(id);
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(code, id);
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		Material other = (Material) obj;
-		return Objects.equals(id, other.id);
+		return Objects.equals(code, other.code) && Objects.equals(id, other.id);
 	}
 
 }

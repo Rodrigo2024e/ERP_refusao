@@ -20,14 +20,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
-import com.smartprocessrefusao.erprefusao.dto.EmployeeSectorDTO;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeDepartamentDTO;
 import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
-import com.smartprocessrefusao.erprefusao.entities.Sector;
-import com.smartprocessrefusao.erprefusao.projections.EmployeeSectorProjection;
+import com.smartprocessrefusao.erprefusao.entities.Departament;
+import com.smartprocessrefusao.erprefusao.projections.EmployeeDepartamentProjection;
 import com.smartprocessrefusao.erprefusao.projections.EmployeeReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
-import com.smartprocessrefusao.erprefusao.repositories.SectorRepository;
+import com.smartprocessrefusao.erprefusao.repositories.DepartamentRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
 import com.smartprocessrefusao.erprefusao.tests.EmployeeFactory;
@@ -45,17 +45,17 @@ class EmployeeServiceTest {
 	private EmployeeRepository employeeRepository;
 
 	@Mock
-	private SectorRepository sectorRepository;
+	private DepartamentRepository departamentRepository;
 
 	private Employee employee;
-	private EmployeeSectorDTO employeeDTO;
-	private Sector sector;
+	private EmployeeDepartamentDTO employeeDTO;
+	private Departament departament;
 
 	@BeforeEach
 	void setUp() {
 		employee = Factory.createEmployee();
 		employeeDTO = Factory.createEmployeeDTO();
-		sector = Factory.createSector();
+		departament = Factory.createSector();
 		EmployeeFactory.create();
 	}
 
@@ -73,12 +73,12 @@ class EmployeeServiceTest {
 
 	// 2 - Report Employee with Sector
 	@Test
-	void reportEmployeeShouldReturnPagedReportEmployeeBySectorDTO() {
-		EmployeeSectorProjection projection = Mockito.mock(EmployeeSectorProjection.class);
-		Page<EmployeeSectorProjection> page = new PageImpl<>(List.of(projection));
-		when(employeeRepository.searchEmployeeBySector(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(page);
+	void reportEmployeeShouldReturnPagedReportEmployeeByDepartamentDTO() {
+		EmployeeDepartamentProjection projection = Mockito.mock(EmployeeDepartamentProjection.class);
+		Page<EmployeeDepartamentProjection> page = new PageImpl<>(List.of(projection));
+		when(employeeRepository.searchEmployeeByDepartament(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(page);
 
-		Page<EmployeeSectorDTO> result = service.reportEmployeeBySector("João", 1L, PageRequest.of(0, 10));
+		Page<EmployeeDepartamentDTO> result = service.reportEmployeeBySector("João", 1L, PageRequest.of(0, 10));
 
 		Assertions.assertNotNull(result);
 	}
@@ -88,7 +88,7 @@ class EmployeeServiceTest {
 	void findByIdShouldReturnEmployeeDTOWhenIdExists() {
 		when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
 
-		EmployeeSectorDTO result = service.findById(1L);
+		EmployeeDepartamentDTO result = service.findById(1L);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals("JONATHAS JUNIO", result.getName());
@@ -107,10 +107,10 @@ class EmployeeServiceTest {
 	// 5 - Insert Employee
 	@Test
 	void insertShouldSaveEmployeeAndReturnDTO() {
-		when(sectorRepository.findById(12L)).thenReturn(Optional.of(sector));
+		when(departamentRepository.findById(12L)).thenReturn(Optional.of(departament));
 		when(employeeRepository.save(Mockito.any())).thenReturn(employee);
 
-		EmployeeSectorDTO result = service.insert(employeeDTO);
+		EmployeeDepartamentDTO result = service.insert(employeeDTO);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals("JONATHAS JUNIO", result.getName());
@@ -120,7 +120,7 @@ class EmployeeServiceTest {
 	// 6 - Insert Sector Invalid
 	@Test
 	void copyDtoToEntityShoulNotFoundExceptionWhenSectorDTOInvalid() {
-		when(sectorRepository.findById(12L)).thenReturn(Optional.empty());
+		when(departamentRepository.findById(12L)).thenReturn(Optional.empty());
 
 		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
 			service.insert(employeeDTO);
@@ -131,10 +131,10 @@ class EmployeeServiceTest {
 	@Test
 	void updateShouldUpdateEmployeeDTOWhenIdExists() {
 		when(employeeRepository.getReferenceById(1L)).thenReturn(employee);
-		when(sectorRepository.findById(12L)).thenReturn(Optional.of(sector));
+		when(departamentRepository.findById(12L)).thenReturn(Optional.of(departament));
 		when(employeeRepository.save(employee)).thenReturn(employee);
 
-		EmployeeSectorDTO result = service.update(1L, employeeDTO);
+		EmployeeDepartamentDTO result = service.update(1L, employeeDTO);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals("JONATHAS JUNIO", result.getName());

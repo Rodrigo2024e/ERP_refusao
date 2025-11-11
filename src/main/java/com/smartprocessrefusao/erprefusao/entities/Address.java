@@ -1,6 +1,7 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.smartprocessrefusao.erprefusao.audit.Auditable;
 
@@ -20,31 +21,31 @@ public class Address extends Auditable<String> implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long idAddress;
+	private Long id;
 
 	private String street;
-	private Integer numberAddress;
+	private Integer number;
 	private String complement;
 	private String neighborhood;
 	private String zipCode;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "city_id")
 	private City city;
-	
+
 	@OneToOne
 	@JoinColumn(name = "people_id")
 	private People people;
-	
+
 	public Address() {
-		
+
 	}
 
-	public Address(Long idAddress, String street, Integer numberAddress, String complement, String neighborhood, String zipCode,
+	public Address(Long id, String street, Integer number, String complement, String neighborhood, String zipCode,
 			City city, People people) {
-		this.idAddress = idAddress;
+		this.id = id;
 		this.street = street;
-		this.numberAddress = numberAddress;
+		this.number = number;
 		this.complement = complement;
 		this.neighborhood = neighborhood;
 		this.zipCode = zipCode;
@@ -52,12 +53,12 @@ public class Address extends Auditable<String> implements Serializable {
 		this.people = people;
 	}
 
-	public Long getIdAddress() {
-		return idAddress;
+	public Long getId() {
+		return id;
 	}
 
-	public void setIdAddress(Long idAddress) {
-		this.idAddress = idAddress;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getStreet() {
@@ -68,12 +69,12 @@ public class Address extends Auditable<String> implements Serializable {
 		this.street = street;
 	}
 
-	public Integer getNumberAddress() {
-		return numberAddress;
+	public Integer getNumber() {
+		return number;
 	}
 
-	public void setNumberAddress(Integer number) {
-		this.numberAddress = number;
+	public void setNumber(Integer number) {
+		this.number = number;
 	}
 
 	public String getComplement() {
@@ -116,6 +117,24 @@ public class Address extends Auditable<String> implements Serializable {
 		this.people = people;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(id);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Address other = (Address) obj;
+		return Objects.equals(id, other.id);
+	}
+
 }
-
-

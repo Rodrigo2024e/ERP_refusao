@@ -16,74 +16,74 @@ import com.smartprocessrefusao.erprefusao.projections.AddressProjection;
 public interface AddressRepository extends JpaRepository<Address, Long> {
 	@Query(value = """
             SELECT
-                a.id_address AS idAddress,
+                a.id AS id,
                 a.street AS street,
-                a.number_address AS numberAddress,
+                a.number AS number,
                 a.complement AS complement,
                 a.neighborhood AS neighborhood,
                 a.zip_code AS zipCode,
-                c.id AS cityId,
-                c.name_city AS nameCity,
-                c.uf_state AS ufState,
+                c.id AS CityId,
+                c.name As name,
+                c.state AS state,
                 a.people_id AS peopleId
             FROM tb_address a
             INNER JOIN tb_city c ON a.city_id = c.id
             LEFT JOIN tb_people p ON a.people_id = p.id
-            WHERE (:addressId IS NULL OR a.id_address = :addressId) 
-            AND (:nameCity IS NULL OR LOWER(c.name_city) LIKE LOWER(CONCAT('%', :nameCity, '%'))) 
-            ORDER BY c.name_city
+            WHERE (:addressId IS NULL OR a.id = :addressId) 
+            AND (:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))) 
+            ORDER BY c.name
         """,
         countQuery = """
-            SELECT COUNT(a.id_address)
+            SELECT COUNT(a.id)
             FROM tb_address a
             INNER JOIN tb_city c ON a.city_id = c.id
-            WHERE (:addressId IS NULL OR a.id_address = :addressId)
-            AND (:nameCity IS NULL OR LOWER(c.name_city) LIKE LOWER(CONCAT('%', :nameCity, '%')))
+            WHERE (:addressId IS NULL OR a.id = :addressId)
+            AND (:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%')))
         """,
         nativeQuery = true)
-    Page<AddressProjection> searchAddressesByCityNameOrId(
-            @Param("nameCity") String nameCity,
+    Page<AddressProjection> searchAddressesByCityNameOrId( 
+            @Param("name") String name,
             @Param("addressId") Long addressId, 
             Pageable pageable);
 
 			@Query(value = """
 			SELECT
-			    a.id_address AS idAddress,
+			    a.id AS idAddress,
 			    a.street AS street,
-			    a.number_address AS numberAddress,
+			    a.number AS numberAddress,
 			    a.complement AS complement,
 			    a.neighborhood AS neighborhood,
 			    a.zip_code AS zipCode,
 			    c.id AS cityId,
-			    c.name_city AS nameCity,
-			    c.uf_state AS ufState,  
+			    c.name,
+			    c.state AS ufState,  
 			    a.people_id AS peopleId
 			FROM tb_address a
 			INNER JOIN tb_city c ON a.city_id = c.id
 			LEFT JOIN tb_people p ON a.people_id = p.id
-			WHERE a.id_address = :id
+			WHERE a.id = :id
 			""", nativeQuery = true)
 			Optional<AddressProjection> findProjectionById(@Param("id") Long id);
 	
 			  @Query(value = """
 			            SELECT
-			                a.id_address AS idAddress,
+			                a.id AS idAddress,
 			                a.street AS street,
-			                a.number_address AS numberAddress,
+			                a.number AS numberAddress,
 			                a.complement AS complement,
 			                a.neighborhood AS neighborhood,
 			                a.zip_code AS zipCode,
 			                c.id AS cityId,
-			                c.name_city AS nameCity,
-			                c.uf_state AS ufState,
+			                c.name,
+			                c.state AS ufState,
 			                a.people_id AS peopleId
 			            FROM tb_address a
 			            INNER JOIN tb_city c ON a.city_id = c.id
 			            LEFT JOIN tb_people p ON a.people_id = p.id
-			            ORDER BY c.name_city
+			            ORDER BY c.name
 			        """,
 			        countQuery = """
-			            SELECT COUNT(a.id_address)
+			            SELECT COUNT(a.id)
 			            FROM tb_address a
 			        """,
 			        nativeQuery = true)
