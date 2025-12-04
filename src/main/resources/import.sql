@@ -87,14 +87,14 @@ INSERT INTO tb_material_group (description) VALUES ('DIVERSOS');
 
 
 --TB_MATERIAL
-INSERT INTO tb_material (code, description, recovery_yield, type, unit_id, tax_class_id, material_group_id) VALUES (1001, 'PERFIL DE PROCESSO', 0.97, 'SCRAP', 1, 1, 1);
-INSERT INTO tb_material (code, description, recovery_yield, type, unit_id, tax_class_id, material_group_id) VALUES (1002, 'PERFIL NATURAL', 0.93, 'SCRAP', 1, 1, 1);
-INSERT INTO tb_material (code, description, recovery_yield, type, unit_id, tax_class_id, material_group_id) VALUES (1003, 'PERFIL PINTADO', 0.86, 'SCRAP', 1, 1, 1);
-INSERT INTO tb_material (code, description, recovery_yield, type, unit_id, tax_class_id, material_group_id) VALUES (2001, 'GLP - GAS LIQUEFEITO', 1.0, 'SUPPLIES', 1, 2, 2);
-INSERT INTO tb_material (code, description, recovery_yield, type, unit_id, tax_class_id, material_group_id) VALUES (2002, 'FILTRO - CAIXA FILTRO', 1.0, 'SUPPLIES', 1, 2, 2);
-INSERT INTO tb_material (code, description, recovery_yield, type, unit_id, tax_class_id, material_group_id) VALUES (3001, 'TARUGO DE ALUMINIO', 1.0,'FINISHED_PRODUCTS', 1, 3, 3);
-INSERT INTO tb_material (code, description, recovery_yield, type, unit_id, tax_class_id, material_group_id) VALUES (3002, 'TARUGO DE ALUMINIO', 1.0, 'FINISHED_PRODUCTS', 1, 3, 3);
-INSERT INTO tb_material (code, description, recovery_yield, type, unit_id, tax_class_id, material_group_id) VALUES (3003, 'TARUGO DE ALUMINIO', 1.0, 'FINISHED_PRODUCTS', 1, 3, 3);
+INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (1001, 'PERFIL DE PROCESSO', 'SCRAP', 1, 1, 1);
+INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (1002, 'PERFIL NATURAL',  'SCRAP', 1, 1, 1);
+INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (1003, 'PERFIL PINTADO', 'SCRAP', 1, 1, 1);
+INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (2001, 'GLP - GAS LIQUEFEITO',  'SUPPLIES', 1, 2, 2);
+INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (2002, 'FILTRO - CAIXA FILTRO', 'SUPPLIES', 1, 2, 2);
+INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (3001, 'TARUGO DE ALUMINIO', 'FINISHED_PRODUCTS', 1, 3, 3);
+INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (3002, 'TARUGO DE ALUMINIO',  'FINISHED_PRODUCTS', 1, 3, 3);
+INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (3003, 'TARUGO DE ALUMINIO',  'FINISHED_PRODUCTS', 1, 3, 3);
 
 --TB_TICKET
 INSERT INTO tb_ticket (num_ticket, date_ticket, number_plate, net_weight) VALUES (34950,'2022-07-25', 'ABC-1245', 15000);
@@ -104,7 +104,7 @@ INSERT INTO tb_ticket (num_ticket, date_ticket, number_plate, net_weight) VALUES
 INSERT INTO tb_receipt (id) VALUES (1);
 
 --TB_RECEIPT_ITEM
-INSERT INTO tb_receipt_item (receipt_id, item_sequence, partner_id, material_id, document_number, quantity, price, total_value, observation, type_receipt, type_costs) VALUES (1, 1, 4, 1, '125.147', 10000.00, 1.00, 10000.00, 'Material para seleção', 'BUY', 'DIRECT_COSTS');
+--INSERT INTO tb_receipt_item (receipt_id, item_sequence, partner_id, material_id, document_number, quantity, price, total_value, observation, type_receipt, type_costs) VALUES (1, 1, 4, 1, '125.147', 10000.00, 1.00, 10000.00, 'Material para seleção', 'PURCHASE', 'DIRECT_COSTS');
 
 --TB_DISPATCH
 INSERT INTO tb_dispatch (id) VALUES (2);

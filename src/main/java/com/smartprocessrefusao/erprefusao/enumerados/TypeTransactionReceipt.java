@@ -2,8 +2,8 @@ package com.smartprocessrefusao.erprefusao.enumerados;
 
 public enum TypeTransactionReceipt {
 
-	SENT_FOR_PROCESSING(1L, "SENT_FOR_PROCESSING"), BUY(2L, "BUY"), SALES_RETURN(3L, "SALES_RETURN"),
-	SERVICE_RETURN(4L, "SERVICE_RETURN");
+	SENT_FOR_PROCESSING(1L, "SENT_FOR_PROCESSING"), PURCHASE(2L, "PURCHASE") ,
+	SALES_SCRAP(3L, "SALES_SCRAP"), SCRAP_SALES_RETURN(4L, "SCRAP_SALES_RETURN"), ADJUSTMENT_ENTRY(5L, "ADJUSTMENT_ENTRY"), ADJUSTMENT_EXIT(6L, "ADJUSTMENT_EXIT");
 
 	private final Long id;
 	private final String description;

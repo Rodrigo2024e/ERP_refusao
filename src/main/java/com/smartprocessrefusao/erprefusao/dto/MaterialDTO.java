@@ -24,9 +24,6 @@ public class MaterialDTO implements Serializable {
 	@Size(min = 3, max = 30, message = "O campo descrição deve ter entre 3 a 30 caracteres")
 	private String description;
 
-	@NotNull(message = "Informe rendimento do material")
-	private Double recoveryYield;
-
 	@NotNull(message = "Informe o tipo de material")
 	private String type;
 
@@ -47,13 +44,12 @@ public class MaterialDTO implements Serializable {
 
 	}
 
-	public MaterialDTO(Long id, Long code, String description, Double recoveryYield, String type, Long unitId,
+	public MaterialDTO(Long id, Long code, String description, String type, Long unitId,
 			String acronym, Long taxClassId, String description_taxclass, Integer ncmCode, Long matGroupId,
 			String description_matGroup) {
 		this.id = id;
 		this.code = code;
 		this.description = description;
-		this.recoveryYield = recoveryYield;
 		this.type = type;
 		this.unitId = unitId;
 		this.acronym = acronym;
@@ -69,7 +65,6 @@ public class MaterialDTO implements Serializable {
 		id =entity.getId();
 		code = entity.getCode();
 		description = entity.getDescription();
-		recoveryYield = entity.getRecoveryYield();
 		type = entity.getType().toString();
 		unitId = entity.getUnit().getId();
 		acronym = entity.getUnit().getAcronym();
@@ -91,10 +86,6 @@ public class MaterialDTO implements Serializable {
 
 	public String getDescription() {
 		return description;
-	}
-
-	public Double getRecoveryYield() {
-		return recoveryYield;
 	}
 
 	public String getType() {

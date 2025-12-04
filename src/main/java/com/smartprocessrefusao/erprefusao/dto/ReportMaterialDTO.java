@@ -6,7 +6,6 @@ public class ReportMaterialDTO {
 
 	private Long code;
 	private String description;
-	private Double recoveryYield;
 	private String type;
 	private Long unitId;
 	private String acronym;
@@ -23,7 +22,6 @@ public class ReportMaterialDTO {
 	public ReportMaterialDTO(MaterialReportProjection projection) {
 		this.code = projection.getCode();
 		this.description = projection.getDescription();
-		this.recoveryYield = projection.getRecoveryYield();
 		this.type = projection.getType();
 		this.unitId = projection.getUnitId();
 		this.acronym = projection.getAcronym();
@@ -41,10 +39,6 @@ public class ReportMaterialDTO {
 
 	public String getDescription() {
 		return description;
-	}
-
-	public Double getRecoveryYield() {
-		return recoveryYield;
 	}
 
 	public String getType() {

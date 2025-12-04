@@ -28,7 +28,9 @@ public abstract class Ticket extends Auditable<String> {
 	@Column(unique = true)
 	private Long numTicket;
 
+	@Column(nullable = false)
 	private LocalDate dateTicket;
+	
 	private String numberPlate;
 
 	private BigDecimal netWeight;

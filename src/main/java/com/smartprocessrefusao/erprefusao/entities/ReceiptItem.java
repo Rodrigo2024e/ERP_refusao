@@ -24,9 +24,11 @@ public class ReceiptItem {
 
 	private String documentNumber;
 
+	private BigDecimal recoveryYield;
 	private BigDecimal quantity;
 	private BigDecimal price;
 	private BigDecimal totalValue;
+	private BigDecimal quantityMco;
 	private String observation;
 
 	@Enumerated(EnumType.STRING)
@@ -39,28 +41,20 @@ public class ReceiptItem {
 	}
 
 	public ReceiptItem(Receipt receipt, Partner partner, Material material, String documentNumber,
-			BigDecimal quantity, BigDecimal price, BigDecimal totalValue, String observation,
-			TypeTransactionReceipt typeReceipt, TypeCosts typeCosts) {
+			BigDecimal recoveryYield, BigDecimal quantity, BigDecimal price, BigDecimal totalValue,
+			BigDecimal quantityMco, String observation, TypeTransactionReceipt typeReceipt, TypeCosts typeCosts) {
 		id.setReceipt(receipt);
 		id.setPartner(partner);
 		id.setMaterial(material);
 		this.documentNumber = documentNumber;
+		this.recoveryYield = recoveryYield;
 		this.quantity = quantity;
 		this.price = price;
 		this.totalValue = totalValue;
+		this.quantityMco = quantityMco;
 		this.observation = observation;
 		this.typeReceipt = typeReceipt;
 		this.typeCosts = typeCosts;
-	}
-
-	@PrePersist
-	@PreUpdate
-	private void calculateTotalValue() {
-		if (quantity != null && price != null) {
-			totalValue = quantity.multiply(price);
-		} else {
-			totalValue = BigDecimal.ZERO;
-		}
 	}
 
 	public ReceiptItemPK getId() {
@@ -77,6 +71,14 @@ public class ReceiptItem {
 
 	public void setDocumentNumber(String documentNumber) {
 		this.documentNumber = documentNumber;
+	}
+
+	public BigDecimal getRecoveryYield() {
+		return recoveryYield;
+	}
+
+	public void setRecoveryYield(BigDecimal recoveryYield) {
+		this.recoveryYield = recoveryYield;
 	}
 
 	public BigDecimal getQuantity() {
@@ -103,6 +105,14 @@ public class ReceiptItem {
 		this.totalValue = totalValue;
 	}
 
+	public BigDecimal getQuantityMco() {
+		return quantityMco;
+	}
+
+	public void setQuantityMco(BigDecimal quantityMco) {
+		this.quantityMco = quantityMco;
+	}
+
 	public String getObservation() {
 		return observation;
 	}
@@ -125,6 +135,16 @@ public class ReceiptItem {
 
 	public void setTypeCosts(TypeCosts typeCosts) {
 		this.typeCosts = typeCosts;
+	}
+
+	@PrePersist
+	@PreUpdate
+	private void calculateTotalValue() {
+		if (quantity != null && price != null) {
+			totalValue = quantity.multiply(price);
+		} else {
+			totalValue = BigDecimal.ZERO;
+		}
 	}
 
 	@Override

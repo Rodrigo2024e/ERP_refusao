@@ -59,7 +59,7 @@ public class ReceiptItemResource {
      * Insere um novo Item de Recibo. O Service deve garantir a consistência do receiptId.
      * POST /receipts/{receiptId}/items
      */
-    @PostMapping
+    @PostMapping(value = "/receiptId")
     public ResponseEntity<ReceiptItemDTO> insert(@PathVariable Long receiptId, 
                                                  @Valid @RequestBody ReceiptItemDTO dto) {
         

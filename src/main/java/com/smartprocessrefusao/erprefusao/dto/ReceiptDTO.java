@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.smartprocessrefusao.erprefusao.entities.Receipt;
+import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSerializer;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
@@ -28,6 +30,7 @@ public class ReceiptDTO {
 	private String numberPlate;
 
 	@NotNull(message = "Informe o peso líquido do ticket")
+    @JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal netWeight;
 
 	@NotNull(message = "Informe os itens de recebimento")
@@ -53,10 +56,9 @@ public class ReceiptDTO {
 		numberPlate = entity.getNumberPlate();
 		netWeight = entity.getNetWeight();
 
-		this.receiptItems = entity.getReceiptItems().stream()
-		        .map(item -> new ReceiptItemDTO(item))
-		        .collect(Collectors.toList());
-		
+		receiptItems = entity.getReceiptItems().stream().map(item -> new ReceiptItemDTO(item))
+				.collect(Collectors.toList());
+
 	}
 
 	public Long getId() {
@@ -66,7 +68,6 @@ public class ReceiptDTO {
 	public Long getNumTicket() {
 		return numTicket;
 	}
-
 
 	public LocalDate getDateTicket() {
 		return dateTicket;

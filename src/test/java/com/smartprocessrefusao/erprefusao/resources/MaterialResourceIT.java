@@ -53,7 +53,7 @@ public class MaterialResourceIT {
 
 		existingId = 1L;
 
-		dto = new MaterialDTO(1L, 1111L, "Perfil de processo", 0.97, "SCRAP", (long) 1, "kg", (long) 1,
+		dto = new MaterialDTO(1L, 1111L, "Perfil de processo", "SCRAP", (long) 1, "kg", (long) 1,
 				"Sucata de alumínio", 7602000, (long) 1, "Sucata de alumínio");
 
 		clientUsername = "michele@alunova.com";
@@ -69,7 +69,7 @@ public class MaterialResourceIT {
 	@Test
 	public void insertShouldReturn401WhenInvalidToken() throws Exception {
 
-		MaterialDTO dto = new MaterialDTO(1L, 1111L,  "Perfil de processo", 0.97, "SCRAP", (long) 1, "kg", (long) 1,
+		MaterialDTO dto = new MaterialDTO(1L, 1111L,  "Perfil de processo", "SCRAP", (long) 1, "kg", (long) 1,
 				"Sucata de alumínio", 7602000, (long) 1, "Sucata de alumínio");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
@@ -83,7 +83,7 @@ public class MaterialResourceIT {
 	@Test
 	public void insertShouldReturn403WhenClientLogged() throws Exception {
 
-		MaterialDTO dto = new MaterialDTO(1L, 1111L,  "Perfil de processo", 0.97, "SCRAP", (long) 1, "kg", (long) 1,
+		MaterialDTO dto = new MaterialDTO(1L, 1111L,  "Perfil de processo", "SCRAP", (long) 1, "kg", (long) 1,
 				"Sucata de alumínio", 7602000, (long) 1, "Sucata de alumínio");
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
@@ -137,7 +137,7 @@ public class MaterialResourceIT {
 	// 6 - AdminLoggedAndInvalidDescriptionMaterial
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndInvalidDescription() throws Exception {
-		MaterialDTO dto = new MaterialDTO(1L, 1111L, "INVALID", 0.97, "SCRAP", (long) 1, "kg", (long) 1,
+		MaterialDTO dto = new MaterialDTO(1L, 1111L, "INVALID", "SCRAP", (long) 1, "kg", (long) 1,
 				"Sucata de alumínio", 7602000, (long) 1, "Sucata de alumínio");
 
 		String jsonBody = objectMapper.writeValueAsString(dto);
@@ -154,7 +154,7 @@ public class MaterialResourceIT {
 	// 7 - AdminLoggedAndBlankDescriptionMaterial
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndBlankDescription() throws Exception {
-		MaterialDTO dto = new MaterialDTO(1L, 1111L, "", 0.97, "SCRAP", (long) 1, "kg", (long) 1,
+		MaterialDTO dto = new MaterialDTO(1L, 1111L, "", "SCRAP", (long) 1, "kg", (long) 1,
 				"Sucata de alumínio", 7602000, (long) 1, "Sucata de alumínio");
 
 		String jsonBody = objectMapper.writeValueAsString(dto);
@@ -171,7 +171,7 @@ public class MaterialResourceIT {
 	// 8 - AdminLoggedAndInvalidUnit
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndInvalidUnit() throws Exception {
-		MaterialDTO dto = new MaterialDTO(1L, 1111L, "Perfil de processo", 0.97, "SCRAP", (long) 99, "INVALID", (long) 1,
+		MaterialDTO dto = new MaterialDTO(1L, 1111L, "Perfil de processo", "SCRAP", (long) 99, "INVALID", (long) 1,
 				"Sucata de alumínio", 7602000, (long) 1, "Sucata de alumínio");
 
 		String jsonBody = objectMapper.writeValueAsString(dto);
@@ -188,7 +188,7 @@ public class MaterialResourceIT {
 	// 9 - AdminLoggedAndInvalidClassificationTax
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndInvalidClassificationTax() throws Exception {
-		MaterialDTO dto = new MaterialDTO(1L, 1111L, "Perfil de processo", 0.97, "SCRAP", (long) 1, "kg", (long) 99,
+		MaterialDTO dto = new MaterialDTO(1L, 1111L, "Perfil de processo", "SCRAP", (long) 1, "kg", (long) 99,
 				"INVALID", 7602000, (long) 1, "Sucata de alumínio");
 
 		String jsonBody = objectMapper.writeValueAsString(dto);
@@ -205,7 +205,7 @@ public class MaterialResourceIT {
 	// 10 - AdminLoggedAndInvalidProdGroup
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndInvalidProdGroup() throws Exception {
-		MaterialDTO dto = new MaterialDTO(1L, 1111L,  "Perfil de processo", 0.97, "SCRAP", (long) 1, "kg", (long) 1,
+		MaterialDTO dto = new MaterialDTO(1L, 1111L,  "Perfil de processo", "SCRAP", (long) 1, "kg", (long) 1,
 				"Sucata de alumínio", 7602000, (long) 99, "INVALID");
 
 		String jsonBody = objectMapper.writeValueAsString(dto);

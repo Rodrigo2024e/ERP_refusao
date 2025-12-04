@@ -150,7 +150,6 @@ public class MaterialService {
 
 		entity.setCode(dto.getCode());
 		entity.setDescription(dto.getDescription().toUpperCase());
-		entity.setRecoveryYield(dto.getRecoveryYield());
 
 		try {
 

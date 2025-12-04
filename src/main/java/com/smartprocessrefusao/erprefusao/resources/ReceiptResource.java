@@ -1,10 +1,14 @@
 package com.smartprocessrefusao.erprefusao.resources;
 
 import java.net.URI;
+import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.smartprocessrefusao.erprefusao.dto.ReceiptDTO;
 import com.smartprocessrefusao.erprefusao.dto.ReportReceiptDTO;
+import com.smartprocessrefusao.erprefusao.projections.ReportReceiptProjection;
 import com.smartprocessrefusao.erprefusao.services.ReceiptService;
 
 import jakarta.validation.Valid;
@@ -31,18 +36,6 @@ public class ReceiptResource {
 	@Autowired
 	private ReceiptService receiptService;
 
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-	@GetMapping(value = "/report")
-	public ResponseEntity<Page<ReportReceiptDTO>> getReportReceipt(@RequestParam(required = false) Long receiptId,
-			@RequestParam(required = false) String description, @RequestParam(required = false) Long numTicket,
-			@RequestParam(required = false) Long people_id, Pageable pageable) {
-
-		Page<ReportReceiptDTO> result = receiptService.reportReceipt(receiptId, description, numTicket, people_id,
-				pageable);
-		return ResponseEntity.ok(result);
-
-	}
-
 	@PostMapping
 	public ResponseEntity<ReceiptDTO> insert(@Valid @RequestBody ReceiptDTO dto) {
 		ReceiptDTO newDto = receiptService.insert(dto);
@@ -52,16 +45,46 @@ public class ReceiptResource {
 		return ResponseEntity.created(uri).body(newDto);
 	}
 
-	@PutMapping(value = "/numTicket/{numTicket}")
-	public ResponseEntity<ReceiptDTO> updateByNumTicket(@PathVariable Long numTicket, @RequestBody ReceiptDTO dto) {
+	@PutMapping("/numTicket/{numTicket}")
+	public ResponseEntity<ReceiptDTO> updateByNumTicket(@PathVariable Long numTicket,
+			@RequestBody @Valid ReceiptDTO dto) {
+
 		ReceiptDTO updatedDto = receiptService.updateByNumTicket(numTicket, dto);
 		return ResponseEntity.ok(updatedDto);
 	}
 
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-	@DeleteMapping(value = "/numTicket/{numTicket}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@DeleteMapping("/numTicket/{numTicket}")
 	public ResponseEntity<Void> delete(@PathVariable Long numTicket) {
 		receiptService.delete(numTicket);
 		return ResponseEntity.noContent().build();
+	}
+
+	// REPORT
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+	@GetMapping("/report-page") 
+	public ResponseEntity<Page<ReportReceiptDTO>> reportPage(@RequestParam(required = false) String description,
+			@RequestParam(required = false) Long numTicket, @RequestParam(required = false) Long partner_id,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+			@RequestParam(required = false) Long code,
+			@PageableDefault(direction = Sort.Direction.ASC) Pageable pageable)
+
+	{
+
+		try {
+
+			Page<ReportReceiptProjection> reportPage = receiptService.getReportRange(description, numTicket, partner_id,
+					startDate, endDate, code, pageable);
+
+			Page<ReportReceiptDTO> dtoPage = reportPage.map(ReportReceiptDTO::new);
+
+			return ResponseEntity.ok(dtoPage);
+
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.badRequest().body(Page.empty(pageable));
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body(Page.empty(pageable));
+		}
 	}
 }

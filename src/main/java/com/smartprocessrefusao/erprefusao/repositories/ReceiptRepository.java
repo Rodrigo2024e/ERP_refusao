@@ -1,5 +1,6 @@
 package com.smartprocessrefusao.erprefusao.repositories;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -19,24 +20,28 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
 
 	@Query(value = """
 			SELECT
-			 	r.id as receipt_id, ri.item_sequence,
-			    t.num_ticket As numTicket, t.date_ticket,
-			 	ri.partner_id, pp.name, t.number_plate, t.net_weight,
-			 	ri.material_id, m.description, ri.document_number,
-			 	ri.type_receipt, ri.type_costs, ri.quantity, ri.price,
-			 	ri.total_value, ri.observation
+			 	t.num_ticket As numTicket, t.date_ticket, t.number_plate,
+			 	ri.document_number, t.net_weight, ri.type_receipt, ri.type_costs,
+			 	ri.partner_id, pp.name, ri.item_sequence, ri.material_id, m.code, m.description,
+			 	ri.quantity, ri.recovery_yield, ri.price, ri.total_value,
+			 	ri.quantity_mco, ri.observation
 			FROM tb_ticket t
 			INNER JOIN tb_receipt r ON r.id = t.id
 			INNER JOIN tb_receipt_item ri ON ri.receipt_id = r.id
 			INNER JOIN tb_material m ON m.id = ri.material_id
 			INNER JOIN tb_partner p ON p.id = ri.partner_id
 			INNER JOIN tb_people pp ON pp.id = p.id
-			WHERE (:receiptId IS NULL OR r.id = :receiptId)
-			AND (:description IS NULL OR LOWER(m.description) LIKE LOWER(CONCAT('%', :description, '%')))
-			AND (:numTicket IS NULL OR t.num_ticket = :numTicket)
-			AND (:people_id IS NULL OR LOWER(pp.id) LIKE LOWER(CONCAT('%', :people_id, '%')))
-			ORDER BY ri.item_sequence
-			""", countQuery = """
+			WHERE
+			 	(:startDate IS NULL OR t.date_ticket >= :startDate)
+			 	AND (:endDate IS NULL OR t.date_ticket <= :endDate)
+			 	AND (:code IS NULL OR m.code = :code)
+				AND (:description IS NULL OR LOWER(m.description) LIKE LOWER(CONCAT('%', :description, '%')))
+				AND (:numTicket IS NULL OR t.num_ticket = :numTicket)
+				AND (:partner_id IS NULL OR LOWER(p.id) LIKE LOWER(CONCAT('%', :partner_id, '%')))
+			ORDER BY
+			 	t.num_ticket,
+			 	ri.item_sequence
+							""", countQuery = """
 				SELECT COUNT(t.id)
 				FROM tb_ticket t
 				INNER JOIN tb_receipt r ON r.id = t.id
@@ -44,21 +49,20 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
 			    INNER JOIN tb_material m ON m.id = ri.material_id
 			    INNER JOIN tb_partner p ON p.id = ri.partner_id
 			    INNER JOIN tb_people pp ON pp.id = p.id
-			   WHERE (:receiptId IS NULL OR r.id = :receiptId)
+			WHERE (:receiptId IS NULL OR r.id = :receiptId)
 			    AND (:description IS NULL OR LOWER(m.description) LIKE LOWER(CONCAT('%', :description, '%')))
 			    AND (:numTicket IS NULL OR t.num_ticket = :numTicket)
-			    AND (:people_id IS NULL OR LOWER(pp.id) LIKE LOWER(CONCAT('%', :people_id, '%')))
+			    AND (:partner_id IS NULL OR LOWER(p.id) LIKE LOWER(CONCAT('%', :partner_id, '%')))
 			""", nativeQuery = true)
-	Page<ReportReceiptProjection> searchDescriptionMaterialOrNumTicketPeople(@Param("receiptId") Long receiptId,
-			@Param("description") String description, @Param("numTicket") Long numTicket,
-			@Param("people_id") Long people_id, Pageable pageable);
-	
+	Page<ReportReceiptProjection> reportReceipt(@Param("description") String description,
+			@Param("numTicket") Long numTicket, @Param("partner_id") Long partner_id,
+			@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("code") Long code, Pageable pageble);
+
 	@Transactional
-    void deleteByNumTicket(Long numTicket);
-	
+	void deleteByNumTicket(Long numTicket);
+
 	boolean existsByNumTicket(Long numTicket);
-	
-	
+
 	Optional<Receipt> findByNumTicket(Long numTicket);
-	
+
 }

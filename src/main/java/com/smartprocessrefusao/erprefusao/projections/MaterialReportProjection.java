@@ -5,7 +5,6 @@ public interface MaterialReportProjection {
 	Long getId();
 	Long getCode();
 	String getDescription();
-	Double getRecoveryYield();
 	String getType();
 	Long getUnitId();
 	String getAcronym();

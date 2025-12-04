@@ -21,7 +21,6 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
 				SELECT
 					m.code,
 					m.description As Description,
-					m.recovery_yield As recoveryYield,
 					m.type,
 					u.id as unitId,
 					u.acronym,

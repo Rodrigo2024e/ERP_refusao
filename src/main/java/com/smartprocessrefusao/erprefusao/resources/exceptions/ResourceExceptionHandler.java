@@ -45,9 +45,9 @@ public class ResourceExceptionHandler {
 		return ResponseEntity.status(status).body(err);
 	}
 
+	// ======= Bean Validation (@NotNull, @Positive, @Size, etc.) =======
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ValidationError> methodArgumentNotValid(MethodArgumentNotValidException e,
-			HttpServletRequest request) {
+	public ResponseEntity<ValidationError> validation(MethodArgumentNotValidException e, HttpServletRequest request) {
 		HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
 		ValidationError err = new ValidationError(Instant.now(), status.value(), "Validation exception",
 				"Erro de validação nos campos", request.getRequestURI());
@@ -68,28 +68,42 @@ public class ResourceExceptionHandler {
 		return ResponseEntity.status(status).body(err);
 	}
 
-	@ExceptionHandler(HttpMessageNotReadableException.class)
-	public ResponseEntity<StandardError> handleHttpMessageNotReadable(HttpMessageNotReadableException e,
-			HttpServletRequest request) {
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<StandardError> dataIntegrity(DataIntegrityViolationException e, HttpServletRequest request) {
+		String error = "Violação de Integridade de Dados. O campo fornecido já existe no banco de dados.";
 		HttpStatus status = HttpStatus.BAD_REQUEST;
-		String userMessage = "Formato inválido: o campo 'código' deve conter apenas números inteiros.";
-
-		StandardError err = new StandardError(Instant.now(), status.value(), userMessage,
-				e.getMostSpecificCause().getMessage(), // deixa a causa técnica mais precisa
+		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(),
 				request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
 	}
-	
-	@ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<StandardError> dataIntegrity(DataIntegrityViolationException e, HttpServletRequest request) {
-        String error = "Violação de Integridade de Dados. O campo fornecido já existe no banco de dados.";
-        HttpStatus status = HttpStatus.BAD_REQUEST; // 400
-        StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
-        
-        // Opcional: tentar extrair a coluna exata do erro, dependendo do driver JDBC
 
-        return ResponseEntity.status(status).body(err);
-    }
-	
-	
+	// ======= Erros de conversão JSON: Enviou texto em campo numérico, enum
+	// inválido, "" etc. =======
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<StandardError> handleHttpMessageNotReadable(HttpMessageNotReadableException e,
+			HttpServletRequest request) {
+
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+
+		String campo = "campo desconhecido";
+		String mensagem = "Formato inválido nos dados enviados.";
+
+		Throwable cause = e.getCause();
+
+		// Detecta erro de formato: BigDecimal, Integer, Enum, etc.
+		if (cause instanceof com.fasterxml.jackson.databind.exc.InvalidFormatException ife) {
+			if (!ife.getPath().isEmpty()) {
+				campo = ife.getPath().get(0).getFieldName();
+			}
+			mensagem = "Formato inválido para o campo: " + campo;
+		}
+
+		// Monta a resposta padrão da API
+		StandardError err = new StandardError(Instant.now(), status.value(), mensagem,
+				e.getMostSpecificCause().getMessage(), // mensagem técnica
+				request.getRequestURI());
+
+		return ResponseEntity.status(status).body(err);
+	}
+
 }

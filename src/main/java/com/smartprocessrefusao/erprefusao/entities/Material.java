@@ -34,7 +34,6 @@ public class Material extends Auditable<String> implements Serializable {
 
 	private Long code;
 	private String description;
-	private Double recoveryYield;
 
 	@Enumerated(EnumType.STRING)
 	private TypeMaterial type;
@@ -54,16 +53,22 @@ public class Material extends Auditable<String> implements Serializable {
 	@OneToMany(mappedBy = "id.material", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ReceiptItem> receiptItems = new ArrayList<>();
 
+	@ManyToOne
+	@JoinColumn(name = "stock_balance_id")
+	private StockBalance stockBalance;
+
+	@OneToMany(mappedBy = "material")
+	private List<InventoryItem> InventoryItems = new ArrayList<>();
+
 	public Material() {
 
 	}
 
-	public Material(Long id, Long code, String description, Double recoveryYield, TypeMaterial type, Unit unit,
-			TaxClassification taxClass, MaterialGroup materialGroup) {
+	public Material(Long id, Long code, String description, TypeMaterial type, Unit unit, TaxClassification taxClass,
+			MaterialGroup materialGroup) {
 		this.id = id;
 		this.code = code;
 		this.description = description;
-		this.recoveryYield = recoveryYield;
 		this.type = type;
 		this.unit = unit;
 		this.taxClass = taxClass;
@@ -92,14 +97,6 @@ public class Material extends Auditable<String> implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Double getRecoveryYield() {
-		return recoveryYield;
-	}
-
-	public void setRecoveryYield(Double recoveryYield) {
-		this.recoveryYield = recoveryYield;
 	}
 
 	public TypeMaterial getType() {
@@ -136,6 +133,19 @@ public class Material extends Auditable<String> implements Serializable {
 
 	public List<ReceiptItem> getReceiptItems() {
 		return receiptItems;
+
+	}
+
+	public StockBalance getStockBalance() {
+		return stockBalance;
+	}
+
+	public void setStockBalance(StockBalance stockBalance) {
+		this.stockBalance = stockBalance;
+	}
+
+	public List<InventoryItem> getInventoryItems() {
+		return InventoryItems;
 	}
 
 	@Override

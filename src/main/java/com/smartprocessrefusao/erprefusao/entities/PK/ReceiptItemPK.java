@@ -29,7 +29,7 @@ public class ReceiptItemPK implements Serializable {
 	private Material material;
 
 	@Column(name = "ITEM_SEQUENCE")
-	private Long itemSequence;
+	private Integer itemSequence;
 
 	public ReceiptItemPK() {
 	}
@@ -64,11 +64,11 @@ public class ReceiptItemPK implements Serializable {
 		this.material = material;
 	}
 
-	public Long getItemSequence() {
+	public Integer getItemSequence() {
 		return itemSequence;
 	}
 
-	public void setItemSequence(Long itemSequence) {
+	public void setItemSequence(Integer itemSequence) {
 		this.itemSequence = itemSequence;
 	}
 

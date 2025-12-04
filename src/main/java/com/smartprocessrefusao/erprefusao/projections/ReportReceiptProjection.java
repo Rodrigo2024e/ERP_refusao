@@ -5,37 +5,41 @@ import java.time.LocalDate;
 
 public interface ReportReceiptProjection {
 
-	Long getReceipt_id();
-	
-	Long getItem_sequence();
-	
 	Long getNumTicket();
 
 	LocalDate getDate_ticket();
 
-	Long getPartner_id();
-
-	String getName();
-
 	String getNumber_plate();
 
-	BigDecimal getNet_weight();
-
-	Long getMaterial_id();
-	
-	String getDescription();
-	
 	String getDocumentNumber();
+
+	BigDecimal getNet_weight();
 
 	String getType_receipt();
 
 	String getType_costs();
 
+	Long getPartner_id();
+
+	String getName();
+
+	Long getItem_sequence();
+	
+	Long getMaterialId();
+
+	Long getCode();
+
+	String getDescription();
+
 	BigDecimal getQuantity();
+
+	BigDecimal getRecovery_yield();
 
 	BigDecimal getPrice();
 
 	BigDecimal getTotal_value();
+
+	BigDecimal getQuantity_mco();
 
 	String getObservation();
 

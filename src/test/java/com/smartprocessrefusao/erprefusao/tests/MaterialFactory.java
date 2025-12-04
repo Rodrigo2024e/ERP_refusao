@@ -39,7 +39,6 @@ public class MaterialFactory {
 		material.setId(1L);
 		material.setCode(1111L);
 		material.setDescription("PERFIL DE PROCESSO");
-		material.setRecoveryYield(0.97);
 		material.setType(TypeMaterial.SCRAP);
 		material.setUnit(createUnit());
 		material.setTaxClass(createTaxClassification());
@@ -48,7 +47,7 @@ public class MaterialFactory {
 	}
 
 	public static MaterialDTO createTypeMaterialInvalid() {
-		return new MaterialDTO(1L, 1111L, "INVALID", 0.97, TypeMaterial.SCRAP.toString(), 1L, "kg", 1L,
+		return new MaterialDTO(1L, 1111L, "INVALID", TypeMaterial.SCRAP.toString(), 1L, "kg", 1L,
 				"Sucata de alumínio", 7602000, 1L, "Sucata de alumínio");
 	}
 
@@ -73,11 +72,6 @@ public class MaterialFactory {
 			@Override
 			public String getDescription() {
 				return "PERFIL DE PROCESSO";
-			}
-
-			@Override
-			public Double getRecoveryYield() {
-				return 0.95;
 			}
 
 			@Override

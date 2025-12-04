@@ -3,7 +3,7 @@ package com.smartprocessrefusao.erprefusao.enumerados;
 public enum TypeTransactionOutGoing {
 
 	JOB_RETURN_TO_CUSTOMER(1L, "JOB_RETURN_TO_CUSTOMER"), SALE(2L, "SALE"), RETURN_TO_SUPPLIER(3L, "RETURN_TO_SUPPLIER"),
-	REWORK_DELIVERY(4L, "REWORK_DELIVERY"), RENT(5L, "RENT");
+	REWORK_DELIVERY(4L, "REWORK_DELIVERY"), RENT(5L, "RENT"), EXIT_ADJUSTMENT(6L, "EXIT_ADJUSTMENT");
 
 	private final Long id;
 	private final String description;
