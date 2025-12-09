@@ -71,7 +71,7 @@ public class ReceiptItemResource {
         // Retorna 201 Created com a URI completa da chave composta.
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
                 .path("/{partnerId}/{materialId}")
-                .buildAndExpand(newDto.getPartnerId(), newDto.getMaterialId())
+                .buildAndExpand(newDto.getPartnerId(), newDto.getCode())
                 .toUri();
 
         return ResponseEntity.created(uri).body(newDto);

@@ -110,5 +110,5 @@ INSERT INTO tb_receipt (id) VALUES (1);
 INSERT INTO tb_dispatch (id) VALUES (2);
 
 --TB_DISPATCH_ITEM
-INSERT INTO tb_dispatch_item (dispatch_id, item_sequence, partner_id, material_id, document_number, type_dispatch, alloy, alloy_pol, alloy_footage, quantity, price, total_value, observation) VALUES (2, 1, 4, 6, '174.254', 'JOB_RETURN_TO_CUSTOMER', 'AL6060', 'POLEGADA_6', 'METRAGEM_6', 6124.96, 3, 18374.88, 'MO/OUT/25 ECO/MATRIZ');
-INSERT INTO tb_dispatch_item (dispatch_id, item_sequence, partner_id, material_id, document_number, type_dispatch, alloy, alloy_pol, alloy_footage, quantity, price, total_value, observation) VALUES (2, 2, 4, 6, '174.254', 'JOB_RETURN_TO_CUSTOMER', 'AL6060', 'POLEGADA_6', 'METRAGEM_6', 11350.04, 3, 34050.12, 'MO/OUT/25 ECO/FILIAL');
+INSERT INTO tb_dispatch_item (dispatch_id, item_sequence, partner_id, code, document_number, type_dispatch, alloy, alloy_pol, alloy_footage, quantity, price, total_value, observation) VALUES (2, 1, 4, 3001, '174.254', 'JOB_RETURN_TO_CUSTOMER', 'AL6060', 'POLEGADA_6', 'METRAGEM_6', 6124.96, 3, 18374.88, 'MO/OUT/25 ECO/MATRIZ');
+INSERT INTO tb_dispatch_item (dispatch_id, item_sequence, partner_id, code, document_number, type_dispatch, alloy, alloy_pol, alloy_footage, quantity, price, total_value, observation) VALUES (2, 2, 4, 3001, '174.254', 'JOB_RETURN_TO_CUSTOMER', 'AL6060', 'POLEGADA_6', 'METRAGEM_6', 11350.04, 3, 34050.12, 'MO/OUT/25 ECO/FILIAL');

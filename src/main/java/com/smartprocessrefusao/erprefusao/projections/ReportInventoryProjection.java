@@ -14,6 +14,9 @@ public interface ReportInventoryProjection {
 	BigDecimal getTotalPurchase();
 	BigDecimal getRecoveryYieldPurchase();
 	BigDecimal getTotalPurchaseMco();
+	BigDecimal getTotalValue();
+	BigDecimal getAverageCost();
+	BigDecimal getAverageCostMco();
 
 	BigDecimal getTotalSentForProcessing();
 	BigDecimal getRecoveryYieldSentForProcessing();

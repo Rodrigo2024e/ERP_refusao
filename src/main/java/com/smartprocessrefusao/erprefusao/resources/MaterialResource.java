@@ -52,7 +52,7 @@ public class MaterialResource {
 	@PostMapping
 	public ResponseEntity<MaterialDTO> insert(@Valid @RequestBody MaterialDTO dto) {
 		dto = materialService.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId())
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getCode())
 				.toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}

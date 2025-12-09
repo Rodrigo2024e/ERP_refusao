@@ -28,6 +28,9 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 					sb.total_purchase, 
 					sb.recovery_yield_purchase, 
 					sb.total_purchase_mco, 
+					sb.total_value,
+					sb.average_cost,
+					sb.average_cost_mco,
 					
 					sb.total_sent_for_processing, 
 					sb.recovery_yield_sent_for_processing,

@@ -19,7 +19,7 @@ public class ReceiptItemDTO {
 	private Long partnerId;
 
 	@NotNull(message = "Informe o tipo material")
-	private Long materialId;
+	private Long code;
 
 	@NotNull(message = "Campo requerido")
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
@@ -53,14 +53,14 @@ public class ReceiptItemDTO {
 	public ReceiptItemDTO() {
 	}
 
-	public ReceiptItemDTO(Long receiptId, Integer itemSequence, Long partnerId, Long materialId,
+	public ReceiptItemDTO(Long receiptId, Integer itemSequence, Long partnerId, Long code,
 			BigDecimal recoveryYield, String documentNumber, String typeReceipt, String typeCosts, BigDecimal quantity,
 			BigDecimal price, BigDecimal totalValue, BigDecimal quantityMco, String observation) {
 
 		this.receiptId = receiptId;
 		this.itemSequence = itemSequence;
 		this.partnerId = partnerId;
-		this.materialId = materialId;
+		this.code = code;
 		this.recoveryYield = recoveryYield;
 		this.documentNumber = documentNumber;
 		this.typeReceipt = typeReceipt;
@@ -76,7 +76,7 @@ public class ReceiptItemDTO {
 		this.receiptId = entity.getId().getReceipt().getId();
 		this.itemSequence = entity.getId().getItemSequence();
 		this.partnerId = entity.getId().getPartner().getId();
-		this.materialId = entity.getId().getMaterial().getId();
+		this.code = entity.getId().getMaterial().getCode();
 		this.recoveryYield = entity.getRecoveryYield();
 		this.documentNumber = entity.getDocumentNumber();
 		this.typeReceipt = entity.getTypeReceipt().toString();
@@ -100,8 +100,8 @@ public class ReceiptItemDTO {
 		return partnerId;
 	}
 
-	public Long getMaterialId() {
-		return materialId;
+	public Long getCode() {
+		return code;
 	}
 
 	public BigDecimal getRecoveryYield() {

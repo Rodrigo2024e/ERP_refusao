@@ -83,12 +83,16 @@ public class ReceiptService {
 
 				Long partnerId = Optional.ofNullable(itemDto.getPartnerId())
 						.orElseThrow(() -> new ResourceNotFoundException("Partner ID é obrigatório."));
-				Partner partner = partnerCache.computeIfAbsent(partnerId, id -> partnerRepository.getReferenceById(id));
 
-				Long materialId = Optional.ofNullable(itemDto.getMaterialId())
-						.orElseThrow(() -> new ResourceNotFoundException("Material ID é obrigatório."));
-				Material material = materialCache.computeIfAbsent(materialId,
-						id -> materialRepository.getReferenceById(id));
+				Partner partner = partnerCache.computeIfAbsent(partnerId, id -> partnerRepository.findById(id)
+						.orElseThrow(() -> new ResourceNotFoundException("Partner não encontrado: id = " + id)));
+
+				Long code = Optional.ofNullable(itemDto.getCode())
+						.orElseThrow(() -> new ResourceNotFoundException("Código do material é obrigatório."));
+
+				Material material = materialCache.computeIfAbsent(code,
+						id -> materialRepository.findByCode(id).orElseThrow(
+								() -> new ResourceNotFoundException("Material não encontrado para o code: " + id)));
 
 				copyItemDtoToEntity(itemDto, item, entity, partner, material, sequence);
 				entity.getReceiptItems().add(item);
@@ -142,12 +146,15 @@ public class ReceiptService {
 			Integer sequence = 1;
 			for (ReceiptItemDTO itemDto : dto.getReceiptItems()) {
 
-				ReceiptItem item = new ReceiptItem();
-
 				Partner partner = partnerCache.computeIfAbsent(itemDto.getPartnerId(),
-						id -> partnerRepository.getReferenceById(id));
-				Material material = materialCache.computeIfAbsent(itemDto.getMaterialId(),
-						id -> materialRepository.getReferenceById(id));
+						id -> partnerRepository.findById(id)
+								.orElseThrow(() -> new ResourceNotFoundException("Parceiro não encontrado: " + id)));
+
+				Material material = materialCache.computeIfAbsent(itemDto.getCode(),
+						id -> materialRepository.findByCode(id)
+								.orElseThrow(() -> new ResourceNotFoundException("Material não encontrado: " + id)));
+
+				ReceiptItem item = new ReceiptItem();
 
 				copyItemDtoToEntity(itemDto, item, entity, partner, material, sequence);
 				entity.getReceiptItems().add(item);

@@ -36,7 +36,7 @@ public class MaterialFactory {
 
 	public static Material createMaterial() {
 		Material material = new Material();
-		material.setId(1L);
+		material.setCode(1001L);
 		material.setCode(1111L);
 		material.setDescription("PERFIL DE PROCESSO");
 		material.setType(TypeMaterial.SCRAP);

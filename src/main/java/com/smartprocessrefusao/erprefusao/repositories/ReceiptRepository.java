@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.smartprocessrefusao.erprefusao.entities.Material;
 import com.smartprocessrefusao.erprefusao.entities.Receipt;
 import com.smartprocessrefusao.erprefusao.projections.ReportReceiptProjection;
 
@@ -22,13 +23,13 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
 			SELECT
 			 	t.num_ticket As numTicket, t.date_ticket, t.number_plate,
 			 	ri.document_number, t.net_weight, ri.type_receipt, ri.type_costs,
-			 	ri.partner_id, pp.name, ri.item_sequence, ri.material_id, m.code, m.description,
+			 	ri.partner_id, pp.name, ri.item_sequence, ri.code, m.code, m.description,
 			 	ri.quantity, ri.recovery_yield, ri.price, ri.total_value,
 			 	ri.quantity_mco, ri.observation
 			FROM tb_ticket t
 			INNER JOIN tb_receipt r ON r.id = t.id
 			INNER JOIN tb_receipt_item ri ON ri.receipt_id = r.id
-			INNER JOIN tb_material m ON m.id = ri.material_id
+			INNER JOIN tb_material m ON m.code = ri.code
 			INNER JOIN tb_partner p ON p.id = ri.partner_id
 			INNER JOIN tb_people pp ON pp.id = p.id
 			WHERE
@@ -46,7 +47,7 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
 				FROM tb_ticket t
 				INNER JOIN tb_receipt r ON r.id = t.id
 				INNER JOIN tb_receipt_item ri ON ri.receipt_id = r.id
-			    INNER JOIN tb_material m ON m.id = ri.material_id
+			    INNER JOIN tb_material m ON m.code = ri.code
 			    INNER JOIN tb_partner p ON p.id = ri.partner_id
 			    INNER JOIN tb_people pp ON pp.id = p.id
 			WHERE (:receiptId IS NULL OR r.id = :receiptId)
@@ -60,6 +61,8 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
 
 	@Transactional
 	void deleteByNumTicket(Long numTicket);
+	
+//	Optional<Material> findByCode(Long code);
 
 	boolean existsByNumTicket(Long numTicket);
 

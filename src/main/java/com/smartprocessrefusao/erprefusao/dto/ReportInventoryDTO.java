@@ -12,19 +12,22 @@ public class ReportInventoryDTO {
 	private BigDecimal totalAdjustmentEntries;
 	private BigDecimal recoveryYieldAdjustmentEntries;
 	private BigDecimal totalAdjustmentEntriesMco;
-	
+
 	private BigDecimal totalPurchase;
 	private BigDecimal recoveryYieldPurchase;
 	private BigDecimal totalPurchaseMco;
-	
+	private BigDecimal totalValue = BigDecimal.ZERO;
+	private BigDecimal averageCost = BigDecimal.ZERO;
+	private BigDecimal averageCostMco = BigDecimal.ZERO;
+
 	private BigDecimal totalSentForProcessing;
 	private BigDecimal recoveryYieldSentForProcessing;
 	private BigDecimal totalSentForProcessingMco;
-	
+
 	private BigDecimal totalSalesScrap;
 	private BigDecimal recoveryYieldSalesScrap;
 	private BigDecimal totalSalesScrapMco;
-	
+
 	private BigDecimal totalScrapSalesReturn;
 	private BigDecimal recoveryYieldScrapSalesReturn;
 	private BigDecimal totalScrapSalesReturnMco;
@@ -32,11 +35,10 @@ public class ReportInventoryDTO {
 	private BigDecimal totalAdjustmentExit;
 	private BigDecimal recoveryYieldAdjustmentExit;
 	private BigDecimal totalAdjustmentExitMco;
-	
+
 	private BigDecimal finalBalance;
 	private BigDecimal recoveryYieldFinalBalance;
 	private BigDecimal finalBalanceMco;
-	
 
 	public ReportInventoryDTO(ReportInventoryProjection p) {
 		this.code = p.getCode();
@@ -49,6 +51,9 @@ public class ReportInventoryDTO {
 		this.totalPurchase = p.getTotalPurchase();
 		this.totalPurchaseMco = p.getTotalPurchaseMco();
 		this.recoveryYieldPurchase = p.getRecoveryYieldPurchase();
+		this.totalValue = p.getTotalValue();
+		this.averageCost = p.getAverageCost();
+		this.averageCostMco = p.getAverageCostMco();
 
 		this.totalSentForProcessing = p.getTotalSentForProcessing();
 		this.totalSentForProcessingMco = p.getTotalSentForProcessingMco();
@@ -102,6 +107,18 @@ public class ReportInventoryDTO {
 
 	public BigDecimal getRecoveryYieldPurchase() {
 		return recoveryYieldPurchase;
+	}
+
+	public BigDecimal getTotalValue() {
+		return totalValue;
+	}
+
+	public BigDecimal getAverageCost() {
+		return averageCost;
+	}
+
+	public BigDecimal getAverageCostMco() {
+		return averageCostMco;
 	}
 
 	public BigDecimal getTotalSentForProcessing() {

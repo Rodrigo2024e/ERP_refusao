@@ -12,8 +12,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -29,9 +27,6 @@ public class Material extends Auditable<String> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
 	private Long code;
 	private String description;
 
@@ -64,23 +59,14 @@ public class Material extends Auditable<String> implements Serializable {
 
 	}
 
-	public Material(Long id, Long code, String description, TypeMaterial type, Unit unit, TaxClassification taxClass,
+	public Material(Long code, String description, TypeMaterial type, Unit unit, TaxClassification taxClass,
 			MaterialGroup materialGroup) {
-		this.id = id;
 		this.code = code;
 		this.description = description;
 		this.type = type;
 		this.unit = unit;
 		this.taxClass = taxClass;
 		this.materialGroup = materialGroup;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public Long getCode() {
@@ -152,7 +138,7 @@ public class Material extends Auditable<String> implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(code, id);
+		result = prime * result + Objects.hash(code);
 		return result;
 	}
 
@@ -165,7 +151,8 @@ public class Material extends Auditable<String> implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Material other = (Material) obj;
-		return Objects.equals(code, other.code) && Objects.equals(id, other.id);
+		return Objects.equals(code, other.code);
 	}
 
+	
 }

@@ -75,7 +75,7 @@ public class DispatchItemDTO {
 		dispatchId = entity.getId().getDispatch().getId();
 		itemSequence = entity.getId().getItemSequence();
 		partnerId = entity.getId().getPartner().getId();
-		materialId = entity.getId().getMaterial().getId();
+		materialId = entity.getId().getMaterial().getCode();
 		documentNumber = entity.getDocumentNumber();
 		typeDispatch = entity.getTypeDispatch().toString();
 		alloy = entity.getAlloy().toString();

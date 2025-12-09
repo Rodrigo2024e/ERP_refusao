@@ -28,11 +28,14 @@ public class StockBalance implements Serializable {
 
 	@OneToMany(mappedBy = "stockBalance")
 	private List<Material> materials = new ArrayList<>();
-	
-	// ENTRADAS 
+
+	// ENTRADAS
 	private BigDecimal totalPurchase = BigDecimal.ZERO;
 	private BigDecimal totalPurchaseMco = BigDecimal.ZERO;
 	private BigDecimal recoveryYieldPurchase = BigDecimal.ZERO;
+	private BigDecimal totalValue = BigDecimal.ZERO;
+	private BigDecimal averageCost = BigDecimal.ZERO;
+	private BigDecimal averageCostMco = BigDecimal.ZERO;
 
 	private BigDecimal totalSentForProcessing = BigDecimal.ZERO;
 	private BigDecimal totalSentForProcessingMco = BigDecimal.ZERO;
@@ -41,7 +44,7 @@ public class StockBalance implements Serializable {
 	private BigDecimal totalScrapSalesReturn = BigDecimal.ZERO;
 	private BigDecimal totalScrapSalesReturnMco = BigDecimal.ZERO;
 	private BigDecimal recoveryYieldScrapSalesReturn = BigDecimal.ZERO;
-	
+
 	// AJUSTES / SAÍDAS
 	private BigDecimal totalAdjustmentEntries = BigDecimal.ZERO;
 	private BigDecimal totalAdjustmentEntriesMco = BigDecimal.ZERO;
@@ -63,20 +66,25 @@ public class StockBalance implements Serializable {
 	public StockBalance() {
 	}
 
-	public StockBalance(Long id, LocalDate dateStock, BigDecimal totalPurchase, BigDecimal totalPurchaseMco,
-			BigDecimal recoveryYieldPurchase, BigDecimal totalSentForProcessing, BigDecimal totalSentForProcessingMco,
-			BigDecimal recoveryYieldSentForProcessing, BigDecimal totalScrapSalesReturn,
-			BigDecimal totalScrapSalesReturnMco, BigDecimal recoveryYieldScrapSalesReturn,
-			BigDecimal totalAdjustmentEntries, BigDecimal totalAdjustmentEntriesMco,
-			BigDecimal recoveryYieldAdjustmentEntries, BigDecimal totalSalesScrap, BigDecimal totalSalesScrapMco,
-			BigDecimal recoveryYieldSalesScrap, BigDecimal totalAdjustmentExit, BigDecimal totalAdjustmentExitMco,
-			BigDecimal recoveryYieldAdjustmentExit, BigDecimal finalBalance, BigDecimal finalBalanceMco,
-			BigDecimal recoveryYieldFinalBalance) {
+	public StockBalance(Long id, LocalDate dateStock, List<Material> materials, BigDecimal totalPurchase,
+			BigDecimal totalPurchaseMco, BigDecimal recoveryYieldPurchase, BigDecimal totalValue,
+			BigDecimal averageCost, BigDecimal averageCostMco, BigDecimal totalSentForProcessing,
+			BigDecimal totalSentForProcessingMco, BigDecimal recoveryYieldSentForProcessing,
+			BigDecimal totalScrapSalesReturn, BigDecimal totalScrapSalesReturnMco,
+			BigDecimal recoveryYieldScrapSalesReturn, BigDecimal totalAdjustmentEntries,
+			BigDecimal totalAdjustmentEntriesMco, BigDecimal recoveryYieldAdjustmentEntries, BigDecimal totalSalesScrap,
+			BigDecimal totalSalesScrapMco, BigDecimal recoveryYieldSalesScrap, BigDecimal totalAdjustmentExit,
+			BigDecimal totalAdjustmentExitMco, BigDecimal recoveryYieldAdjustmentExit, BigDecimal finalBalance,
+			BigDecimal finalBalanceMco, BigDecimal recoveryYieldFinalBalance) {
 		this.id = id;
 		this.dateStock = dateStock;
+		this.materials = materials;
 		this.totalPurchase = totalPurchase;
 		this.totalPurchaseMco = totalPurchaseMco;
 		this.recoveryYieldPurchase = recoveryYieldPurchase;
+		this.totalValue = totalValue;
+		this.averageCost = averageCost;
+		this.averageCostMco = averageCostMco;
 		this.totalSentForProcessing = totalSentForProcessing;
 		this.totalSentForProcessingMco = totalSentForProcessingMco;
 		this.recoveryYieldSentForProcessing = recoveryYieldSentForProcessing;
@@ -143,6 +151,30 @@ public class StockBalance implements Serializable {
 
 	public void setRecoveryYieldPurchase(BigDecimal recoveryYieldPurchase) {
 		this.recoveryYieldPurchase = recoveryYieldPurchase;
+	}
+
+	public BigDecimal getTotalValue() {
+		return totalValue;
+	}
+
+	public void setTotalValue(BigDecimal totalValue) {
+		this.totalValue = totalValue;
+	}
+
+	public BigDecimal getAverageCost() {
+		return averageCost;
+	}
+
+	public BigDecimal getAverageCostMco() {
+		return averageCostMco;
+	}
+
+	public void setAverageCostMco(BigDecimal averageCostMco) {
+		this.averageCostMco = averageCostMco;
+	}
+
+	public void setAverageCost(BigDecimal averageCost) {
+		this.averageCost = averageCost;
 	}
 
 	public BigDecimal getTotalSentForProcessing() {

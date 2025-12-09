@@ -13,7 +13,6 @@ import jakarta.validation.constraints.Size;
 public class MaterialDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
 
 	@NotNull(message = "O código do material é obrigatório.")
 	@Min(value = 1000, message = "O código do material deve ter 4 dígitos.")
@@ -47,7 +46,6 @@ public class MaterialDTO implements Serializable {
 	public MaterialDTO(Long id, Long code, String description, String type, Long unitId,
 			String acronym, Long taxClassId, String description_taxclass, Integer ncmCode, Long matGroupId,
 			String description_matGroup) {
-		this.id = id;
 		this.code = code;
 		this.description = description;
 		this.type = type;
@@ -62,7 +60,6 @@ public class MaterialDTO implements Serializable {
 	}
 
 	public MaterialDTO(Material entity) {
-		id =entity.getId();
 		code = entity.getCode();
 		description = entity.getDescription();
 		type = entity.getType().toString();
@@ -74,10 +71,6 @@ public class MaterialDTO implements Serializable {
 		matGroupId = entity.getMaterialGroup().getId();
 		description_matGroup = entity.getMaterialGroup().getDescription();
 
-	}
-
-	public Long getId() {
-		return id;
 	}
 
 	public Long getCode() {

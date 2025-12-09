@@ -219,13 +219,13 @@ public class InventoryService {
 			item.setTotalValue(itemDto.getTotalValue());
 			item.setQuantityMco(itemDto.getQuantityMco());
 
-			Material material = materialRepository.findById(itemDto.getMaterial().getId()).orElseThrow(
-					() -> new ResourceNotFoundException("Material not found: " + itemDto.getMaterial().getId()));
+			Material material = materialRepository.findById(itemDto.getMaterial().getCode()).orElseThrow(
+					() -> new ResourceNotFoundException("Material not found: " + itemDto.getMaterial().getCode()));
 
 			item.setMaterial(material);
 
 			Partner partner = partnerRepository.findById(itemDto.getPartner().getId()).orElseThrow(
-					() -> new ResourceNotFoundException("Material not found: " + itemDto.getMaterial().getId()));
+					() -> new ResourceNotFoundException("Material not found: " + itemDto.getMaterial().getCode()));
 
 			item.setPartner(partner);
 
@@ -252,6 +252,8 @@ public class InventoryService {
 
 			BigDecimal qty = item.getQuantity() != null ? item.getQuantity() : BigDecimal.ZERO;
 
+			BigDecimal val = item.getTotalValue() != null ? item.getTotalValue() : BigDecimal.ZERO;
+
 			// ================
 			// BLOQUEIA ESTOQUE NEGATIVO
 			// ================
@@ -267,9 +269,9 @@ public class InventoryService {
 				}
 			}
 
-			// ================
-			// APLICA A MOVIMENTAÇÃO
-			// ================
+			// ==================================
+			// APLICA A MOVIMENTAÇÃO TYPE_RECEIPT
+			// ==================================
 			switch (item.getTypeReceipt()) {
 
 			case PURCHASE:
@@ -283,6 +285,17 @@ public class InventoryService {
 				// Recovery Yield PURCHASE
 				BigDecimal ry = calcRecoveryYield(stock.getTotalPurchaseMco(), stock.getTotalPurchase());
 				stock.setRecoveryYieldPurchase(ry);
+
+				// TotalValue
+				stock.setTotalValue(stock.getTotalValue().add(val));
+
+				// Average Cost
+				BigDecimal aCost = calcAverageCost(stock.getTotalValue(), stock.getTotalPurchase());
+				stock.setAverageCost(aCost);
+
+				// Average Cost Mco
+				BigDecimal aCostMco = calcAverageCost(stock.getTotalValue(), stock.getTotalPurchaseMco());
+				stock.setAverageCostMco(aCostMco);
 				break;
 
 			case SENT_FOR_PROCESSING:
@@ -337,8 +350,7 @@ public class InventoryService {
 				stock.setTotalSalesScrapMco(stock.getTotalSalesScrapMco().add(salesScrapMco));
 
 				// Recovey Yield SALES_SCRAP
-				BigDecimal salesScrapRy = calcRecoveryYield(stock.getTotalSalesScrapMco(),
-						stock.getTotalSalesScrap());
+				BigDecimal salesScrapRy = calcRecoveryYield(stock.getTotalSalesScrapMco(), stock.getTotalSalesScrap());
 				stock.setRecoveryYieldSalesScrap(salesScrapRy);
 				break;
 
@@ -355,7 +367,7 @@ public class InventoryService {
 						stock.getTotalAdjustmentExit());
 				stock.setRecoveryYieldAdjustmentExit(ajustmentExitRy);
 				break;
-				
+
 			default:
 				break;
 
@@ -383,6 +395,8 @@ public class InventoryService {
 
 			BigDecimal qty = item.getQuantity() != null ? item.getQuantity() : BigDecimal.ZERO;
 
+			BigDecimal val = item.getTotalValue() != null ? item.getTotalValue() : BigDecimal.ZERO;
+
 			switch (item.getTypeReceipt()) {
 
 			case PURCHASE:
@@ -396,6 +410,17 @@ public class InventoryService {
 				// Recovery Yield PURCHASE
 				BigDecimal ry = calcRecoveryYield(stock.getTotalPurchaseMco(), stock.getTotalPurchase());
 				stock.setRecoveryYieldPurchase(ry);
+
+				// TotalValue
+				stock.setTotalValue(stock.getTotalValue().add(val));
+
+				// Average Cost
+				BigDecimal aCost = calcAverageCost(stock.getTotalValue(), stock.getTotalPurchase());
+				stock.setAverageCost(aCost);
+
+				// Average Cost Mco
+				BigDecimal aCostMco = calcAverageCost(stock.getTotalValue(), stock.getTotalPurchaseMco());
+				stock.setAverageCostMco(aCostMco);
 				break;
 
 			case SENT_FOR_PROCESSING:
@@ -450,8 +475,7 @@ public class InventoryService {
 				stock.setTotalSalesScrapMco(stock.getTotalSalesScrapMco().add(salesScrapMco));
 
 				// Recovey Yield SALES_SCRAP
-				BigDecimal salesScrapRy = calcRecoveryYield(stock.getTotalSalesScrapMco(),
-						stock.getTotalSalesScrap());
+				BigDecimal salesScrapRy = calcRecoveryYield(stock.getTotalSalesScrapMco(), stock.getTotalSalesScrap());
 				stock.setRecoveryYieldSalesScrap(salesScrapRy);
 				break;
 
@@ -468,7 +492,7 @@ public class InventoryService {
 						stock.getTotalAdjustmentExit());
 				stock.setRecoveryYieldAdjustmentExit(ajustmentExitRy);
 				break;
-				
+
 			default:
 				break;
 			}
@@ -510,6 +534,17 @@ public class InventoryService {
 		}
 
 		return mco.divide(total, 2, RoundingMode.HALF_UP);
+	}
+
+	// Calculate Average Cosy
+	private BigDecimal calcAverageCost(BigDecimal valTotal, BigDecimal qty) {
+		if (qty == null)
+			qty = BigDecimal.ZERO;
+		if (valTotal == null || valTotal.compareTo(BigDecimal.ZERO) == 0) {
+			return BigDecimal.ZERO; // Evita divisão por zero
+		}
+
+		return valTotal.divide(qty, 2, RoundingMode.HALF_UP);
 	}
 
 }
