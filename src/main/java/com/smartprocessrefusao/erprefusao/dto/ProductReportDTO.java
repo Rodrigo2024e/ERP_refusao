@@ -1,8 +1,8 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
-import com.smartprocessrefusao.erprefusao.projections.ReportProductProjection;
+import com.smartprocessrefusao.erprefusao.projections.ProductReportProjection;
 
-public class ReportProductDTO {
+public class ProductReportDTO {
 
 	private Long code;
 	private String description;
@@ -17,11 +17,11 @@ public class ReportProductDTO {
 	private Long matGroupId;
 	private String description_matGroup;
 
-	public ReportProductDTO() {
+	public ProductReportDTO() {
 
 	}
 
-	public ReportProductDTO(ReportProductProjection projection) {
+	public ProductReportDTO(ProductReportProjection projection) {
 		code = projection.getCode();
 		description = projection.getDescription();
 		type = projection.getType();

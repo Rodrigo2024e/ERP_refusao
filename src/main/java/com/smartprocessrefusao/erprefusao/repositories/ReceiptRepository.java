@@ -10,9 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.smartprocessrefusao.erprefusao.entities.Material;
 import com.smartprocessrefusao.erprefusao.entities.Receipt;
-import com.smartprocessrefusao.erprefusao.projections.ReportReceiptProjection;
+import com.smartprocessrefusao.erprefusao.projections.ReceiptReportProjection;
 
 import jakarta.transaction.Transactional;
 
@@ -55,7 +54,7 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
 			    AND (:numTicket IS NULL OR t.num_ticket = :numTicket)
 			    AND (:partner_id IS NULL OR LOWER(p.id) LIKE LOWER(CONCAT('%', :partner_id, '%')))
 			""", nativeQuery = true)
-	Page<ReportReceiptProjection> reportReceipt(@Param("description") String description,
+	Page<ReceiptReportProjection> reportReceipt(@Param("description") String description,
 			@Param("numTicket") Long numTicket, @Param("partner_id") Long partner_id,
 			@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("code") Long code, Pageable pageble);
 

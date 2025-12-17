@@ -22,7 +22,7 @@ import com.smartprocessrefusao.erprefusao.entities.Receipt;
 import com.smartprocessrefusao.erprefusao.entities.ReceiptItem;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeCosts;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
-import com.smartprocessrefusao.erprefusao.projections.ReportReceiptProjection;
+import com.smartprocessrefusao.erprefusao.projections.ReceiptReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.MaterialRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
 import com.smartprocessrefusao.erprefusao.repositories.ReceiptRepository;
@@ -238,7 +238,7 @@ public class ReceiptService {
 	}
 
 	// REPORT
-	public Page<ReportReceiptProjection> getReportRange(String description, Long numTicket, Long people_id,
+	public Page<ReceiptReportProjection> getReportRange(String description, Long numTicket, Long people_id,
 			LocalDate startDate, LocalDate endDate, Long code, Pageable pageable) {
 
 		if (startDate != null && endDate != null && startDate.isAfter(endDate)) {

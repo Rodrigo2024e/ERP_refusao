@@ -11,7 +11,7 @@ import com.smartprocessrefusao.erprefusao.entities.Receipt;
 import com.smartprocessrefusao.erprefusao.entities.Ticket;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeCosts;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
-import com.smartprocessrefusao.erprefusao.projections.MaterialMovementProjection;
+import com.smartprocessrefusao.erprefusao.projections.MaterialMovementReportProjection;
 /*
 public class ReceiptFactory {
 

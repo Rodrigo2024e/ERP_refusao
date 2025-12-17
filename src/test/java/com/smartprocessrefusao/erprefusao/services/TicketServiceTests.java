@@ -24,10 +24,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.smartprocessrefusao.erprefusao.dto.ReportReceiptDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReceiptReportDTO;
 
 import com.smartprocessrefusao.erprefusao.entities.Ticket;
-import com.smartprocessrefusao.erprefusao.projections.ReportReceiptProjection;
+import com.smartprocessrefusao.erprefusao.projections.ReceiptReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.TicketRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;

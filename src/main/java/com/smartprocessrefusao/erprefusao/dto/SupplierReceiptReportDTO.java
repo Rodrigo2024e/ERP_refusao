@@ -5,9 +5,9 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSerializer;
-import com.smartprocessrefusao.erprefusao.projections.SupplierReceiptProjection;
+import com.smartprocessrefusao.erprefusao.projections.SupplierReceiptReportProjection;
 
-public class ReportSupplierReceiptDTO {
+public class SupplierReceiptReportDTO {
 
 	private Long id;
 
@@ -36,11 +36,11 @@ public class ReportSupplierReceiptDTO {
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal totalValue;
 
-	public ReportSupplierReceiptDTO() {
+	public SupplierReceiptReportDTO() {
 
 	}
 
-	public ReportSupplierReceiptDTO(SupplierReceiptProjection projection) {
+	public SupplierReceiptReportDTO(SupplierReceiptReportProjection projection) {
 
 		id = projection.getId();
 		dateReceipt = projection.getDateReceipt();

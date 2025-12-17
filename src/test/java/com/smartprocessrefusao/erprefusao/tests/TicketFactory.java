@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import com.smartprocessrefusao.erprefusao.entities.Ticket;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeCosts;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
-import com.smartprocessrefusao.erprefusao.projections.ReportReceiptProjection;
+import com.smartprocessrefusao.erprefusao.projections.ReceiptReportProjection;
 /*
 public class TicketFactory {
 

@@ -3,34 +3,34 @@ package com.smartprocessrefusao.erprefusao.tests;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.smartprocessrefusao.erprefusao.projections.UserDetailsProjection;
+import com.smartprocessrefusao.erprefusao.projections.UserDetailsReportProjection;
 
 public class UserDetailsFactory {
 
-	public static List<UserDetailsProjection> createCustomClientUser(String username) {
+	public static List<UserDetailsReportProjection> createCustomClientUser(String username) {
 		
-		List<UserDetailsProjection> list = new ArrayList<>();
+		List<UserDetailsReportProjection> list = new ArrayList<>();
 		list.add(new UserDetailsImpl(username, "123", 1L, "ROLE_CLIENT"));
 		return list;
 	}
 	
-	public static List<UserDetailsProjection> createCustomAdminUser(String username) {
+	public static List<UserDetailsReportProjection> createCustomAdminUser(String username) {
 		
-		List<UserDetailsProjection> list = new ArrayList<>();
+		List<UserDetailsReportProjection> list = new ArrayList<>();
 		list.add(new UserDetailsImpl(username, "123", 2L, "ROLE_ADMIN"));
 		return list;
 	}
 	
-	public static List<UserDetailsProjection> createCustomAdminClientUser(String username) {
+	public static List<UserDetailsReportProjection> createCustomAdminClientUser(String username) {
 		
-		List<UserDetailsProjection> list = new ArrayList<>();
+		List<UserDetailsReportProjection> list = new ArrayList<>();
 		list.add(new UserDetailsImpl(username, "123", 1L, "ROLE_CLIENT"));
 		list.add(new UserDetailsImpl(username, "123", 2L, "ROLE_ADMIN"));
 		return list;
 	}
 }
 	
-class UserDetailsImpl implements UserDetailsProjection {
+class UserDetailsImpl implements UserDetailsReportProjection {
 	
 	private String username;
 	private String password;

@@ -2,9 +2,9 @@ package com.smartprocessrefusao.erprefusao.dto;
 
 import java.math.BigDecimal;
 
-import com.smartprocessrefusao.erprefusao.projections.MaterialMovementProjection;
+import com.smartprocessrefusao.erprefusao.projections.MaterialMovementReportProjection;
 
-public class ReportMaterialMovementReceiptDTO {
+public class MaterialMovementReceiptReportDTO {
 
 	private Long id;
 	private Integer ticketId;
@@ -19,11 +19,11 @@ public class ReportMaterialMovementReceiptDTO {
 	private BigDecimal totalValue;
 	
 
-	public ReportMaterialMovementReceiptDTO() {
+	public MaterialMovementReceiptReportDTO() {
 
 	}
 	
-	public ReportMaterialMovementReceiptDTO(MaterialMovementProjection projection) {
+	public MaterialMovementReceiptReportDTO(MaterialMovementReportProjection projection) {
 		id = projection.getId();
 
 		if (projection.getTicketId() != null) {

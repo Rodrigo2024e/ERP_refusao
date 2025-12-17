@@ -1,6 +1,6 @@
 package com.smartprocessrefusao.erprefusao.projections;
 
-public interface AddressProjection {
+public interface AddressReportProjection {
 	    Long getId();
 	    String getStreet();
 	    Integer getNumber();

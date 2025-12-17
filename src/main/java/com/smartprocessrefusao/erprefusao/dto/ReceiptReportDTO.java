@@ -6,9 +6,9 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSerializer;
-import com.smartprocessrefusao.erprefusao.projections.ReportReceiptProjection;
+import com.smartprocessrefusao.erprefusao.projections.ReceiptReportProjection;
 
-public class ReportReceiptDTO {
+public class ReceiptReportDTO {
 
 	private Long numTicket;
 
@@ -50,11 +50,11 @@ public class ReportReceiptDTO {
 
 	private String observation;
 
-	public ReportReceiptDTO() {
+	public ReceiptReportDTO() {
 
 	}
 
-	public ReportReceiptDTO(Long numTicket, LocalDate date_ticket, String number_plate, String document_number,
+	public ReceiptReportDTO(Long numTicket, LocalDate date_ticket, String number_plate, String document_number,
 			BigDecimal net_weight, String type_receipt, String type_costs, Long partner_id, String name,
 			Long item_sequence, Long material_id, Long code, String description, BigDecimal quantity,
 			BigDecimal recovery_yield, BigDecimal price, BigDecimal totalValue, BigDecimal quantity_mco,
@@ -80,7 +80,7 @@ public class ReportReceiptDTO {
 		this.observation = observation;
 	}
 
-	public ReportReceiptDTO(ReportReceiptProjection projection) {
+	public ReceiptReportDTO(ReceiptReportProjection projection) {
 		numTicket = projection.getNumTicket();
 		date_ticket = projection.getDate_ticket();
 		number_plate = projection.getNumber_plate();

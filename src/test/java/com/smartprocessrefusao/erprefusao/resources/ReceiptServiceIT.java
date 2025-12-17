@@ -16,7 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.smartprocessrefusao.erprefusao.dto.ReportMaterialMovementReceiptDTO;
+import com.smartprocessrefusao.erprefusao.dto.MaterialMovementReceiptReportDTO;
 
 import com.smartprocessrefusao.erprefusao.entities.Ticket;
 

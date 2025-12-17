@@ -26,7 +26,10 @@ public class Partner extends People implements IdProjection<Long> {
 	private List<ReceiptItem> receiptItems = new ArrayList<>();
 
 	@OneToMany(mappedBy = "partner")
-	private List<InventoryItem> InventoryItems = new ArrayList<>();
+	private List<InventoryItem> inventoryItems = new ArrayList<>();
+
+	@OneToMany(mappedBy = "partner")
+	private List<Melting> meltings = new ArrayList<>();
 
 	public Partner() {
 
@@ -88,7 +91,11 @@ public class Partner extends People implements IdProjection<Long> {
 	}
 
 	public List<InventoryItem> getInventoryItems() {
-		return InventoryItems;
+		return inventoryItems;
+	}
+
+	public List<Melting> getMeltings() {
+		return meltings;
 	}
 
 	@Override

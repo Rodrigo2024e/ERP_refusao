@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartprocessrefusao.erprefusao.dto.AddressDTO;
 import com.smartprocessrefusao.erprefusao.dto.EmployeeDepartamentDTO;
+import com.smartprocessrefusao.erprefusao.enumerados.EmployeePosition;
 import com.smartprocessrefusao.erprefusao.tests.AddressFactory;
 import com.smartprocessrefusao.erprefusao.tests.TokenUtil;
 
@@ -54,8 +57,18 @@ public class AddressResourceIT {
 
 		existingId = 1L;
 
-		employeeDTO = new EmployeeDepartamentDTO(null, "Luciano R Carvalho", "luciano@gmail.com.br", "44-14244-1222",
-				"44-1442-2222", "111.000.111-49", 1L, "Produção", "Recebimento e classificação de sucata");
+		employeeDTO = new EmployeeDepartamentDTO(
+				null, 
+				"Luciano R Carvalho", 
+				"luciano@gmail.com.br", 
+				"44-14244-1222",
+				"44-1442-2222", 
+				"111.000.111-49", 
+				LocalDate.now(),  
+				1L, 
+				"Produção", 
+				"Recebimento e classificação de sucata",
+				EmployeePosition.GERENTE_INDUSTRIAL);
 
 		clientUsername = "michele@alunova.com";
 		clientPassword = "123456";

@@ -29,7 +29,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.smartprocessrefusao.erprefusao.dto.DispatchDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportDispatchDTO;
+import com.smartprocessrefusao.erprefusao.dto.DispatchReportDTO;
 import com.smartprocessrefusao.erprefusao.entities.Dispatch;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.entities.Ticket;

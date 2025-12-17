@@ -17,7 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.dto.DispatchDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportDispatchDTO;
+import com.smartprocessrefusao.erprefusao.dto.DispatchReportDTO;
 
 import com.smartprocessrefusao.erprefusao.entities.Dispatch;
 import com.smartprocessrefusao.erprefusao.entities.Partner;

@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.smartprocessrefusao.erprefusao.dto.InventoryDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportInventoryDTO;
-import com.smartprocessrefusao.erprefusao.projections.ReportInventoryProjection;
+import com.smartprocessrefusao.erprefusao.dto.InventoryReportDTO;
+import com.smartprocessrefusao.erprefusao.projections.InventoryReportProjection;
 import com.smartprocessrefusao.erprefusao.services.InventoryService;
 
 import jakarta.validation.Valid;
@@ -75,9 +75,9 @@ public class InventoryResource {
 
 		try {
 
-			Page<ReportInventoryProjection> reportPage = inventoryService.getReportRange(startDate, endDate, code, pageable);
+			Page<InventoryReportProjection> reportPage = inventoryService.getReportRange(startDate, endDate, code, pageable);
 
-			Page<ReportInventoryDTO> dtoPage = reportPage.map(ReportInventoryDTO::new);
+			Page<InventoryReportDTO> dtoPage = reportPage.map(InventoryReportDTO::new);
 
 			return ResponseEntity.ok(dtoPage);
 

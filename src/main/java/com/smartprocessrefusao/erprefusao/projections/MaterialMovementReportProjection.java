@@ -3,7 +3,7 @@ package com.smartprocessrefusao.erprefusao.projections;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public interface MaterialMovementProjection extends IdProjection<Long> {
+public interface MaterialMovementReportProjection extends IdProjection<Long> {
 
 	Long getId();
 	

@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.User;
-import com.smartprocessrefusao.erprefusao.projections.UserDetailsProjection;
+import com.smartprocessrefusao.erprefusao.projections.UserDetailsReportProjection;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 			INNER JOIN tb_role ON tb_role.id = tb_user_role.role_id
 			WHERE tb_user.username = :username
 		""")
-	List<UserDetailsProjection> searchUserAndRolesByUsername(@Param("username") String username);
+	List<UserDetailsReportProjection> searchUserAndRolesByUsername(@Param("username") String username);
 	
 	 boolean existsByUsername(String username);
 	Optional<User> findByUsername(String username);

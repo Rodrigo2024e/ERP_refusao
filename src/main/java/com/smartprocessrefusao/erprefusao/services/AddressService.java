@@ -15,7 +15,7 @@ import com.smartprocessrefusao.erprefusao.dto.AddressDTO;
 import com.smartprocessrefusao.erprefusao.entities.Address;
 import com.smartprocessrefusao.erprefusao.entities.City;
 import com.smartprocessrefusao.erprefusao.entities.People;
-import com.smartprocessrefusao.erprefusao.projections.AddressProjection;
+import com.smartprocessrefusao.erprefusao.projections.AddressReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.AddressRepository;
 import com.smartprocessrefusao.erprefusao.repositories.CityRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PeopleRepository;
@@ -40,7 +40,7 @@ public class AddressService {
 
     @Transactional(readOnly = true)
     public Page<AddressDTO> searchAddresses(String city, Long addressId, Pageable pageable) {
-        Page<AddressProjection> result = addressRepository.searchAddressesByCityNameOrId(city, addressId, pageable);
+        Page<AddressReportProjection> result = addressRepository.searchAddressesByCityNameOrId(city, addressId, pageable);
         return result.map(AddressDTO::new);
     }
 

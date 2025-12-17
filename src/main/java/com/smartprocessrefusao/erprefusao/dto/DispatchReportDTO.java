@@ -5,9 +5,9 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSerializer;
-import com.smartprocessrefusao.erprefusao.projections.ReportDispatchProjection;
+import com.smartprocessrefusao.erprefusao.projections.DispatchReportProjection;
 
-public class ReportDispatchDTO {
+public class DispatchReportDTO {
 
 	private Long numTicket;
 
@@ -46,11 +46,11 @@ public class ReportDispatchDTO {
 
 	private String observation;
 
-	public ReportDispatchDTO() {
+	public DispatchReportDTO() {
 
 	}
 
-	public ReportDispatchDTO(Long numTicket, LocalDate date_ticket, Long item_sequence, Long partner_id, String name,
+	public DispatchReportDTO(Long numTicket, LocalDate date_ticket, Long item_sequence, Long partner_id, String name,
 			String number_plate, BigDecimal net_weight, Long material_id, String description, String document_number,
 			String transactionDescription, String alloy, String alloyPol, String alloyFootage, BigDecimal quantity,
 			BigDecimal price, BigDecimal totalValue, String observation) {
@@ -74,7 +74,7 @@ public class ReportDispatchDTO {
 		this.observation = observation;
 	}
 
-	public ReportDispatchDTO(ReportDispatchProjection projection) {
+	public DispatchReportDTO(DispatchReportProjection projection) {
 		numTicket = projection.getNumTicket();
 		date_ticket = projection.getDate_ticket();
 		item_sequence = projection.getItem_sequence();

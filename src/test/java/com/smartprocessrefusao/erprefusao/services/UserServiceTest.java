@@ -32,12 +32,11 @@ import com.smartprocessrefusao.erprefusao.dto.UserUpdateDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.Role;
 import com.smartprocessrefusao.erprefusao.entities.User;
-import com.smartprocessrefusao.erprefusao.projections.UserDetailsProjection;
+import com.smartprocessrefusao.erprefusao.projections.UserDetailsReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.RoleRepository;
 import com.smartprocessrefusao.erprefusao.repositories.UserRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
-import com.smartprocessrefusao.erprefusao.tests.EmployeeFactory;
 import com.smartprocessrefusao.erprefusao.tests.UserFactory;
 import com.smartprocessrefusao.erprefusao.util.CustomUserUtil;
 
@@ -165,7 +164,7 @@ public class UserServiceTest {
 
 	@Test
 	public void loadUserByUsernameShouldReturnUserDetailsWhenUserExists() {
-		UserDetailsProjection projection = mock(UserDetailsProjection.class);
+		UserDetailsReportProjection projection = mock(UserDetailsReportProjection.class);
 		when(projection.getUsername()).thenReturn("user@example.com");
 		when(projection.getPassword()).thenReturn("123456");
 		when(projection.getRoleId()).thenReturn(1L);
@@ -210,7 +209,7 @@ public class UserServiceTest {
 
 	@Test
 	void insertShouldReturnUserDTOWhenEmployeeExists() {
-		Employee employee = EmployeeFactory.createEmployee();
+		Employee employee = UserFactory.createEmployee();
 		when(userRepository.save(any())).thenReturn(user);
 		when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
 		UserDTO result = userService.insert(insertDTO);

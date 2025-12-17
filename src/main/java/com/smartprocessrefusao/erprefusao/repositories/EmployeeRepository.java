@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.Employee;
-import com.smartprocessrefusao.erprefusao.projections.EmployeeDepartamentProjection;
+import com.smartprocessrefusao.erprefusao.projections.EmployeeDepartamentReportProjection;
 import com.smartprocessrefusao.erprefusao.projections.EmployeeReportProjection;
 
 @Repository
@@ -25,8 +25,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
                 p.cell_phone As cellPhone,
                 p.telephone As telephone,
                 e.cpf As cpf,
+                e.date_of_birth AS dateOfBirth,
                 e.departament_id AS departamentId,
                 d.name As departament, 
+                e.position,
                 d.process AS process
                         
             FROM tb_people p
@@ -45,7 +47,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             AND (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
         """,
         nativeQuery = true)
-    Page<EmployeeDepartamentProjection> searchEmployeeByDepartament(
+    Page<EmployeeDepartamentReportProjection> searchEmployeeByDepartament(
             @Param("name") String name, @Param("departamentId") Long departamentId, Pageable pageable);
 
 
@@ -54,12 +56,14 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
                 p.id AS id,
                 p.name AS name,
                 e.cpf AS cpf,
+                e.date_of_birth AS dateOfBirth,
                 p.email AS email,
                 p.cell_phone AS cellPhone,
                 p.telephone AS telephone,
                 e.id AS departamentId,
                 d.name AS departament,
                 d.process AS process,
+                e.position,
                 a.id AS idAddress,
                 a.street AS street,
                 a.number AS numberAddress,
@@ -94,6 +98,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 	
 	  Optional<Employee> findByEmail(String email);
 	  boolean existsByEmail(String email);
+	  
+	  Optional<Employee> findByCpf(String cpf);
+	  boolean existsByCpf(String cpf);
 	  
 
 }

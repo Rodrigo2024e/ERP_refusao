@@ -21,10 +21,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import com.smartprocessrefusao.erprefusao.dto.EmployeeDepartamentDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeReportDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.Departament;
-import com.smartprocessrefusao.erprefusao.projections.EmployeeDepartamentProjection;
+import com.smartprocessrefusao.erprefusao.projections.EmployeeDepartamentReportProjection;
 import com.smartprocessrefusao.erprefusao.projections.EmployeeReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.DepartamentRepository;
@@ -53,9 +53,9 @@ class EmployeeServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		employee = Factory.createEmployee();
+//		employee = Factory.createEmployee();
 		employeeDTO = Factory.createEmployeeDTO();
-		departament = Factory.createSector();
+		departament = Factory.createDepartament();
 		EmployeeFactory.create();
 	}
 
@@ -66,7 +66,7 @@ class EmployeeServiceTest {
 		Page<EmployeeReportProjection> page = new PageImpl<>(List.of(projection));
 		when(employeeRepository.searchPeopleNameByOrId(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(page);
 
-		Page<ReportEmployeeDTO> result = service.reportEmployee("João", 1L, PageRequest.of(0, 10));
+		Page<EmployeeReportDTO> result = service.reportEmployee("João", 1L, PageRequest.of(0, 10));
 
 		Assertions.assertNotNull(result);
 	}
@@ -74,8 +74,8 @@ class EmployeeServiceTest {
 	// 2 - Report Employee with Sector
 	@Test
 	void reportEmployeeShouldReturnPagedReportEmployeeByDepartamentDTO() {
-		EmployeeDepartamentProjection projection = Mockito.mock(EmployeeDepartamentProjection.class);
-		Page<EmployeeDepartamentProjection> page = new PageImpl<>(List.of(projection));
+		EmployeeDepartamentReportProjection projection = Mockito.mock(EmployeeDepartamentReportProjection.class);
+		Page<EmployeeDepartamentReportProjection> page = new PageImpl<>(List.of(projection));
 		when(employeeRepository.searchEmployeeByDepartament(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(page);
 
 		Page<EmployeeDepartamentDTO> result = service.reportEmployeeBySector("João", 1L, PageRequest.of(0, 10));

@@ -22,7 +22,7 @@ import com.smartprocessrefusao.erprefusao.entities.Departament;
 import com.smartprocessrefusao.erprefusao.repositories.DepartamentRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
-import com.smartprocessrefusao.erprefusao.tests.SectorFactory;
+import com.smartprocessrefusao.erprefusao.tests.DepartamentFactory;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -40,8 +40,8 @@ public class DepartamentServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		sector = SectorFactory.createSector();
-		sectorDTO = SectorFactory.createSectorDTO();
+		sector = DepartamentFactory.createDepartament();
+		sectorDTO = DepartamentFactory.createDepartamentDTO();
 	}
 
 	// 1 - FindAll Sector

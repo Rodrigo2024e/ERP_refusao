@@ -1,6 +1,6 @@
 package com.smartprocessrefusao.erprefusao.projections;
 
-public interface UserDetailsProjection {
+public interface UserDetailsReportProjection {
 
 	String getUsername();
 	String getPassword();

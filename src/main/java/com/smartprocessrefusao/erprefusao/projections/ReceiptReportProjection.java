@@ -3,41 +3,43 @@ package com.smartprocessrefusao.erprefusao.projections;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public interface ReportDispatchProjection {
+public interface ReceiptReportProjection {
 
 	Long getNumTicket();
 
 	LocalDate getDate_ticket();
 
-	Long getItem_sequence();
+	String getNumber_plate();
+
+	String getDocumentNumber();
+
+	BigDecimal getNet_weight();
+
+	String getType_receipt();
+
+	String getType_costs();
 
 	Long getPartner_id();
 
 	String getName();
 
-	String getNumber_plate();
+	Long getItem_sequence();
+	
+	Long getMaterialId();
 
-	BigDecimal getNet_weight();
-
-	Long getMaterial_id();
+	Long getCode();
 
 	String getDescription();
 
-	String getDocumentNumber();
-
-	String getTransactionDescription();
-
-	String getAlloy();
-
-	String getAlloyPol();
-
-	String getAlloyFootage();
-
 	BigDecimal getQuantity();
+
+	BigDecimal getRecovery_yield();
 
 	BigDecimal getPrice();
 
 	BigDecimal getTotal_value();
+
+	BigDecimal getQuantity_mco();
 
 	String getObservation();
 

@@ -2,7 +2,7 @@ package com.smartprocessrefusao.erprefusao.dto;
 
 import com.smartprocessrefusao.erprefusao.projections.MaterialReportProjection;
 
-public class ReportMaterialDTO {
+public class MateriaReportlDTO {
 
 	private Long code;
 	private String description;
@@ -15,11 +15,11 @@ public class ReportMaterialDTO {
 	private Long matGroupId;
 	private String materialGroup;
 
-	public ReportMaterialDTO() {
+	public MateriaReportlDTO() {
 
 	}
 
-	public ReportMaterialDTO(MaterialReportProjection projection) {
+	public MateriaReportlDTO(MaterialReportProjection projection) {
 		this.code = projection.getCode();
 		this.description = projection.getDescription();
 		this.type = projection.getType();

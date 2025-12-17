@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.dto.MaterialDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportMaterialDTO;
+import com.smartprocessrefusao.erprefusao.dto.MateriaReportlDTO;
 import com.smartprocessrefusao.erprefusao.entities.Material;
 import com.smartprocessrefusao.erprefusao.entities.MaterialGroup;
 import com.smartprocessrefusao.erprefusao.entities.TaxClassification;
@@ -43,10 +43,10 @@ public class MaterialService {
 	private MaterialGroupRepository materialGroupRepository;
 
 	@Transactional(readOnly = true)
-	public Page<ReportMaterialDTO> reportMaterial(String type, Long code, String description, Long groupId, Pageable pageable) {
+	public Page<MateriaReportlDTO> reportMaterial(String type, Long code, String description, Long groupId, Pageable pageable) {
 		Page<MaterialReportProjection> page = materialRepository.searchMaterialByNameOrGroup(type, code, description, groupId,
 				pageable);
-		return page.map(ReportMaterialDTO::new);
+		return page.map(MateriaReportlDTO::new);
 	}
 
 	@Transactional(readOnly = true)

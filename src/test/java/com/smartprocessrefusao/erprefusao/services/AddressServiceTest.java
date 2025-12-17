@@ -32,7 +32,7 @@ import com.smartprocessrefusao.erprefusao.dto.AddressDTO;
 import com.smartprocessrefusao.erprefusao.entities.Address;
 import com.smartprocessrefusao.erprefusao.entities.City;
 import com.smartprocessrefusao.erprefusao.entities.People;
-import com.smartprocessrefusao.erprefusao.projections.AddressProjection;
+import com.smartprocessrefusao.erprefusao.projections.AddressReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.AddressRepository;
 import com.smartprocessrefusao.erprefusao.repositories.CityRepository;
 import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
@@ -83,10 +83,10 @@ public class AddressServiceTest {
 	    @Test
 	    void searchAddressesShouldReturnPageOfAddressDTO() {
 	        Pageable pageable = AddressFactory.createPageable();
-	        AddressProjection projection = mock(AddressProjection.class);
+	        AddressReportProjection projection = mock(AddressReportProjection.class);
 	        when(projection.getStreet()).thenReturn("Rua A");
 
-	        Page<AddressProjection> page = new PageImpl<>(List.of(projection));
+	        Page<AddressReportProjection> page = new PageImpl<>(List.of(projection));
 	        when(addressRepository.searchAddressesByCityNameOrId(anyString(), anyLong(), any()))
 	                .thenReturn(page);
 

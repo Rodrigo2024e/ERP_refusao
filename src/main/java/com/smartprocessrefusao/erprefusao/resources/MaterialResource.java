@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.smartprocessrefusao.erprefusao.dto.MaterialDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportMaterialDTO;
+import com.smartprocessrefusao.erprefusao.dto.MateriaReportlDTO;
 import com.smartprocessrefusao.erprefusao.services.MaterialService;
 
 import jakarta.validation.Valid;
@@ -33,10 +33,10 @@ public class MaterialResource {
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/report")
-	public ResponseEntity<Page<ReportMaterialDTO>> getReportMaterial(@RequestParam(required = false) String type, @RequestParam(required = false) Long code, @RequestParam(required = false) String description,
+	public ResponseEntity<Page<MateriaReportlDTO>> getReportMaterial(@RequestParam(required = false) String type, @RequestParam(required = false) Long code, @RequestParam(required = false) String description,
 			@RequestParam(required = false) Long groupId, Pageable pageable) {
 
-		Page<ReportMaterialDTO> result = materialService.reportMaterial(type, code, description, groupId, pageable);
+		Page<MateriaReportlDTO> result = materialService.reportMaterial(type, code, description, groupId, pageable);
 		return ResponseEntity.ok(result);
 
 	}

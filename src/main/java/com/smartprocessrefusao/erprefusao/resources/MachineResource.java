@@ -16,56 +16,52 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.smartprocessrefusao.erprefusao.dto.DepartamentDTO;
-import com.smartprocessrefusao.erprefusao.services.DepartamentService;
+import com.smartprocessrefusao.erprefusao.dto.MachineDTO;
+import com.smartprocessrefusao.erprefusao.services.MachineService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/api/departaments")
-public class DepartamentResource {
+@RequestMapping(value = "/api/machines")
+public class MachineResource {
 
 	@Autowired
-	private DepartamentService sectorService;
-	
-	
+	private MachineService machineService;
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping
-	public ResponseEntity<List<DepartamentDTO>> findAll(){
-			List<DepartamentDTO> list = sectorService.findAll();		
-			return ResponseEntity.ok().body(list);
-		}
+	public ResponseEntity<List<MachineDTO>> findAll() {
+		List<MachineDTO> list = machineService.findAll();
+		return ResponseEntity.ok().body(list);
+	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<DepartamentDTO> findById(@PathVariable Long id){
-		DepartamentDTO dto = sectorService.findById(id);
+	public ResponseEntity<MachineDTO> findById(@PathVariable Long id) {
+		MachineDTO dto = machineService.findById(id);
 		return ResponseEntity.ok().body(dto);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PostMapping
-	public ResponseEntity<DepartamentDTO> insert(@Valid @RequestBody DepartamentDTO dto) {
-		dto = sectorService.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(dto.getId()).toUri();
+	public ResponseEntity<MachineDTO> insert(@Valid @RequestBody MachineDTO dto) {
+		dto = machineService.insert(dto);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<DepartamentDTO> update(@PathVariable Long id, @Valid @RequestBody DepartamentDTO dto) {
-		dto = sectorService.update(id, dto);
+	public ResponseEntity<MachineDTO> update(@PathVariable Long id, @Valid @RequestBody MachineDTO dto) {
+		dto = machineService.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}
-	
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
-		sectorService.delete(id);
+		machineService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-	
-	
-	
+
 }

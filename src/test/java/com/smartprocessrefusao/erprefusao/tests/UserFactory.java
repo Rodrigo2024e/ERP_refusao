@@ -1,5 +1,6 @@
 package com.smartprocessrefusao.erprefusao.tests;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.test.util.ReflectionTestUtils;
@@ -7,11 +8,34 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.smartprocessrefusao.erprefusao.dto.RoleDTO;
 import com.smartprocessrefusao.erprefusao.dto.UserInsertDTO;
 import com.smartprocessrefusao.erprefusao.dto.UserUpdateDTO;
+import com.smartprocessrefusao.erprefusao.entities.Address;
+import com.smartprocessrefusao.erprefusao.entities.Departament;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.Role;
 import com.smartprocessrefusao.erprefusao.entities.User;
 
 public class UserFactory {
+	
+	public static Address createAddress() {
+		Address address = new Address();
+		address.setId(1L);
+		address.setStreet("RUA A");
+		address.setNumber(123);
+		address.setComplement("CASA");
+		address.setNeighborhood("CENTRO");
+		address.setZipCode("12345-678");
+		address.setCity(CityFactory.createCity());
+		address.setPeople(PeopleFactory.createPeople());
+		return address;
+	}
+
+	public static Departament createDepartament() {
+		Departament departament = new Departament();
+		departament.setId(1L);
+		departament.setName("PRODUÇÃO");
+		departament.setProcess("CORTE DE TARUGOS");
+		return departament;
+	}
 
 	public static User createClientUser() {
 		User user = new User(2L, "nomeUsuario", "$2a$10$N7SkKCa3r17ga.i.dF9iy.BFUBL2n3b6Z1CWSZWi/qy7ABq/E6VpO", null);
@@ -57,7 +81,7 @@ public class UserFactory {
 
 	public static User createUser() {
 		Employee emp = new Employee(1L, "John Doe", "LUCIANO@GMAIL.COM", "99999-9999", "9999-9999", null,
-				"99.999.999-99", null, null);
+				"99.999.999-99", null, null, null);
 		Role role = new Role(1L, "ROLE_USER");
 
 		User user = new User(1L, "nomeUsuario", "123456", emp);
@@ -66,9 +90,18 @@ public class UserFactory {
 	}
 
 	public static Employee createEmployee() {
-		Employee emp = new Employee(1L, "John Doe", "LUCIANO@GMAIL.COM", "99999-9999", "9999-9999", null,
-				"99.999.999-99", null, null);
-		return emp;
+		Employee employee = new Employee();
+		employee.setId(1L);
+		employee.setName("JONATHAS JUNIO");
+		employee.setEmail("jonathas@alunova.com");
+		employee.setCellPhone("44-12345-7652");
+		employee.setTelephone("01-1000-1000");
+		employee.setAddress(createAddress());
+		employee.setCpf("058.651.619-03");
+		employee.setDateOfBirth(LocalDate.now());
+		employee.setUser(createUser());
+		employee.setDepartament(createDepartament());
+		return employee;
 	}
 
 	public static Role createRole() {

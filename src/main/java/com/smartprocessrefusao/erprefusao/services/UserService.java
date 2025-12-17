@@ -21,7 +21,7 @@ import com.smartprocessrefusao.erprefusao.dto.UserUpdateDTO;
 import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.entities.Role;
 import com.smartprocessrefusao.erprefusao.entities.User;
-import com.smartprocessrefusao.erprefusao.projections.UserDetailsProjection;
+import com.smartprocessrefusao.erprefusao.projections.UserDetailsReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.RoleRepository;
 import com.smartprocessrefusao.erprefusao.repositories.UserRepository;
@@ -132,7 +132,7 @@ public class UserService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-		List<UserDetailsProjection> result = repository.searchUserAndRolesByUsername(username);
+		List<UserDetailsReportProjection> result = repository.searchUserAndRolesByUsername(username);
 		if (result.size() == 0) {
 			throw new UsernameNotFoundException("Username not found");
 		}
@@ -140,7 +140,7 @@ public class UserService implements UserDetailsService {
 		User user = new User();
 		user.setUsername(result.get(0).getUsername());
 		user.setPassword(result.get(0).getPassword());
-		for (UserDetailsProjection projection : result) {
+		for (UserDetailsReportProjection projection : result) {
 			user.addRole(new Role(projection.getRoleId(), projection.getAuthority()));
 		}
 

@@ -11,13 +11,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.dto.EmployeeDepartamentDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportEmployeeDTO;
-import com.smartprocessrefusao.erprefusao.entities.Employee;
+import com.smartprocessrefusao.erprefusao.dto.EmployeeReportDTO;
 import com.smartprocessrefusao.erprefusao.entities.Departament;
-import com.smartprocessrefusao.erprefusao.projections.EmployeeDepartamentProjection;
+import com.smartprocessrefusao.erprefusao.entities.Employee;
+import com.smartprocessrefusao.erprefusao.projections.EmployeeDepartamentReportProjection;
 import com.smartprocessrefusao.erprefusao.projections.EmployeeReportProjection;
-import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.DepartamentRepository;
+import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
 
@@ -34,15 +34,15 @@ public class EmployeeService {
 
 	@Transactional(readOnly = true)
 	public Page<EmployeeDepartamentDTO> reportEmployeeBySector(String name, Long sectorId, Pageable pageable) {
-		Page<EmployeeDepartamentProjection> page = employeeRepository.searchEmployeeByDepartament(name, sectorId,
+		Page<EmployeeDepartamentReportProjection> page = employeeRepository.searchEmployeeByDepartament(name, sectorId,
 				pageable);
 		return page.map(EmployeeDepartamentDTO::new);
 	}
 
 	@Transactional(readOnly = true)
-	public Page<ReportEmployeeDTO> reportEmployee(String name, Long peopleId, Pageable pageable) {
+	public Page<EmployeeReportDTO> reportEmployee(String name, Long peopleId, Pageable pageable) {
 		Page<EmployeeReportProjection> page = employeeRepository.searchPeopleNameByOrId(name, peopleId, pageable);
-		return page.map(ReportEmployeeDTO::new);
+		return page.map(EmployeeReportDTO::new);
 	}
 
 	@Transactional(readOnly = true)
@@ -63,6 +63,10 @@ public class EmployeeService {
 			throw new IllegalArgumentException("E-mail já cadastrado!");
 		}
 
+		if (employeeRepository.existsByCpf(dto.getCpf())) {
+			throw new IllegalArgumentException("CPF já cadastrado!");
+		}
+
 		Employee entity = new Employee();
 		copyDtoToEntity(dto, entity);
 		entity = employeeRepository.save(entity);
@@ -71,9 +75,6 @@ public class EmployeeService {
 
 	@Transactional
 	public EmployeeDepartamentDTO update(Long id, EmployeeDepartamentDTO dto) {
-		if (employeeRepository.existsByEmail(dto.getEmail())) {
-			throw new IllegalArgumentException("E-mail já cadastrado!");
-		}
 
 		try {
 			Employee entity = employeeRepository.getReferenceById(id);
@@ -103,6 +104,7 @@ public class EmployeeService {
 		entity.setCellPhone(dto.getCellPhone());
 		entity.setTelephone(dto.getTelephone());
 		entity.setCpf(dto.getCpf());
+		entity.setDateOfBirth(dto.getDateOfBirth());
 
 		Optional.ofNullable(dto.getDepartamentId()).ifPresent(id -> {
 			Departament departament = departamentRepository.findById(id)

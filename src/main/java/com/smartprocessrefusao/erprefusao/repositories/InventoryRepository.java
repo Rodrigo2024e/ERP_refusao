@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.Inventory;
 import com.smartprocessrefusao.erprefusao.entities.Receipt;
-import com.smartprocessrefusao.erprefusao.projections.ReportInventoryProjection;
+import com.smartprocessrefusao.erprefusao.projections.InventoryReportProjection;
 
 @Repository
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
@@ -66,7 +66,7 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 			    ORDER BY
 			        m.code
 			""", nativeQuery = true)
-	Page<ReportInventoryProjection> reportInventory(@Param("startDate") LocalDate startDate,
+	Page<InventoryReportProjection> reportInventory(@Param("startDate") LocalDate startDate,
 			@Param("endDate") LocalDate endDate, @Param("code") Long code, Pageable pageable);
 
 	Optional<Inventory> findByReceipt(Receipt receipt);

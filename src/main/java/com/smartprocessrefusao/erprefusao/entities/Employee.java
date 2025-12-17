@@ -1,12 +1,16 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
-import java.util.Objects;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.smartprocessrefusao.erprefusao.projections.IdProjection;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -18,6 +22,8 @@ public class Employee extends People implements IdProjection<Long> {
 
 	private String cpf;
 
+	private LocalDate dateOfBirth;
+
 	@OneToOne(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
 	private User user;
 
@@ -25,16 +31,24 @@ public class Employee extends People implements IdProjection<Long> {
 	@JoinColumn(name = "departament_id")
 	private Departament departament;
 
+	@ManyToMany
+	@JoinTable(name = "tb_employee_melting", 
+	joinColumns = @JoinColumn(name = "employee_id"), 
+	inverseJoinColumns = @JoinColumn(name = "melting_id"))
+	private Set<Melting> meltings = new HashSet<>();
+
 	public Employee() {
 
 	}
 
 	public Employee(Long id, String name, String email, String cellPhone, String telephone, Address address, String cpf,
-			User user, Departament departament) {
+			LocalDate dateOfBirth,  User user, Departament departament) {
 		super(id, name, email, cellPhone, telephone, address);
 		this.cpf = cpf;
+		this.dateOfBirth = dateOfBirth;
 		this.user = user;
 		this.departament = departament;
+
 	}
 
 	public String getCpf() {
@@ -43,6 +57,14 @@ public class Employee extends People implements IdProjection<Long> {
 
 	public void setCpf(String cpf) {
 		this.cpf = cpf;
+	}
+
+	public LocalDate getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+	public void setDateOfBirth(LocalDate dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
 	}
 
 	public User getUser() {
@@ -61,24 +83,12 @@ public class Employee extends People implements IdProjection<Long> {
 		this.departament = departament;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(cpf);
-		return result;
+	public Set<Melting> getMeltings() {
+		return meltings;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Employee other = (Employee) obj;
-		return Objects.equals(cpf, other.cpf);
+	public void setMeltings(Set<Melting> meltings) {
+		this.meltings = meltings;
 	}
 
 }

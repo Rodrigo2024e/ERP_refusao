@@ -53,7 +53,7 @@ public class Material extends Auditable<String> implements Serializable {
 	private StockBalance stockBalance;
 
 	@OneToMany(mappedBy = "material")
-	private List<InventoryItem> InventoryItems = new ArrayList<>();
+	private List<InventoryItem> inventoryItems = new ArrayList<>();
 
 	public Material() {
 
@@ -131,7 +131,7 @@ public class Material extends Auditable<String> implements Serializable {
 	}
 
 	public List<InventoryItem> getInventoryItems() {
-		return InventoryItems;
+		return inventoryItems;
 	}
 
 	@Override

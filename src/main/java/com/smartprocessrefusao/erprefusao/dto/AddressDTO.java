@@ -2,7 +2,7 @@ package com.smartprocessrefusao.erprefusao.dto;
 
 import com.smartprocessrefusao.erprefusao.entities.Address;
 import com.smartprocessrefusao.erprefusao.enumerados.StateBrazil;
-import com.smartprocessrefusao.erprefusao.projections.AddressProjection;
+import com.smartprocessrefusao.erprefusao.projections.AddressReportProjection;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
 
 import jakarta.validation.constraints.NotNull;
@@ -72,7 +72,7 @@ public class AddressDTO {
 
 	}
 
-	public AddressDTO(AddressProjection projection) {
+	public AddressDTO(AddressReportProjection projection) {
 		this.id = projection.getId();
 		this.street = projection.getStreet();
 		this.number = projection.getNumber();

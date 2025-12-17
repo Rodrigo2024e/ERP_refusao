@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.Address;
-import com.smartprocessrefusao.erprefusao.projections.AddressProjection;
+import com.smartprocessrefusao.erprefusao.projections.AddressReportProjection;
 
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Long> {
@@ -41,7 +41,7 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
             AND (:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%')))
         """,
         nativeQuery = true)
-    Page<AddressProjection> searchAddressesByCityNameOrId( 
+    Page<AddressReportProjection> searchAddressesByCityNameOrId( 
             @Param("name") String name,
             @Param("addressId") Long addressId, 
             Pageable pageable);
@@ -63,7 +63,7 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
 			LEFT JOIN tb_people p ON a.people_id = p.id
 			WHERE a.id = :id
 			""", nativeQuery = true)
-			Optional<AddressProjection> findProjectionById(@Param("id") Long id);
+			Optional<AddressReportProjection> findProjectionById(@Param("id") Long id);
 	
 			  @Query(value = """
 			            SELECT
@@ -87,7 +87,7 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
 			            FROM tb_address a
 			        """,
 			        nativeQuery = true)
-			    Page<AddressProjection> findAllProjections(Pageable pageable);
+			    Page<AddressReportProjection> findAllProjections(Pageable pageable);
 
 			
 }

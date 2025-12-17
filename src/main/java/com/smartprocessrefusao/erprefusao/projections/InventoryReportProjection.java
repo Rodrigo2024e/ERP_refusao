@@ -2,7 +2,7 @@ package com.smartprocessrefusao.erprefusao.projections;
 
 import java.math.BigDecimal;
 
-public interface ReportInventoryProjection {
+public interface InventoryReportProjection {
 	Long getCode();
 
 	String getDescription();

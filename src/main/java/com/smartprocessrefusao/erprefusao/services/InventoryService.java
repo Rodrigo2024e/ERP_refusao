@@ -25,7 +25,7 @@ import com.smartprocessrefusao.erprefusao.entities.Receipt;
 import com.smartprocessrefusao.erprefusao.entities.ReceiptItem;
 import com.smartprocessrefusao.erprefusao.entities.StockBalance;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
-import com.smartprocessrefusao.erprefusao.projections.ReportInventoryProjection;
+import com.smartprocessrefusao.erprefusao.projections.InventoryReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.InventoryRepository;
 import com.smartprocessrefusao.erprefusao.repositories.MaterialRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
@@ -504,7 +504,7 @@ public class InventoryService {
 		}
 	}
 
-	public Page<ReportInventoryProjection> getReportRange(LocalDate startDate, LocalDate endDate, Long code,
+	public Page<InventoryReportProjection> getReportRange(LocalDate startDate, LocalDate endDate, Long code,
 			Pageable pageable) {
 
 		// --- Validação: startDate > endDate ---

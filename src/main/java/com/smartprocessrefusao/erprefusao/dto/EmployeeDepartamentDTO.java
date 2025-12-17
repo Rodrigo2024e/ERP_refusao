@@ -1,14 +1,19 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
+import java.time.LocalDate;
+
 import org.hibernate.validator.constraints.br.CPF;
 
 import com.smartprocessrefusao.erprefusao.entities.Employee;
-import com.smartprocessrefusao.erprefusao.projections.EmployeeDepartamentProjection;
+import com.smartprocessrefusao.erprefusao.enumerados.EmployeePosition;
+import com.smartprocessrefusao.erprefusao.projections.EmployeeDepartamentReportProjection;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -33,54 +38,64 @@ public class EmployeeDepartamentDTO {
 
 	@NotBlank(message = "invalid Brazilian individual taxpayer registry number (CPF)")
 	@CPF
+	@Column(name = "cpf", unique = true)
 	private String cpf;
+
+	@NotNull(message = "A data de nascimento é obrigatória")
+	@Past(message = "A data deve estar no passado.")
+	private LocalDate dateOfBirth;
 
 	@NotNull(message = "Informe o setor do funcionário")
 	private Long departamentId;
 	private String departament;
 	private String process;
+	private EmployeePosition position;
 
 	public EmployeeDepartamentDTO() {
 
 	}
 
 	public EmployeeDepartamentDTO(Long id, String name, String email, String cellPhone, String telephone, String cpf,
-			 Long departamentId, String departament, String process) {
-		super();
+			LocalDate dateOfBirth, Long departamentId, String departament, String process, EmployeePosition position) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.cellPhone = cellPhone;
 		this.telephone = telephone;
 		this.cpf = cpf;
+		this.dateOfBirth = dateOfBirth;
 		this.departamentId = departamentId;
 		this.departament = departament;
 		this.process = process;
+		this.position = position;
 	}
 
 	public EmployeeDepartamentDTO(Employee entity) {
-		id= entity.getId();
+		id = entity.getId();
 		name = entity.getName();
 		email = entity.getEmail();
 		cellPhone = entity.getCellPhone();
 		telephone = entity.getTelephone();
 		cpf = entity.getCpf();
+		dateOfBirth = entity.getDateOfBirth();
 		departamentId = entity.getDepartament().getId();
 		departament = entity.getDepartament().getName();
 		process = entity.getDepartament().getProcess();
+		position = entity.getDepartament().getPosition();
 
 	}
 
-	public EmployeeDepartamentDTO(EmployeeDepartamentProjection projection) {
-		this.id = projection.getId();
-		this.name = projection.getName();
-		this.email = projection.getEmail();
-		this.cellPhone = projection.getCellPhone();
-		this.telephone = projection.getTelephone();
-		this.cpf = projection.getCpf();
-		this.departamentId = projection.getDepartamentId();
-		this.departament = projection.getDepartament();
-		this.process = projection.getProcess();
+	public EmployeeDepartamentDTO(EmployeeDepartamentReportProjection projection) {
+		id = projection.getId();
+		name = projection.getName();
+		email = projection.getEmail();
+		cellPhone = projection.getCellPhone();
+		telephone = projection.getTelephone();
+		cpf = projection.getCpf();
+		dateOfBirth = projection.getDateOfBirth();
+		departamentId = projection.getDepartamentId();
+		departament = projection.getDepartament();
+		process = projection.getProcess();
 
 	}
 
@@ -108,6 +123,10 @@ public class EmployeeDepartamentDTO {
 		return cpf;
 	}
 
+	public LocalDate getDateOfBirth() {
+		return dateOfBirth;
+	}
+
 	public Long getDepartamentId() {
 		return departamentId;
 	}
@@ -118,6 +137,10 @@ public class EmployeeDepartamentDTO {
 
 	public String getProcess() {
 		return process;
+	}
+
+	public EmployeePosition getPosition() {
+		return position;
 	}
 
 }

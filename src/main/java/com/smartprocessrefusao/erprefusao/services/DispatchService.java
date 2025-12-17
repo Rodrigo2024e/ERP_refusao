@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.dto.DispatchDTO;
 import com.smartprocessrefusao.erprefusao.dto.DispatchItemDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportDispatchDTO;
+import com.smartprocessrefusao.erprefusao.dto.DispatchReportDTO;
 import com.smartprocessrefusao.erprefusao.entities.Dispatch;
 import com.smartprocessrefusao.erprefusao.entities.DispatchItem;
 import com.smartprocessrefusao.erprefusao.entities.Material;
@@ -24,7 +24,7 @@ import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloy;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyFootage;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyPol;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionOutGoing;
-import com.smartprocessrefusao.erprefusao.projections.ReportDispatchProjection;
+import com.smartprocessrefusao.erprefusao.projections.DispatchReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.DispatchRepository;
 import com.smartprocessrefusao.erprefusao.repositories.MaterialRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
@@ -48,11 +48,11 @@ public class DispatchService {
 	private TicketRepository ticketRepository;
 
 	@Transactional(readOnly = true)
-	public Page<ReportDispatchDTO> reportDispatch(String description, Long numTicket, Long people_id,
+	public Page<DispatchReportDTO> reportDispatch(String description, Long numTicket, Long people_id,
 			Pageable pageable) {
-		Page<ReportDispatchProjection> page = dispatchRepository.searchDescriptionMaterialOrNumTicketPeople(description,
+		Page<DispatchReportProjection> page = dispatchRepository.searchDescriptionMaterialOrNumTicketPeople(description,
 				numTicket, people_id, pageable);
-		return page.map(ReportDispatchDTO::new);
+		return page.map(DispatchReportDTO::new);
 	}
 
 	@Transactional

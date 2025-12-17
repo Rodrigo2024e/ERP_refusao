@@ -1,6 +1,8 @@
 package com.smartprocessrefusao.erprefusao.projections;
 
-public interface EmployeeDepartamentProjection {
+import java.time.LocalDate;
+
+public interface EmployeeDepartamentReportProjection {
 
 	Long getId();
 	String getName();
@@ -8,10 +10,10 @@ public interface EmployeeDepartamentProjection {
 	String getCellPhone();
 	String getTelephone();
 	String getCpf();
-	String getRg();
-	boolean getSysUser();
+	LocalDate getDateOfBirth();
 	Long getDepartamentId();
 	String getDepartament();
 	String getProcess();
+	String getPosition();
 
 }

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartprocessrefusao.erprefusao.dto.DepartamentDTO;
+import com.smartprocessrefusao.erprefusao.enumerados.EmployeePosition;
 import com.smartprocessrefusao.erprefusao.tests.TokenUtil;
 
 @SpringBootTest
@@ -60,7 +61,7 @@ public class DepartamentResourceIT {
 	@Test
 	public void insertShouldReturn401WhenInvalidToken() throws Exception {
 
-		DepartamentDTO dto = new DepartamentDTO(null, "Produção", "Expedição");
+		DepartamentDTO dto = new DepartamentDTO(null, "Produção", "Expedição", EmployeePosition.AUXILIAR_DE_EXPEDIÇÃO);
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/sectors").header("Authorization", "Bearer " + invalidToken)
@@ -73,7 +74,7 @@ public class DepartamentResourceIT {
 	@Test
 	public void insertShouldReturn403WhenClientLogged() throws Exception {
 
-		DepartamentDTO dto = new DepartamentDTO(null, "Gerência Industrial", "Administração");
+		DepartamentDTO dto = new DepartamentDTO(null, "Gerência Industrial", "Administração", EmployeePosition.GERENTE_INDUSTRIAL);
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/sectors").header("Authorization", "Bearer " + clientToken)
@@ -107,7 +108,7 @@ public class DepartamentResourceIT {
 	@Test
 	public void insertShouldResourceWhenAdminLoggedAndCorrectData() throws Exception {
 
-		DepartamentDTO dto = new DepartamentDTO(null, "Gerência Industrial", "Administração");
+		DepartamentDTO dto = new DepartamentDTO(null, "Gerência Industrial", "Administração", EmployeePosition.GERENTE_INDUSTRIAL);
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/sectors").header("Authorization", "Bearer " + adminToken)
@@ -123,7 +124,7 @@ public class DepartamentResourceIT {
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndBlankSector() throws Exception {
 
-		DepartamentDTO dto = new DepartamentDTO(null, "", "Carregamento de fornos");
+		DepartamentDTO dto = new DepartamentDTO(null, "", "Carregamento de fornos", EmployeePosition.OPERADOR_DE_FORNO);
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/sectors").header("Authorization", "Bearer " + adminToken)
@@ -139,7 +140,7 @@ public class DepartamentResourceIT {
 	@Test
 	public void insertShouldReturn422WhenAdminLoggedAndBlankProcess() throws Exception {
 
-		DepartamentDTO dto = new DepartamentDTO(null, "Produção", "");
+		DepartamentDTO dto = new DepartamentDTO(null, "Produção", "", EmployeePosition.AUXILIAR_DE_PRODUÇÃO);
 		String jsonBody = objectMapper.writeValueAsString(dto);
 
 		ResultActions result = mockMvc.perform(post("/sectors").header("Authorization", "Bearer " + adminToken)

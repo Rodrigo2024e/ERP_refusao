@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.smartprocessrefusao.erprefusao.dto.ReceiptDTO;
-import com.smartprocessrefusao.erprefusao.dto.ReportReceiptDTO;
-import com.smartprocessrefusao.erprefusao.projections.ReportReceiptProjection;
+import com.smartprocessrefusao.erprefusao.dto.ReceiptReportDTO;
+import com.smartprocessrefusao.erprefusao.projections.ReceiptReportProjection;
 import com.smartprocessrefusao.erprefusao.services.ReceiptService;
 
 import jakarta.validation.Valid;
@@ -63,7 +63,7 @@ public class ReceiptResource {
 	// REPORT
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping("/report-page") 
-	public ResponseEntity<Page<ReportReceiptDTO>> reportPage(@RequestParam(required = false) String description,
+	public ResponseEntity<Page<ReceiptReportDTO>> reportPage(@RequestParam(required = false) String description,
 			@RequestParam(required = false) Long numTicket, @RequestParam(required = false) Long partner_id,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
@@ -74,10 +74,10 @@ public class ReceiptResource {
 
 		try {
 
-			Page<ReportReceiptProjection> reportPage = receiptService.getReportRange(description, numTicket, partner_id,
+			Page<ReceiptReportProjection> reportPage = receiptService.getReportRange(description, numTicket, partner_id,
 					startDate, endDate, code, pageable);
 
-			Page<ReportReceiptDTO> dtoPage = reportPage.map(ReportReceiptDTO::new);
+			Page<ReceiptReportDTO> dtoPage = reportPage.map(ReceiptReportDTO::new);
 
 			return ResponseEntity.ok(dtoPage);
 

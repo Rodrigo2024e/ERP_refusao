@@ -2,9 +2,9 @@ package com.smartprocessrefusao.erprefusao.dto;
 
 import java.math.BigDecimal;
 
-import com.smartprocessrefusao.erprefusao.projections.ReportInventoryProjection;
+import com.smartprocessrefusao.erprefusao.projections.InventoryReportProjection;
 
-public class ReportInventoryDTO {
+public class InventoryReportDTO {
 
 	private Long code;
 	private String description;
@@ -40,7 +40,7 @@ public class ReportInventoryDTO {
 	private BigDecimal recoveryYieldFinalBalance;
 	private BigDecimal finalBalanceMco;
 
-	public ReportInventoryDTO(ReportInventoryProjection p) {
+	public InventoryReportDTO(InventoryReportProjection p) {
 		this.code = p.getCode();
 		this.description = p.getDescription();
 

@@ -1,48 +1,46 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
-import com.smartprocessrefusao.erprefusao.entities.Partner;
+import com.smartprocessrefusao.erprefusao.entities.Employee;
 import com.smartprocessrefusao.erprefusao.enumerados.StateBrazil;
-import com.smartprocessrefusao.erprefusao.projections.PartnerReportProjection;
+import com.smartprocessrefusao.erprefusao.projections.EmployeeReportProjection;
 
-public class ReportPartnerDTO {
+public class EmployeeReportDTO {
 
 	private Long id;
 	private String name;
-	private String cnpj;
-	private String ie;
+	private String cpf;
 	private String email;
 	private String cellPhone;
 	private String telephone;
-	private Boolean supplier;
-	private Boolean client;
-	private Boolean active;
+	private Long departamentId;
+	private String departament;
+	private String process;
 	private Long id_address;
 	private String street;
 	private Integer numberAddress;
 	private String complement;
 	private String neighborhood;
 	private String zipCode;
-    private Long cityId;
-    private String nameCity;
-    private String ufState; 
-    private String nameState; 
-    private String country;   
-    
-    public ReportPartnerDTO() {
-    	
-    }
+	private Long cityId;
+	private String city;
+	private String state;
+	private String nameState;
+	private String country;
 
-	public ReportPartnerDTO(Partner entity) {
+	public EmployeeReportDTO() {
+
+	}
+
+	public EmployeeReportDTO(Employee entity) {
 		id = entity.getId();
 		name = entity.getName();
-		cnpj = entity.getCnpj();
-		ie = entity.getIe();
+		cpf = entity.getCpf();
 		email = entity.getEmail();
 		cellPhone = entity.getCellPhone();
 		telephone = entity.getTelephone();
-		supplier = entity.getSupplier();
-		client = entity.getClient();
-		active = entity.getActive();
+		departamentId = entity.getDepartament().getId();
+		departament = entity.getDepartament().getName();
+		process = entity.getDepartament().getProcess();
 		id_address = entity.getAddress().getId();
 		street = entity.getAddress().getStreet();
 		numberAddress = entity.getAddress().getNumber();
@@ -50,24 +48,23 @@ public class ReportPartnerDTO {
 		neighborhood = entity.getAddress().getNeighborhood();
 		zipCode = entity.getAddress().getZipCode();
 		cityId = entity.getAddress().getCity().getId();
-		nameCity = entity.getAddress().getCity().getName();
-		ufState = entity.getAddress().getCity().getState().getUf();
-	    nameState = entity.getAddress().getCity().getState().getNameState();
-	    country = entity.getAddress().getCity().getState().getCountry();
-	    		
+		city = entity.getAddress().getCity().getName();
+		state = entity.getAddress().getCity().getState().getUf();
+		nameState = entity.getAddress().getCity().getState().getNameState();
+		country = entity.getAddress().getCity().getState().getCountry();
+
 	}
 
-	public ReportPartnerDTO(PartnerReportProjection projection) {
+	public EmployeeReportDTO(EmployeeReportProjection projection) {
 		this.id = projection.getId();
 		this.name = projection.getName();
-		this.cnpj = projection.getCnpj();
-		this.ie = projection.getIe();
+		this.cpf = projection.getCpf();
 		this.email = projection.getEmail();
 		this.cellPhone = projection.getCellPhone();
 		this.telephone = projection.getTelephone();
-		this.supplier = projection.getSupplier();
-		this.client = projection.getClient();
-		this.active = projection.getActive();
+		this.departamentId = projection.getDepartamentId();
+		this.departament = projection.getDepartament();
+		this.process = projection.getProcess();
 		this.id_address = projection.getIdAddress();
 		this.street = projection.getStreet();
 		this.numberAddress = projection.getNumberAddress();
@@ -75,20 +72,21 @@ public class ReportPartnerDTO {
 		this.neighborhood = projection.getNeighborhood();
 		this.zipCode = projection.getZipCode();
 		this.cityId = projection.getCityId();
-		this.nameCity = projection.getNameCity();
+		this.city = projection.getCity();
 		this.nameState = projection.getNameState();
-		this.country = projection.getCountry();
-	    		
-		String uf = projection.getUfState();
+
+		String uf = projection.getState();
 		StateBrazil stateEnum = null;
 
 		if (uf != null && !uf.isEmpty()) {
-		    stateEnum = StateBrazil.fromUf(uf);
+			stateEnum = StateBrazil.fromUf(uf);
 		}
 
-		this.ufState = uf;
+		this.state = uf;
 		this.nameState = (stateEnum != null) ? stateEnum.getNameState() : "Estado não encontrado";
-		this.country = (stateEnum != null) ? stateEnum.getCountry() : (projection.getCountry() != null ? projection.getCountry() : "País desconhecido");
+		this.country = (stateEnum != null) ? stateEnum.getCountry()
+				: (projection.getCountry() != null ? projection.getCountry() : "País desconhecido");
+
 	}
 
 	public Long getId() {
@@ -99,12 +97,8 @@ public class ReportPartnerDTO {
 		return name;
 	}
 
-	public String getCnpj() {
-		return cnpj;
-	}
-
-	public String getIe() {
-		return ie;
+	public String getCpf() {
+		return cpf;
 	}
 
 	public String getEmail() {
@@ -119,16 +113,16 @@ public class ReportPartnerDTO {
 		return telephone;
 	}
 
-	public Boolean getSupplier() {
-		return supplier;
+	public Long getDepartamentId() {
+		return departamentId;
 	}
 
-	public Boolean getClient() {
-		return client;
+	public String getDepartament() {
+		return departament;
 	}
 
-	public Boolean getActive() {
-		return active;
+	public String getProcess() {
+		return process;
 	}
 
 	public Long getId_address() {
@@ -159,12 +153,12 @@ public class ReportPartnerDTO {
 		return cityId;
 	}
 
-	public String getNameCity() {
-		return nameCity;
+	public String getCity() {
+		return city;
 	}
 
-	public String getUfState() {
-		return ufState;
+	public String getState() {
+		return state;
 	}
 
 	public String getNameState() {
@@ -174,5 +168,5 @@ public class ReportPartnerDTO {
 	public String getCountry() {
 		return country;
 	}
-	
+
 }

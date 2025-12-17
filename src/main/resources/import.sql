@@ -16,25 +16,25 @@ INSERT INTO tb_city (name, state) VALUES ('GUARAREMA', 'SP');
 INSERT INTO tb_city (name, state) VALUES ('CAMPO LARGO', 'PR');
 
 --TB_DEPARTAMENT
-INSERT INTO tb_departament (name, process) VALUES ('PRODUÇÃO', 'RECEBIMENTO E CLASSIFICAÇÃO DE SUCATAS');
-INSERT INTO tb_departament (name, process) VALUES ('PRODUÇÃO', 'CARREGAMENTOS DE FORNOS');
-INSERT INTO tb_departament (name, process) VALUES ('PRODUÇÃO', 'VAZAMENTO');
-INSERT INTO tb_departament (name, process) VALUES ('PRODUÇÃO', 'CORTE DE TARUGOS');
-INSERT INTO tb_departament (name, process) VALUES ('PRODUÇÃO', 'HOMOGENIZAÇÃO');
-INSERT INTO tb_departament (name, process) VALUES ('PRODUÇÃO', 'RESFRIAMENTO');
-INSERT INTO tb_departament (name, process) VALUES ('PRODUÇÃO', 'EMBALAGEM');
-INSERT INTO tb_departament (name, process) VALUES ('PRODUÇÃO', 'EXPEDIÇÃO');
-INSERT INTO tb_departament (name, process) VALUES ('ADMINISTRAÇÃO', 'QUALIDADE');
-INSERT INTO tb_departament (name, process) VALUES ('ADMINISTRAÇÃO', 'GERÊNCIA INDUSTRIAL');
-INSERT INTO tb_departament (name, process) VALUES ('ADMINISTRAÇÃO', 'MANUTENÇÃO');
-INSERT INTO tb_departament (name, process) VALUES ('ADMINISTRAÇÃO', 'BALANÇA RODOVIÁRIA');
-INSERT INTO tb_departament (name, process) VALUES ('ADMINISTRAÇÃO', 'COMERCIAL');
-
+INSERT INTO tb_departament (name, process, position) VALUES ('PRODUÇÃO', 'RECEBIMENTO E CLASSIFICAÇÃO DE SUCATAS', 'AUXILIAR_DE_EXPEDIÇÃO');
+INSERT INTO tb_departament (name, process, position) VALUES ('PRODUÇÃO', 'CARREGAMENTOS DE FORNOS', 'OPERADOR_DE_FORNO');
+INSERT INTO tb_departament (name, process, position) VALUES ('PRODUÇÃO', 'VAZAMENTO', 'OPERADOR_DE_MÁQUINA_VDC');
+INSERT INTO tb_departament (name, process, position) VALUES ('PRODUÇÃO', 'CORTE DE TARUGOS', 'AUXILIAR_DE_PRODUÇÃO');
+INSERT INTO tb_departament (name, process, position) VALUES ('PRODUÇÃO', 'HOMOGENIZAÇÃO', 'AUXILIAR_DE_PRODUÇÃO');
+INSERT INTO tb_departament (name, process, position) VALUES ('PRODUÇÃO', 'RESFRIAMENTO', 'AUXILIAR_DE_PRODUÇÃO');
+INSERT INTO tb_departament (name, process, position) VALUES ('PRODUÇÃO', 'EMBALAGEM', 'AUXILIAR_DE_EXPEDIÇÃO');
+INSERT INTO tb_departament (name, process, position) VALUES ('PRODUÇÃO', 'EXPEDIÇÃO', 'AUXILIAR_DE_EXPEDIÇÃO');
+INSERT INTO tb_departament (name, process, position) VALUES ('ADMINISTRAÇÃO', 'QUALIDADE', 'SUPERVISOR_DE_SGI');
+INSERT INTO tb_departament (name, process, position) VALUES ('ADMINISTRAÇÃO', 'GERÊNCIA INDUSTRIAL', 'GERENTE_INDUSTRIAL');
+INSERT INTO tb_departament (name, process, position) VALUES ('ADMINISTRAÇÃO', 'MANUTENÇÃO', 'SUPERVISOR_DE_MANUTENÇÃO');
+INSERT INTO tb_departament (name, process, position) VALUES ('ADMINISTRAÇÃO', 'BALANÇA RODOVIÁRIA', 'AUXILIAR_ADMINISTRATIVO');
+INSERT INTO tb_departament (name, process, position) VALUES ('ADMINISTRAÇÃO', 'COMERCIAL', 'SUPERVISOR_ADMINISTRATIVO');
+INSERT INTO tb_departament (name, process, position) VALUES ('ADMINISTRAÇÃO', 'BALANÇA_RODOVIÁRIA', 'AUXILIAR_ADMINISTRATIVO');
 --TB_EMPLOYEE
-INSERT INTO tb_employee (cpf, id, departament_id) VALUES ('100.125.255-49',  1, 9);
-INSERT INTO tb_employee (cpf, id, departament_id) VALUES ('520.123.255-49',  2, 11);
-INSERT INTO tb_employee (cpf, id, departament_id) VALUES ('111.121.225-49',  3, 8);
-INSERT INTO tb_employee (cpf, id, departament_id) VALUES ('111.000.111-49',  7, 10);
+INSERT INTO tb_employee (cpf, date_of_birth, id, departament_id) VALUES ('100.125.255-49', '1980-10-01', 1, 10);
+INSERT INTO tb_employee (cpf, date_of_birth, id, departament_id) VALUES ('520.123.255-49', '1980-10-01', 2, 14);
+INSERT INTO tb_employee (cpf, date_of_birth, id, departament_id) VALUES ('111.121.225-49', '1980-10-01', 3, 9);
+INSERT INTO tb_employee (cpf, date_of_birth, id, departament_id) VALUES ('111.000.111-49', '1980-10-01', 7, 11);
 
 --TB_PARTNER
 INSERT INTO tb_partner (cnpj, ie, supplier, client, active, id) VALUES ('00.252.457/0001-45', '114.115.225', true, true, true, 4);

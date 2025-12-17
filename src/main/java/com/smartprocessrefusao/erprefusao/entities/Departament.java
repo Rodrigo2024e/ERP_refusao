@@ -5,17 +5,29 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.smartprocessrefusao.erprefusao.audit.Auditable;
+import com.smartprocessrefusao.erprefusao.enumerados.EmployeePosition;
 import com.smartprocessrefusao.erprefusao.projections.IdProjection;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "tb_departament")
+@Table(
+	    name = "tb_departament",
+	    uniqueConstraints = {
+	        @UniqueConstraint(
+	            name = "uk_departament_name_process_position",
+	            columnNames = {"name", "process", "position"}
+	        )
+	    }
+)
 public class Departament extends Auditable<String> implements IdProjection<Long> {
 	private static final long serialVersionUID = 1L;
 
@@ -26,16 +38,20 @@ public class Departament extends Auditable<String> implements IdProjection<Long>
 	private String name;
 	private String process;
 
+	@Enumerated(EnumType.STRING)
+	private EmployeePosition position;
+
 	@OneToMany(mappedBy = "departament")
 	private Set<Employee> employees = new HashSet<>();
 
 	public Departament() {
 	}
 
-	public Departament(Long id, String name, String process) {
+	public Departament(Long id, String name, String process, EmployeePosition position) {
 		this.id = id;
 		this.name = name;
 		this.process = process;
+		this.position = position;
 
 	}
 
@@ -61,6 +77,14 @@ public class Departament extends Auditable<String> implements IdProjection<Long>
 
 	public void setProcess(String process) {
 		this.process = process;
+	}
+
+	public EmployeePosition getPosition() {
+		return position;
+	}
+
+	public void setPosition(EmployeePosition position) {
+		this.position = position;
 	}
 
 	public Set<Employee> getEmployees() {

@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.Dispatch;
-import com.smartprocessrefusao.erprefusao.projections.ReportDispatchProjection;
+import com.smartprocessrefusao.erprefusao.projections.DispatchReportProjection;
 
 import jakarta.transaction.Transactional;
 
@@ -50,7 +50,7 @@ public interface DispatchRepository extends JpaRepository<Dispatch, Long> {
 			    AND (:numTicket IS NULL OR t.num_ticket = :numTicket)
 			    AND (:people_id IS NULL OR LOWER(pp.id) LIKE LOWER(CONCAT('%', :people_id, '%')))
 			""", nativeQuery = true)
-	Page<ReportDispatchProjection> searchDescriptionMaterialOrNumTicketPeople(@Param("description") String description,
+	Page<DispatchReportProjection> searchDescriptionMaterialOrNumTicketPeople(@Param("description") String description,
 			@Param("numTicket") Long numTicket, @Param("people_id") Long people_id, Pageable pageable);
 
 	@Transactional
