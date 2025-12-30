@@ -52,7 +52,7 @@ public class MeltingResource {
 	@PostMapping
 	public ResponseEntity<MeltingDTO> insert(@Valid @RequestBody MeltingDTO dto) {
 		dto = meltingService.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getNumberMelting()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
 
@@ -71,15 +71,24 @@ public class MeltingResource {
 	}
 
 	@GetMapping("/report")
-	public ResponseEntity<Page<MeltingReportDTO>> searchMeltingReport(@RequestParam(required = false) Long partnerId,
-			@RequestParam(required = false) Long numberMelting,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			Pageable pageable) {
+	public ResponseEntity<Page<MeltingReportDTO>> searchMeltingReport(
+	        @RequestParam(required = false) Long partnerId,
+	        @RequestParam(required = false) Long numberMelting,
+	        @RequestParam(required = false)
+	        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+	        @RequestParam(required = false)
+	        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+	        Pageable pageable) {
 
-		Page<MeltingReportDTO> page = meltingService.searchMeltingReport(partnerId, numberMelting, startDate, endDate,
-				pageable);
+	    Page<MeltingReportDTO> page = meltingService.findDetails(
+	            partnerId,
+	            numberMelting,
+	            startDate,
+	            endDate,
+	            pageable
+	    );
 
-		return ResponseEntity.ok(page);
+	    return ResponseEntity.ok(page);
 	}
+
 }

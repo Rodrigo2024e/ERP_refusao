@@ -37,7 +37,7 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
 				AND (:description IS NULL OR LOWER(m.description) LIKE LOWER(CONCAT('%', :description, '%')))
 				AND (:code IS NULL OR m.code = :code)
 				AND (:type IS NULL OR LOWER(m.type) LIKE LOWER(CONCAT('%', :type, '%')))
-				ORDER BY m.id
+				ORDER BY m.code
 			""", countQuery = """
 				SELECT COUNT(m.id)
 					FROM tb_material m

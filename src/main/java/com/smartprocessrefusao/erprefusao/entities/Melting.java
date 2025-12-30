@@ -11,15 +11,19 @@ import com.smartprocessrefusao.erprefusao.audit.Auditable;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionOutGoing;
 import com.smartprocessrefusao.erprefusao.projections.IdProjection;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -30,7 +34,10 @@ public class Melting extends Auditable<String> implements IdProjection<Long> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
 	private LocalDate dateMelting;
+
+	@Column(name = "numberMelting", unique = true)
 	private Long numberMelting;
 
 	@Enumerated(EnumType.STRING)
@@ -47,16 +54,19 @@ public class Melting extends Auditable<String> implements IdProjection<Long> {
 	private Duration totalCycleTime;
 	private String observation;
 
-	@ManyToMany(mappedBy = "meltings")
+	@ManyToMany(mappedBy = "meltings", fetch = FetchType.LAZY)
 	private Set<Employee> employees = new HashSet<>();
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "partner_id")
 	private Partner partner;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "machine_id")
 	private Machine machine;
+
+	@OneToMany(mappedBy = "id.melting", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<MeltingItem> meltingItems = new HashSet<>();
 
 	public Melting() {
 	}
@@ -223,6 +233,10 @@ public class Melting extends Auditable<String> implements IdProjection<Long> {
 
 	public void setMachine(Machine machine) {
 		this.machine = machine;
+	}
+
+	public Set<MeltingItem> getMeltingItems() {
+		return meltingItems;
 	}
 
 	@Override

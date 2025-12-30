@@ -91,8 +91,8 @@ public class ReceiptService {
 						.orElseThrow(() -> new ResourceNotFoundException("Código do material é obrigatório."));
 
 				Material material = materialCache.computeIfAbsent(code,
-						id -> materialRepository.findByCode(id).orElseThrow(
-								() -> new ResourceNotFoundException("Material não encontrado para o code: " + id)));
+						id -> materialRepository.findByCode(code).orElseThrow(
+								() -> new ResourceNotFoundException("Material não encontrado para o code: " + code)));
 
 				copyItemDtoToEntity(itemDto, item, entity, partner, material, sequence);
 				entity.getReceiptItems().add(item);

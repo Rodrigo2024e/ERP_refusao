@@ -1,23 +1,25 @@
 package com.smartprocessrefusao.erprefusao.projections;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public interface MeltingReportProjection {
+public interface MeltingProjection {
 
 	Long getMeltingId();
-
+	
 	LocalDate getDateMelting();
 
-	Integer getNumberMelting();
+	Long getNumberMelting();
+
 	Long getPartnerId();
 
 	String getPartnerName();
 
 	String getTypeTransaction();
-	
+
 	Long getMachineId();
-	
+
 	String getMachineName();
 
 	LocalDateTime getStartOfFurnaceCharging();
@@ -32,22 +34,13 @@ public interface MeltingReportProjection {
 
 	LocalDateTime getEndOfFurnaceTapping();
 
-	Long getTotalChargingTime();
-	Long getTotalTransferTime();
+	Duration getTotalChargingTime();
 
-	Long getTotalTappingTime();
+	Duration getTotalTransferTime();
 
-	Long getTotalCycleTime();
+	Duration getTotalTappingTime();
+
+	Duration getTotalCycleTime();
 
 	String getObservation();
-
-	Long getEmployeeId();
-
-	String getEmployeeName();
-
-	Long getDepartamentId();
-
-	String getDepartamentName();
-
-	String getDepartamentProcess();
 }

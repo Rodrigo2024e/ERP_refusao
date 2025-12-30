@@ -3,16 +3,15 @@ package com.smartprocessrefusao.erprefusao.dto;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-import com.smartprocessrefusao.erprefusao.projections.MeltingProjection;
+import com.smartprocessrefusao.erprefusao.projections.MeltingEmployeeProjection;
+import com.smartprocessrefusao.erprefusao.projections.MeltingItemProjection;
 
-public class MeltingReportDTO {
+public class MeltingDetailsDTO {
 
 	private Long meltingId;
 	private LocalDate dateMelting;
-
 	private Long numberMelting;
 
 	private Long partnerId;
@@ -24,36 +23,34 @@ public class MeltingReportDTO {
 	private String machineName;
 
 	private LocalDateTime startOfFurnaceCharging;
-
 	private LocalDateTime endOfFurnaceCharging;
 
 	private LocalDateTime startOfFurnaceToFurnaceMetalTransfer;
-
 	private LocalDateTime endOfFurnaceToFurnaceMetalTransfer;
 
 	private LocalDateTime startOfFurnaceTapping;
-
 	private LocalDateTime endOfFurnaceTapping;
 
 	private Duration totalChargingTime;
 	private Duration totalTransferTime;
 	private Duration totalTappingTime;
 	private Duration totalCycleTime;
+
 	private String observation;
 
-	private List<MeltingItemDTO> meltingItems = new ArrayList<>();
-	private List<EmployeeMeltingReportDTO> employees = new ArrayList<>();
+	private List<MeltingItemProjection> meltingItems;
+	private List<MeltingEmployeeProjection> employees;
 
-	public MeltingReportDTO() {
+	public MeltingDetailsDTO() {
 	}
 
-	public MeltingReportDTO(Long meltingId, LocalDate dateMelting, Long numberMelting, Long partnerId,
+	public MeltingDetailsDTO(Long meltingId, LocalDate dateMelting, Long numberMelting, Long partnerId,
 			String partnerName, String typeTransaction, Long machineId, String machineName,
 			LocalDateTime startOfFurnaceCharging, LocalDateTime endOfFurnaceCharging,
 			LocalDateTime startOfFurnaceToFurnaceMetalTransfer, LocalDateTime endOfFurnaceToFurnaceMetalTransfer,
 			LocalDateTime startOfFurnaceTapping, LocalDateTime endOfFurnaceTapping, Duration totalChargingTime,
 			Duration totalTransferTime, Duration totalTappingTime, Duration totalCycleTime, String observation,
-			List<MeltingItemDTO> meltingItems, List<EmployeeMeltingReportDTO> employees) {
+			List<MeltingItemProjection> meltingItems, List<MeltingEmployeeProjection> employees) {
 		this.meltingId = meltingId;
 		this.dateMelting = dateMelting;
 		this.numberMelting = numberMelting;
@@ -73,30 +70,9 @@ public class MeltingReportDTO {
 		this.totalTappingTime = totalTappingTime;
 		this.totalCycleTime = totalCycleTime;
 		this.observation = observation;
-		this.employees = employees;
-		this.meltingItems = meltingItems;
-	}
+		this.meltingItems = List.copyOf(meltingItems);
+		this.employees = List.copyOf(employees);
 
-	public MeltingReportDTO(MeltingProjection p) {
-		meltingId = p.getMeltingId();
-		dateMelting = p.getDateMelting();
-		numberMelting = p.getNumberMelting();
-		partnerId = p.getPartnerId();
-		partnerName = p.getPartnerName();
-		typeTransaction = p.getTypeTransaction();
-		machineId = p.getMachineId();
-		machineName = p.getMachineName();
-		startOfFurnaceCharging = p.getStartOfFurnaceCharging();
-		endOfFurnaceCharging = p.getEndOfFurnaceCharging();
-		startOfFurnaceToFurnaceMetalTransfer = p.getStartOfFurnaceToFurnaceMetalTransfer();
-		endOfFurnaceToFurnaceMetalTransfer = p.getEndOfFurnaceToFurnaceMetalTransfer();
-		startOfFurnaceTapping = p.getStartOfFurnaceTapping();
-		endOfFurnaceTapping = p.getEndOfFurnaceTapping();
-		totalChargingTime = p.getTotalChargingTime();
-		totalTransferTime = p.getTotalTransferTime();
-		totalTappingTime = p.getTotalTappingTime();
-		totalCycleTime = p.getTotalCycleTime();
-		observation = p.getObservation();
 	}
 
 	public Long getMeltingId() {
@@ -175,12 +151,12 @@ public class MeltingReportDTO {
 		return observation;
 	}
 
-	public List<EmployeeMeltingReportDTO> getEmployees() {
-		return employees;
+	public List<MeltingItemProjection> getMeltingItems() {
+		return meltingItems;
 	}
 
-	public List<MeltingItemDTO> getMeltingItems() {
-		return meltingItems;
+	public List<MeltingEmployeeProjection> getEmployees() {
+		return employees;
 	}
 
 }

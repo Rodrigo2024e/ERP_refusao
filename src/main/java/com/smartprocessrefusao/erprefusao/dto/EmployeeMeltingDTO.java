@@ -1,7 +1,10 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
+import java.util.List;
+
 import com.smartprocessrefusao.erprefusao.entities.Employee;
-import com.smartprocessrefusao.erprefusao.projections.EmployeeMeltingProjection;
+import com.smartprocessrefusao.erprefusao.entities.Melting;
+import com.smartprocessrefusao.erprefusao.projections.MeltingEmployeeProjection;
 
 public class EmployeeMeltingDTO {
 
@@ -11,6 +14,8 @@ public class EmployeeMeltingDTO {
 	private String departamentName;
 	private String departamentProcess;
 	private String employeePosition;
+
+	private List<Long> meltingIds;
 
 	public EmployeeMeltingDTO() {
 
@@ -27,6 +32,7 @@ public class EmployeeMeltingDTO {
 	}
 
 	public EmployeeMeltingDTO(Employee entity) {
+		this.meltingIds = entity.getMeltings().stream().map(Melting::getId).toList();
 		employeeId = entity.getId();
 		employeeName = entity.getName();
 		departamentId = entity.getDepartament().getId();
@@ -36,7 +42,8 @@ public class EmployeeMeltingDTO {
 
 	}
 
-	public EmployeeMeltingDTO(EmployeeMeltingProjection projection) {
+	public EmployeeMeltingDTO(MeltingEmployeeProjection projection) {
+
 		employeeId = projection.getEmployeeId();
 		employeeName = projection.getEmployeeName();
 		departamentId = projection.getDepartamentId();
@@ -44,6 +51,10 @@ public class EmployeeMeltingDTO {
 		departamentProcess = projection.getDepartamentProcess();
 		employeePosition = projection.getEmployeePosition();
 
+	}
+
+	public List<Long> getMeltingIds() {
+		return meltingIds;
 	}
 
 	public Long getEmployeeId() {

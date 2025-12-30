@@ -8,72 +8,78 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.smartprocessrefusao.erprefusao.entities.Melting;
+import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionOutGoing;
 
-import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public class MeltingDTO {
 
-	private Long id;
+	private Long meltingId;
 
 	@NotNull(message = "Informe a data da fusão")
 	private LocalDate dateMelting;
 
 	@NotNull(message = "Informe o número da fusão")
-	@Column(name = "numberMelting", unique = true)
 	private Long numberMelting;
 
-	@NotNull(message = "Informe o id do parceiro")
+	@NotNull(message = "Informe o parceiro")
 	private Long partnerId;
 	private String partnerName;
 
 	@NotNull(message = "Informe o tipo da transação")
-	private String typeTransaction;
+	private TypeTransactionOutGoing typeTransaction;
 
-	@NotNull(message = "Informe o id do forno")
+	@NotNull(message = "Informe o forno")
 	private Long machineId;
 	private String machineName;
 
-	@NotNull(message = "Informe a data e a hora do início do carregamento")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@NotNull(message = "Informe a data e hora de início do carregamento")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime startOfFurnaceCharging;
 
-	@NotNull(message = "Informe a data e a hora do fim do carregamento")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@NotNull(message = "Informe a data e hora de fim do carregamento")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime endOfFurnaceCharging;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime startOfFurnaceToFurnaceMetalTransfer;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime endOfFurnaceToFurnaceMetalTransfer;
 
-	@NotNull(message = "Informe a data e a hora do início do vazamento")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@NotNull(message = "Informe a data e hora de início do vazamento")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime startOfFurnaceTapping;
 
-	@NotNull(message = "Informe a data e a hora do fim do vazamento")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@NotNull(message = "Informe a data e hora de fim do vazamento")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime endOfFurnaceTapping;
 
 	private Duration totalChargingTime;
 	private Duration totalTransferTime;
 	private Duration totalTappingTime;
 	private Duration totalCycleTime;
+
 	private String observation;
 
+	@NotEmpty(message = "Informe os itens da fusão")
+	private List<MeltingItemDTO> meltingItems = new ArrayList<>();
+
+	@NotEmpty(message = "Informe os colaboradores participantes da fusão")
 	private List<EmployeeMeltingDTO> employees = new ArrayList<>();
 
 	public MeltingDTO() {
 	}
 
-	public MeltingDTO(Long id, LocalDate dateMelting, Long numberMelting, Long partnerId, String partnerName,
-			String typeTransaction, Long machineId, String machineName, LocalDateTime startOfFurnaceCharging,
-			LocalDateTime endOfFurnaceCharging, LocalDateTime startOfFurnaceToFurnaceMetalTransfer,
-			LocalDateTime endOfFurnaceToFurnaceMetalTransfer, LocalDateTime startOfFurnaceTapping,
-			LocalDateTime endOfFurnaceTapping, Duration totalChargingTime, Duration totalTransferTime,
-			Duration totalTappingTime, Duration totalCycleTime, String observation) {
-		this.id = id;
+	public MeltingDTO(Long meltingId, LocalDate dateMelting, Long numberMelting, Long partnerId, String partnerName,
+			TypeTransactionOutGoing typeTransaction, Long machineId, String machineName,
+			LocalDateTime startOfFurnaceCharging, LocalDateTime endOfFurnaceCharging,
+			LocalDateTime startOfFurnaceToFurnaceMetalTransfer, LocalDateTime endOfFurnaceToFurnaceMetalTransfer,
+			LocalDateTime startOfFurnaceTapping, LocalDateTime endOfFurnaceTapping, Duration totalChargingTime,
+			Duration totalTransferTime, Duration totalTappingTime, Duration totalCycleTime, String observation,
+			List<EmployeeMeltingDTO> employees, List<MeltingItemDTO> meltingItems) {
+		this.meltingId = meltingId;
 		this.dateMelting = dateMelting;
 		this.numberMelting = numberMelting;
 		this.partnerId = partnerId;
@@ -92,35 +98,48 @@ public class MeltingDTO {
 		this.totalTappingTime = totalTappingTime;
 		this.totalCycleTime = totalCycleTime;
 		this.observation = observation;
+		this.employees = employees;
+		this.meltingItems = meltingItems;
 	}
 
 	public MeltingDTO(Melting entity) {
-		id = entity.getId();
+		meltingId = entity.getId();
 		dateMelting = entity.getDateMelting();
 		numberMelting = entity.getNumberMelting();
-		partnerId = entity.getPartner().getId();
-		partnerName = entity.getPartner().getName();
-		typeTransaction = entity.getTypeTransaction().toString();
-		machineId = entity.getMachine().getId();
-		machineName = entity.getMachine().getDescription();
+
+		if (entity.getPartner() != null) {
+			partnerId = entity.getPartner().getId();
+			partnerName = entity.getPartner().getName();
+		}
+
+		typeTransaction = entity.getTypeTransaction();
+
+		if (entity.getMachine() != null) {
+			machineId = entity.getMachine().getId();
+			machineName = entity.getMachine().getDescription();
+		}
+
 		startOfFurnaceCharging = entity.getStartOfFurnaceCharging();
 		endOfFurnaceCharging = entity.getEndOfFurnaceCharging();
 		startOfFurnaceToFurnaceMetalTransfer = entity.getStartOfFurnaceToFurnaceMetalTransfer();
 		endOfFurnaceToFurnaceMetalTransfer = entity.getEndOfFurnaceToFurnaceMetalTransfer();
 		startOfFurnaceTapping = entity.getStartOfFurnaceTapping();
 		endOfFurnaceTapping = entity.getEndOfFurnaceTapping();
+
 		totalChargingTime = entity.getTotalChargingTime();
 		totalTransferTime = entity.getTotalTransferTime();
 		totalTappingTime = entity.getTotalTappingTime();
 		totalCycleTime = entity.getTotalCycleTime();
+
 		observation = entity.getObservation();
 
 		employees = entity.getEmployees().stream().map(EmployeeMeltingDTO::new).toList();
 
+		meltingItems = entity.getMeltingItems().stream().map(MeltingItemDTO::new).toList();
 	}
-	
-		public Long getId() {
-		return id;
+
+	public Long getMeltingId() {
+		return meltingId;
 	}
 
 	public LocalDate getDateMelting() {
@@ -139,7 +158,7 @@ public class MeltingDTO {
 		return partnerName;
 	}
 
-	public String getTypeTransaction() {
+	public TypeTransactionOutGoing getTypeTransaction() {
 		return typeTransaction;
 	}
 
@@ -197,6 +216,10 @@ public class MeltingDTO {
 
 	public List<EmployeeMeltingDTO> getEmployees() {
 		return employees;
+	}
+
+	public List<MeltingItemDTO> getMeltingItems() {
+		return meltingItems;
 	}
 
 }

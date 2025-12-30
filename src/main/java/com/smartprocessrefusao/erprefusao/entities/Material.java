@@ -48,6 +48,9 @@ public class Material extends Auditable<String> implements Serializable {
 	@OneToMany(mappedBy = "id.material", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ReceiptItem> receiptItems = new ArrayList<>();
 
+	@OneToMany(mappedBy = "id.materialCode", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<MeltingItem> meltingItems = new ArrayList<>();
+
 	@ManyToOne
 	@JoinColumn(name = "stock_balance_id")
 	private StockBalance stockBalance;
@@ -134,6 +137,10 @@ public class Material extends Auditable<String> implements Serializable {
 		return inventoryItems;
 	}
 
+	public List<MeltingItem> getMeltingItems() {
+		return meltingItems;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -154,5 +161,4 @@ public class Material extends Auditable<String> implements Serializable {
 		return Objects.equals(code, other.code);
 	}
 
-	
 }
