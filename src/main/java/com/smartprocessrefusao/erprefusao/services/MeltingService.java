@@ -199,7 +199,7 @@ public class MeltingService {
 			Long code = Optional.ofNullable(itemDto.getMaterialCode())
 					.orElseThrow(() -> new IllegalArgumentException("Código do material obrigatório"));
 
-			Material material = materialCache.computeIfAbsent(code, c -> materialRepository.findByCode(c)
+			Material material = materialCache.computeIfAbsent(code, c -> materialRepository.findByMaterialCode(c)
 					.orElseThrow(() -> new ResourceNotFoundException("Material não encontrado: " + c)));
 
 			MeltingItem item = new MeltingItem();
@@ -238,83 +238,74 @@ public class MeltingService {
 
 	// REPORT
 	public Page<MeltingReportDTO> findDetails(
-	        Long partnerId,
-	        Long numberMelting,
-	        LocalDate startDate,
-	        LocalDate endDate,
-	        Pageable pageable) {
+			Long partnerId, 
+			Long numberMelting, 
+			LocalDate startDate,
+			LocalDate endDate, 
+			Pageable pageable) {
 
-	    Page<MeltingProjection> page =
-	            meltingRepository.findMeltingBase(
-	                    partnerId, numberMelting, startDate, endDate, pageable
-	            );
+		Page<MeltingProjection> page = meltingRepository.findMeltingBase(
+				partnerId, 
+				numberMelting, 
+				startDate, 
+				endDate,
+				pageable);
 
-	    // 🔹 IDs das fusões (fora do map!)
-	    List<Long> meltingIds = page.stream()
-	            .map(MeltingProjection::getMeltingId)
-	            .toList();
+		// 🔹 IDs das fusões (fora do map!)
+		List<Long> meltingIds = page.stream().map(MeltingProjection::getMeltingId).toList();
 
-	    // 🔹 1 query só — Itens
-	    Map<Long, List<MeltingItemDTO>> itemsMap =
-	            meltingItemRepository.findItemsByMeltingIds(meltingIds)
-	                    .stream()
-	                    .map(p -> new MeltingItemDTO(
-	                            p.getMeltingId(),
-	                            p.getItemSequence(),
-	                            p.getMaterialCode(),
-	                            p.getCodeDescription(),
-	                            p.getQuantity(),
-	                            p.getAveragePrice(),
-	                            p.getTotalValue(),
-	                            p.getAverageRecoveryYield(),
-	                            p.getQuantityMco(),
-	                            p.getSlagWeight()
-	                    ))
-	                    .collect(Collectors.groupingBy(
-	                            MeltingItemDTO::getMeltingId
-	                    ));
+		// 🔹 1 query só — Itens
+		Map<Long, List<MeltingItemDTO>> itemsMap = meltingItemRepository.findItemsByMeltingIds(meltingIds).stream()
+				.map(p -> new MeltingItemDTO(
+						p.getMeltingId(), 
+						p.getItemSequence(), 
+						p.getMaterialCode(),
+						p.getDescription(), 
+						p.getQuantity(), 
+						p.getAveragePrice(), 
+						p.getTotalValue(),
+						p.getAverageRecoveryYield(), 
+						p.getQuantityMco(), 
+						p.getSlagWeight()))
+				.collect(Collectors.groupingBy(MeltingItemDTO::getMeltingId));
 
-	    // 🔹 1 query só — Employees
-	    Map<Long, List<EmployeeMeltingReportDTO>> employeesMap =
-	            employeeRepository.findEmployeesByMeltingIds(meltingIds)
-	                    .stream()
-	                    .map(p -> new EmployeeMeltingReportDTO(
-	                            p.getMeltingId(),
-	                            p.getEmployeeId(),
-	                            p.getEmployeeName(),
-	                            p.getDepartamentId(),
-	                            p.getDepartamentName(),
-	                            p.getDepartamentProcess(),
-	                            p.getEmployeePosition()
-	                    ))
-	                    .collect(Collectors.groupingBy(
-	                            EmployeeMeltingReportDTO::getMeltingId
-	                    ));
+		// 🔹 1 query só — Employees
+		Map<Long, List<EmployeeMeltingReportDTO>> employeesMap = employeeRepository
+				.findEmployeesByMeltingIds(meltingIds).stream()
+				.map(p -> new EmployeeMeltingReportDTO(
+						p.getMeltingId(), 
+						p.getEmployeeId(), 
+						p.getEmployeeName(),
+						p.getDepartamentId(), 
+						p.getDepartamentName(), 
+						p.getDepartamentProcess(),
+						p.getEmployeePosition()))
+				.collect(Collectors.groupingBy(EmployeeMeltingReportDTO::getMeltingId));
 
-	    // 🔹 Montagem final do DTO (SEM N+1)
-	    return page.map(p -> new MeltingReportDTO(
-	            p.getMeltingId(),
-	            p.getDateMelting(),
-	            p.getNumberMelting(),
-	            p.getPartnerId(),
-	            p.getPartnerName(),
-	            p.getTypeTransaction(),
-	            p.getMachineId(),
-	            p.getMachineName(),
-	            p.getStartOfFurnaceCharging(),
-	            p.getEndOfFurnaceCharging(),
-	            p.getStartOfFurnaceToFurnaceMetalTransfer(),
-	            p.getEndOfFurnaceToFurnaceMetalTransfer(),
-	            p.getStartOfFurnaceTapping(),
-	            p.getEndOfFurnaceTapping(),
-	            p.getTotalChargingTime(),
-	            p.getTotalTransferTime(),
-	            p.getTotalTappingTime(),
-	            p.getTotalCycleTime(),
-	            p.getObservation(),
-	            itemsMap.getOrDefault(p.getMeltingId(), List.of()),
-	            employeesMap.getOrDefault(p.getMeltingId(), List.of())
-	    ));
+		// 🔹 Montagem final do DTO (SEM N+1)
+		return page.map(p -> new MeltingReportDTO(
+				p.getMeltingId(), 
+				p.getDateMelting(), 
+				p.getNumberMelting(),
+				p.getPartnerId(), 
+				p.getPartnerName(), 
+				p.getTypeTransaction(), 
+				p.getMachineId(), 
+				p.getMachineName(),
+				p.getStartOfFurnaceCharging(), 
+				p.getEndOfFurnaceCharging(), 
+				p.getStartOfFurnaceToFurnaceMetalTransfer(),
+				p.getEndOfFurnaceToFurnaceMetalTransfer(), 
+				p.getStartOfFurnaceTapping(), 
+				p.getEndOfFurnaceTapping(),
+				p.getTotalChargingTime(), 
+				p.getTotalTransferTime(), 
+				p.getTotalTappingTime(), 
+				p.getTotalCycleTime(),
+				p.getObservation(), 
+				itemsMap.getOrDefault(
+						p.getMeltingId(), List.of()),
+				employeesMap.getOrDefault(p.getMeltingId(), List.of())));
 	}
 
 	// Calculate times melting
@@ -324,6 +315,7 @@ public class MeltingService {
 		return Duration.between(start, end);
 	}
 
+	// Return Zero when null value
 	private BigDecimal nz(BigDecimal value) {
 		return value != null ? value : BigDecimal.ZERO;
 	}

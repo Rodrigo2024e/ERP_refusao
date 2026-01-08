@@ -33,18 +33,18 @@ public class MaterialResource {
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/report")
-	public ResponseEntity<Page<MateriaReportlDTO>> getReportMaterial(@RequestParam(required = false) String type, @RequestParam(required = false) Long code, @RequestParam(required = false) String description,
+	public ResponseEntity<Page<MateriaReportlDTO>> getReportMaterial(@RequestParam(required = false) String type, @RequestParam(required = false) Long materialCode, @RequestParam(required = false) String description,
 			@RequestParam(required = false) Long groupId, Pageable pageable) {
 
-		Page<MateriaReportlDTO> result = materialService.reportMaterial(type, code, description, groupId, pageable);
+		Page<MateriaReportlDTO> result = materialService.reportMaterial(type, materialCode, description, groupId, pageable);
 		return ResponseEntity.ok(result);
 
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-	@GetMapping(value = "/{code}")
-	public ResponseEntity<MaterialDTO> findByCode(@PathVariable Long code) {
-		MaterialDTO dto = materialService.findByCode(code);
+	@GetMapping(value = "/{materialCode}")
+	public ResponseEntity<MaterialDTO> findByCode(@PathVariable Long materialCode) {
+		MaterialDTO dto = materialService.findByCode(materialCode);
 		return ResponseEntity.ok().body(dto);
 	}
 
@@ -52,22 +52,22 @@ public class MaterialResource {
 	@PostMapping
 	public ResponseEntity<MaterialDTO> insert(@Valid @RequestBody MaterialDTO dto) {
 		dto = materialService.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getCode())
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getMaterialCode())
 				.toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-	@PutMapping(value = "/{code}")
-	public ResponseEntity<MaterialDTO> update(@PathVariable Long code, @Valid @RequestBody MaterialDTO dto) {
-		dto = materialService.update(code, dto);
+	@PutMapping(value = "/{materialCode}")
+	public ResponseEntity<MaterialDTO> update(@PathVariable Long materialCode, @Valid @RequestBody MaterialDTO dto) {
+		dto = materialService.update(materialCode, dto);
 		return ResponseEntity.ok().body(dto);
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-	@DeleteMapping(value = "/{code}")
-	public ResponseEntity<Void> delete(@PathVariable Long code) {
-		materialService.delete(code);
+	@DeleteMapping(value = "/{materialCode}")
+	public ResponseEntity<Void> delete(@PathVariable Long materialCode) {
+		materialService.delete(materialCode);
 		return ResponseEntity.noContent().build();
 	}
 

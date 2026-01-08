@@ -34,8 +34,8 @@ public class StockBalance implements Serializable {
 	private BigDecimal totalPurchaseMco = BigDecimal.ZERO;
 	private BigDecimal recoveryYieldPurchase = BigDecimal.ZERO;
 	private BigDecimal totalValue = BigDecimal.ZERO;
-	private BigDecimal averageCost = BigDecimal.ZERO;
-	private BigDecimal averageCostMco = BigDecimal.ZERO;
+	private BigDecimal averagePrice = BigDecimal.ZERO;
+	private BigDecimal averagePriceMco = BigDecimal.ZERO;
 
 	private BigDecimal totalSentForProcessing = BigDecimal.ZERO;
 	private BigDecimal totalSentForProcessingMco = BigDecimal.ZERO;
@@ -68,7 +68,7 @@ public class StockBalance implements Serializable {
 
 	public StockBalance(Long id, LocalDate dateStock, List<Material> materials, BigDecimal totalPurchase,
 			BigDecimal totalPurchaseMco, BigDecimal recoveryYieldPurchase, BigDecimal totalValue,
-			BigDecimal averageCost, BigDecimal averageCostMco, BigDecimal totalSentForProcessing,
+			BigDecimal averagePrice, BigDecimal averagePriceMco, BigDecimal totalSentForProcessing,
 			BigDecimal totalSentForProcessingMco, BigDecimal recoveryYieldSentForProcessing,
 			BigDecimal totalScrapSalesReturn, BigDecimal totalScrapSalesReturnMco,
 			BigDecimal recoveryYieldScrapSalesReturn, BigDecimal totalAdjustmentEntries,
@@ -83,8 +83,8 @@ public class StockBalance implements Serializable {
 		this.totalPurchaseMco = totalPurchaseMco;
 		this.recoveryYieldPurchase = recoveryYieldPurchase;
 		this.totalValue = totalValue;
-		this.averageCost = averageCost;
-		this.averageCostMco = averageCostMco;
+		this.averagePrice = averagePrice;
+		this.averagePriceMco = averagePriceMco;
 		this.totalSentForProcessing = totalSentForProcessing;
 		this.totalSentForProcessingMco = totalSentForProcessingMco;
 		this.recoveryYieldSentForProcessing = recoveryYieldSentForProcessing;
@@ -161,20 +161,20 @@ public class StockBalance implements Serializable {
 		this.totalValue = totalValue;
 	}
 
-	public BigDecimal getAverageCost() {
-		return averageCost;
+	public BigDecimal getAveragePrice() {
+		return averagePrice;
 	}
 
-	public BigDecimal getAverageCostMco() {
-		return averageCostMco;
+	public BigDecimal getAveragePriceMco() {
+		return averagePriceMco;
 	}
 
-	public void setAverageCostMco(BigDecimal averageCostMco) {
-		this.averageCostMco = averageCostMco;
+	public void setAveragePriceMco(BigDecimal averagePriceMco) {
+		this.averagePriceMco = averagePriceMco;
 	}
 
-	public void setAverageCost(BigDecimal averageCost) {
-		this.averageCost = averageCost;
+	public void setAveragePrice(BigDecimal averagePrice) {
+		this.averagePrice = averagePrice;
 	}
 
 	public BigDecimal getTotalSentForProcessing() {

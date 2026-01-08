@@ -9,6 +9,6 @@ import com.smartprocessrefusao.erprefusao.entities.StockBalance;
 
 @Repository
 public interface StockBalanceRepository extends JpaRepository<StockBalance, Long> {
-	Optional<StockBalance> findByMaterialsCode(Long code);
+	Optional<StockBalance> findByMaterials_MaterialCode(Long materialCode);
 
 }

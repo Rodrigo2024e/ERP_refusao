@@ -3,7 +3,7 @@ package com.smartprocessrefusao.erprefusao.projections;
 import java.math.BigDecimal;
 
 public interface InventoryReportProjection {
-	Long getCode();
+	Long getMaterialCode();
 
 	String getDescription();
 	
@@ -15,8 +15,8 @@ public interface InventoryReportProjection {
 	BigDecimal getRecoveryYieldPurchase();
 	BigDecimal getTotalPurchaseMco();
 	BigDecimal getTotalValue();
-	BigDecimal getAverageCost();
-	BigDecimal getAverageCostMco();
+	BigDecimal getAveragePrice();
+	BigDecimal getAveragePriceMco();
 
 	BigDecimal getTotalSentForProcessing();
 	BigDecimal getRecoveryYieldSentForProcessing();

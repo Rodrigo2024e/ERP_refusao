@@ -52,7 +52,7 @@ public class MaterialService {
 	@Transactional(readOnly = true)
 	public MaterialDTO findByCode(Long code) {
 		try {
-			Optional<Material> obj = materialRepository.findByCode(code);
+			Optional<Material> obj = materialRepository.findByMaterialCode(code);
 			Material entity = obj.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
 			return new MaterialDTO(entity);
 		} catch (EntityNotFoundException e) {
@@ -65,11 +65,11 @@ public class MaterialService {
 	public MaterialDTO insert(MaterialDTO dto) {
 
 		// 1. Validação de Duplicidade de Código
-		materialRepository.findByCode(dto.getCode()).ifPresent(m -> {
+		materialRepository.findByMaterialCode(dto.getMaterialCode()).ifPresent(m -> {
 			throw new IllegalArgumentException("Código de material já cadastrado!");
 		});
 
-		String newMaterialCode = dto.getCode().toString();
+		String newMaterialCode = dto.getMaterialCode().toString();
 		String groupIdStr = String.valueOf(dto.getMatGroupId());
 		String taxClassIdStr = String.valueOf(dto.getTaxClassId());
 
@@ -99,15 +99,15 @@ public class MaterialService {
 	}
 
 	@Transactional
-	public MaterialDTO update(Long code, MaterialDTO dto) {
+	public MaterialDTO update(Long materialCode, MaterialDTO dto) {
 
 		// 1. Busca a entidade existente pelo código atual.
-		Material entity = materialRepository.findByCode(code)
-				.orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado com o código: " + code));
+		Material entity = materialRepository.findByMaterialCode(materialCode)
+				.orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado com o código: " + materialCode));
 
 		// --- INÍCIO DA VALIDAÇÃO CORRETA ---
 
-		String newMaterialCode = dto.getCode().toString();
+		String newMaterialCode = dto.getMaterialCode().toString();
 		String groupIdStr = String.valueOf(dto.getMatGroupId());
 		String taxClassIdStr = String.valueOf(dto.getTaxClassId());
 
@@ -135,12 +135,12 @@ public class MaterialService {
 	}
 
 	@Transactional(propagation = Propagation.SUPPORTS)
-	public void delete(Long code) {
-		if (!materialRepository.existsByCode(code)) {
-			throw new ResourceNotFoundException("Code not found " + code);
+	public void delete(Long materialCode) {
+		if (!materialRepository.existsByMaterialCode(materialCode)) {
+			throw new ResourceNotFoundException("Code not found " + materialCode);
 		}
 		try {
-			materialRepository.deleteByCode(code);
+			materialRepository.deleteByMaterialCode(materialCode);
 		} catch (DataIntegrityViolationException e) {
 			throw new DatabaseException("Integrity violation");
 		}
@@ -148,7 +148,7 @@ public class MaterialService {
 
 	public void copyDtoToEntity(MaterialDTO dto, Material entity) {
 
-		entity.setCode(dto.getCode());
+		entity.setMaterialCode(dto.getMaterialCode());
 		entity.setDescription(dto.getDescription().toUpperCase());
 
 		try {

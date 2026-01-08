@@ -6,8 +6,6 @@ import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +22,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.smartprocessrefusao.erprefusao.dto.ReceiptDTO;
 import com.smartprocessrefusao.erprefusao.dto.ReceiptReportDTO;
-import com.smartprocessrefusao.erprefusao.projections.ReceiptReportProjection;
 import com.smartprocessrefusao.erprefusao.services.ReceiptService;
 
 import jakarta.validation.Valid;
@@ -35,7 +32,10 @@ public class ReceiptResource {
 
 	@Autowired
 	private ReceiptService receiptService;
-
+/*
+	@Autowired
+	private ReceiptReportService receiptReportService;
+*/
 	@PostMapping
 	public ResponseEntity<ReceiptDTO> insert(@Valid @RequestBody ReceiptDTO dto) {
 		ReceiptDTO newDto = receiptService.insert(dto);
@@ -61,30 +61,22 @@ public class ReceiptResource {
 	}
 
 	// REPORT
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-	@GetMapping("/report-page") 
-	public ResponseEntity<Page<ReceiptReportDTO>> reportPage(@RequestParam(required = false) String description,
-			@RequestParam(required = false) Long numTicket, @RequestParam(required = false) Long partner_id,
+	@GetMapping("/report-page")
+	public ResponseEntity<Page<ReceiptReportDTO>> reportReceipt(
+			@RequestParam(required = false) Long id,
+			@RequestParam(required = false) Long numTicket, 
+			@RequestParam(required = false) Long partnerId,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@RequestParam(required = false) Long code,
-			@PageableDefault(direction = Sort.Direction.ASC) Pageable pageable)
+			@RequestParam(required = false) Long materialCode, Pageable pageable) {
 
-	{
+		Page<ReceiptReportDTO> page = receiptService.findDetails(
+				id,
+				numTicket, 
+				startDate,
+				endDate, 
+				pageable);
 
-		try {
-
-			Page<ReceiptReportProjection> reportPage = receiptService.getReportRange(description, numTicket, partner_id,
-					startDate, endDate, code, pageable);
-
-			Page<ReceiptReportDTO> dtoPage = reportPage.map(ReceiptReportDTO::new);
-
-			return ResponseEntity.ok(dtoPage);
-
-		} catch (IllegalArgumentException ex) {
-			return ResponseEntity.badRequest().body(Page.empty(pageable));
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(Page.empty(pageable));
-		}
+		return ResponseEntity.ok(page);
 	}
 }

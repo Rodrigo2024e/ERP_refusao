@@ -107,30 +107,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 			   WHERE m.id IN :meltingIds
 			   ORDER BY e.name
 			""")
-			List<MeltingEmployeeProjection> findEmployeesByMeltingIds(
-			    @Param("meltingIds") List<Long> meltingIds
-			);
+	List<MeltingEmployeeProjection> findEmployeesByMeltingIds(@Param("meltingIds") List<Long> meltingIds);
 
-	
-	/*
-	@Query("""
-			    SELECT
-			        e.id AS employeeId,
-			        e.name AS employeeName,
-
-			        d.id AS departamentId,
-			        d.name AS departamentName,
-			        d.process AS departamentProcess,
-			        d.position AS employeePosition
-			        
-			    FROM Melting m
-			    JOIN m.employees e
-			    JOIN e.departament d
-			    WHERE m.id = :id
-			    ORDER BY e.name
-			""")
-	List<MeltingEmployeeProjection> findEmployeesById(Long id);
-*/
 	Optional<Employee> findByEmail(String email);
 
 	boolean existsByEmail(String email);

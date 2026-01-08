@@ -13,12 +13,13 @@ import jakarta.validation.constraints.Size;
 public class MaterialDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	private Long id;
 
 	@NotNull(message = "O código do material é obrigatório.")
 	@Min(value = 1000, message = "O código do material deve ter 4 dígitos.")
 	@Max(value = 9999, message = "O código do material deve ter 4 dígitos.")
 	@Column(name = "code", unique = true)
-	private Long code;
+	private Long materialCode;
 
 	@Size(min = 3, max = 30, message = "O campo descrição deve ter entre 3 a 30 caracteres")
 	private String description;
@@ -43,10 +44,11 @@ public class MaterialDTO implements Serializable {
 
 	}
 
-	public MaterialDTO(Long id, Long code, String description, String type, Long unitId,
-			String acronym, Long taxClassId, String description_taxclass, Integer ncmCode, Long matGroupId,
+	public MaterialDTO(Long id, Long materialCode, String description, String type, Long unitId, String acronym,
+			Long taxClassId, String description_taxclass, Integer ncmCode, Long matGroupId,
 			String description_matGroup) {
-		this.code = code;
+		this.id = id;
+		this.materialCode = materialCode;
 		this.description = description;
 		this.type = type;
 		this.unitId = unitId;
@@ -60,7 +62,8 @@ public class MaterialDTO implements Serializable {
 	}
 
 	public MaterialDTO(Material entity) {
-		code = entity.getCode();
+		id = entity.getId();
+		materialCode = entity.getMaterialCode();
 		description = entity.getDescription();
 		type = entity.getType().toString();
 		unitId = entity.getUnit().getId();
@@ -73,8 +76,12 @@ public class MaterialDTO implements Serializable {
 
 	}
 
-	public Long getCode() {
-		return code;
+	public Long getId() {
+		return id;
+	}
+
+	public Long getMaterialCode() {
+		return materialCode;
 	}
 
 	public String getDescription() {

@@ -3,7 +3,7 @@ package com.smartprocessrefusao.erprefusao.projections;
 public interface MaterialReportProjection {
 
 	Long getId();
-	Long getCode();
+	Long getMaterialCode();
 	String getDescription();
 	String getType();
 	Long getUnitId();

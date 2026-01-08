@@ -219,13 +219,13 @@ public class InventoryService {
 			item.setTotalValue(itemDto.getTotalValue());
 			item.setQuantityMco(itemDto.getQuantityMco());
 
-			Material material = materialRepository.findById(itemDto.getMaterial().getCode()).orElseThrow(
-					() -> new ResourceNotFoundException("Material not found: " + itemDto.getMaterial().getCode()));
+			Material material = materialRepository.findById(itemDto.getMaterial().getMaterialCode()).orElseThrow(
+					() -> new ResourceNotFoundException("Material not found: " + itemDto.getMaterial().getMaterialCode()));
 
 			item.setMaterial(material);
 
 			Partner partner = partnerRepository.findById(itemDto.getPartner().getId()).orElseThrow(
-					() -> new ResourceNotFoundException("Material not found: " + itemDto.getMaterial().getCode()));
+					() -> new ResourceNotFoundException("Material not found: " + itemDto.getMaterial().getMaterialCode()));
 
 			item.setPartner(partner);
 
@@ -264,7 +264,7 @@ public class InventoryService {
 				BigDecimal finalBalance = stock.getFinalBalance() != null ? stock.getFinalBalance() : BigDecimal.ZERO;
 
 				if (finalBalance.subtract(qty).compareTo(BigDecimal.ZERO) < 0) {
-					throw new IllegalArgumentException("Saldo insuficiente para o material " + material.getCode()
+					throw new IllegalArgumentException("Saldo insuficiente para o material " + material.getMaterialCode()
 							+ ". Saldo atual: " + finalBalance + " | Saída: " + qty);
 				}
 			}
@@ -290,12 +290,12 @@ public class InventoryService {
 				stock.setTotalValue(stock.getTotalValue().add(val));
 
 				// Average Cost
-				BigDecimal aCost = calcAverageCost(stock.getTotalValue(), stock.getTotalPurchase());
-				stock.setAverageCost(aCost);
+				BigDecimal aPrice = calcAveragePrice(stock.getTotalValue(), stock.getTotalPurchase());
+				stock.setAveragePrice(aPrice);
 
 				// Average Cost Mco
-				BigDecimal aCostMco = calcAverageCost(stock.getTotalValue(), stock.getTotalPurchaseMco());
-				stock.setAverageCostMco(aCostMco);
+				BigDecimal aPriceMco = calcAveragePrice(stock.getTotalValue(), stock.getTotalPurchaseMco());
+				stock.setAveragePriceMco(aPriceMco);
 				break;
 
 			case SENT_FOR_PROCESSING:
@@ -415,12 +415,12 @@ public class InventoryService {
 				stock.setTotalValue(stock.getTotalValue().add(val));
 
 				// Average Cost
-				BigDecimal aCost = calcAverageCost(stock.getTotalValue(), stock.getTotalPurchase());
-				stock.setAverageCost(aCost);
+				BigDecimal aPrice = calcAveragePrice(stock.getTotalValue(), stock.getTotalPurchase());
+				stock.setAveragePrice(aPrice);
 
 				// Average Cost Mco
-				BigDecimal aCostMco = calcAverageCost(stock.getTotalValue(), stock.getTotalPurchaseMco());
-				stock.setAverageCostMco(aCostMco);
+				BigDecimal aPriceMco = calcAveragePrice(stock.getTotalValue(), stock.getTotalPurchaseMco());
+				stock.setAveragePriceMco(aPriceMco);
 				break;
 
 			case SENT_FOR_PROCESSING:
@@ -504,7 +504,7 @@ public class InventoryService {
 		}
 	}
 
-	public Page<InventoryReportProjection> getReportRange(LocalDate startDate, LocalDate endDate, Long code,
+	public Page<InventoryReportProjection> getReportRange(LocalDate startDate, LocalDate endDate, Long materialCode,
 			Pageable pageable) {
 
 		// --- Validação: startDate > endDate ---
@@ -513,16 +513,16 @@ public class InventoryService {
 		}
 
 		// --- Validação: código inexistente ---
-		if (code != null) {
-			boolean exists = materialRepository.existsByCode(code);
+		if (materialCode != null) {
+			boolean exists = materialRepository.existsByMaterialCode(materialCode);
 
 			if (!exists) {
-				throw new IllegalArgumentException("Nenhum material encontrado com o código: " + code);
+				throw new IllegalArgumentException("Nenhum material encontrado com o código: " + materialCode);
 			}
 		}
 
 		// --- Executa a consulta ---
-		return inventoryRepository.reportInventory(startDate, endDate, code, pageable);
+		return inventoryRepository.reportInventory(startDate, endDate, materialCode, pageable);
 	}
 
 	// Calculate Recovery Yield
@@ -537,7 +537,7 @@ public class InventoryService {
 	}
 
 	// Calculate Average Cosy
-	private BigDecimal calcAverageCost(BigDecimal valTotal, BigDecimal qty) {
+	private BigDecimal calcAveragePrice(BigDecimal valTotal, BigDecimal qty) {
 		if (qty == null)
 			qty = BigDecimal.ZERO;
 		if (valTotal == null || valTotal.compareTo(BigDecimal.ZERO) == 0) {

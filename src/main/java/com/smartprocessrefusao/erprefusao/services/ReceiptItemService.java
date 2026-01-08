@@ -95,11 +95,11 @@ public class ReceiptItemService {
 		}
 
 		// valida e monta a chave primária
-		ReceiptItemPK pk = buildReceiptItemPK(parentReceiptId, dto.getPartnerId(), dto.getCode());
+		ReceiptItemPK pk = buildReceiptItemPK(parentReceiptId, dto.getPartnerId(), dto.getMaterialCode());
 
 		if (receiptItemRepository.existsById(pk)) {
 			throw new IllegalArgumentException("ReceiptItem já existe com (Receipt=" + parentReceiptId + ", Partner="
-					+ dto.getPartnerId() + ", Code=" + dto.getCode() + ")");
+					+ dto.getPartnerId() + ", Code=" + dto.getMaterialCode() + ")");
 		}
 
 		ReceiptItem entity = new ReceiptItem();

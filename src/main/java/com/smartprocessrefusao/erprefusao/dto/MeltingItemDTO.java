@@ -17,7 +17,7 @@ public class MeltingItemDTO {
 
 	@NotNull(message = "Informe o tipo material")
 	private Long materialCode;
-	private String codeDescription;
+	private String description;
 
 	@NotNull(message = "A quantidade não pode ser nula")
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
@@ -43,13 +43,13 @@ public class MeltingItemDTO {
 	public MeltingItemDTO() {
 	}
 
-	public MeltingItemDTO(Long meltingId, Integer itemSequence, Long materialCode, String codeDescription,
+	public MeltingItemDTO(Long meltingId, Integer itemSequence, Long materialCode, String description,
 			BigDecimal quantity, BigDecimal averagePrice, BigDecimal totalValue, BigDecimal averageRecoveryYield,
 			BigDecimal quantityMco, BigDecimal slagWeight) {
 		this.meltingId = meltingId;
 		this.itemSequence = itemSequence;
 		this.materialCode = materialCode;
-		this.codeDescription = codeDescription;
+		this.description = description;
 		this.quantity = quantity;
 		this.averagePrice = averagePrice;
 		this.totalValue = totalValue;
@@ -61,8 +61,8 @@ public class MeltingItemDTO {
 	public MeltingItemDTO(MeltingItem entity) {
 		meltingId = entity.getId().getMelting().getId();
 		itemSequence = entity.getId().getItemSequence();
-		materialCode = entity.getId().getMaterialCode().getCode();
-		codeDescription = entity.getId().getMaterialCode().getDescription();
+		materialCode = entity.getId().getMaterial().getMaterialCode();
+		description = entity.getId().getMaterial().getDescription();
 		quantity = entity.getQuantity();
 		averagePrice = entity.getAveragePrice();
 		totalValue = entity.getTotalValue();
@@ -83,8 +83,8 @@ public class MeltingItemDTO {
 		return materialCode;
 	}
 
-	public String getCodeDescription() {
-		return codeDescription;
+	public String getDescription() {
+		return description;
 	}
 
 	public BigDecimal getQuantity() {

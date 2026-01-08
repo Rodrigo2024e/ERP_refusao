@@ -3,8 +3,11 @@ package com.smartprocessrefusao.erprefusao.services;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,15 +19,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.dto.ReceiptDTO;
 import com.smartprocessrefusao.erprefusao.dto.ReceiptItemDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReceiptReportDTO;
 import com.smartprocessrefusao.erprefusao.entities.Material;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.entities.Receipt;
 import com.smartprocessrefusao.erprefusao.entities.ReceiptItem;
+import com.smartprocessrefusao.erprefusao.entities.PK.ReceiptItemPK;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeCosts;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
 import com.smartprocessrefusao.erprefusao.projections.ReceiptReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.MaterialRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
+import com.smartprocessrefusao.erprefusao.repositories.ReceiptItemRepository;
 import com.smartprocessrefusao.erprefusao.repositories.ReceiptRepository;
 import com.smartprocessrefusao.erprefusao.repositories.TicketRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
@@ -35,6 +41,9 @@ public class ReceiptService {
 
 	@Autowired
 	private ReceiptRepository receiptRepository;
+
+	@Autowired
+	private ReceiptItemRepository receiptItemRepository;
 
 	@Autowired
 	private PartnerRepository partnerRepository;
@@ -87,11 +96,11 @@ public class ReceiptService {
 				Partner partner = partnerCache.computeIfAbsent(partnerId, id -> partnerRepository.findById(id)
 						.orElseThrow(() -> new ResourceNotFoundException("Partner não encontrado: id = " + id)));
 
-				Long code = Optional.ofNullable(itemDto.getCode())
+				Long code = Optional.ofNullable(itemDto.getMaterialCode())
 						.orElseThrow(() -> new ResourceNotFoundException("Código do material é obrigatório."));
 
 				Material material = materialCache.computeIfAbsent(code,
-						id -> materialRepository.findByCode(code).orElseThrow(
+						id -> materialRepository.findByMaterialCode(code).orElseThrow(
 								() -> new ResourceNotFoundException("Material não encontrado para o code: " + code)));
 
 				copyItemDtoToEntity(itemDto, item, entity, partner, material, sequence);
@@ -111,11 +120,14 @@ public class ReceiptService {
 	// --------------------------------------------------------------------------
 	@Transactional
 	public ReceiptDTO updateByNumTicket(Long numTicket, ReceiptDTO dto) {
+
 		Receipt entity = receiptRepository.findByNumTicket(numTicket).orElseThrow(
 				() -> new ResourceNotFoundException("Receipt não encontrado para atualização, ID: " + numTicket));
 
-		// 2. VALIDAÇÃO DE UNICIDADE DO numTicket (Herdado de Ticket) // a) Garante
-		// que o numTicket do DTO não é nulo e obtém o valor
+		/*
+		 * ===================================================== 1️⃣ VALIDAÇÃO DE
+		 * UNICIDADE DO NUMTICKET =====================================================
+		 */
 		Long newNumTicket = Optional.ofNullable(dto.getNumTicket())
 				.orElseThrow(() -> new IllegalArgumentException("O número do ticket é obrigatório."));
 
@@ -128,43 +140,95 @@ public class ReceiptService {
 			}
 		});
 
-		// Soma das quantidades
+		/*
+		 * ===================================================== 2️⃣ REGRA DE NEGÓCIO —
+		 * PESO LÍQUIDO =====================================================
+		 */
 		BigDecimal totalItemsQuantity = calculateTotalItemQuantity(dto);
+
 		if (dto.getNetWeight() != null && totalItemsQuantity.compareTo(dto.getNetWeight()) > 0) {
+
 			throw new IllegalArgumentException("A soma das quantidades dos itens (" + totalItemsQuantity
-					+ ") não pode ultrapassar o Peso Líquido (Net Weight) do ticket (" + dto.getNetWeight() + ").");
+					+ ") não pode ultrapassar o Peso Líquido (" + dto.getNetWeight() + ").");
 		}
 
+		/*
+		 * ===================================================== 3️⃣ ATUALIZA CAMPOS
+		 * SIMPLES =====================================================
+		 */
 		copyDtoToEntity(dto, entity);
 
-		// Atualiza itens
+		/*
+		 * ===================================================== 4️⃣ MAPA DOS ITENS
+		 * ATUAIS (CHAVE = PK) =====================================================
+		 */
+		Map<ReceiptItemPK, ReceiptItem> currentItems = entity.getReceiptItems().stream()
+				.collect(Collectors.toMap(ReceiptItem::getId, Function.identity()));
+
+		/*
+		 * ===================================================== 5️⃣ CACHE DE APOIO
+		 * =====================================================
+		 */
 		Map<Long, Partner> partnerCache = new HashMap<>();
 		Map<Long, Material> materialCache = new HashMap<>();
-		entity.getReceiptItems().clear();
 
+		/*
+		 * ===================================================== 6️⃣ PROCESSA ITENS DO
+		 * DTO (DIFF INTELIGENTE) =====================================================
+		 */
 		if (dto.getReceiptItems() != null) {
+
 			Integer sequence = 1;
+
 			for (ReceiptItemDTO itemDto : dto.getReceiptItems()) {
 
 				Partner partner = partnerCache.computeIfAbsent(itemDto.getPartnerId(),
 						id -> partnerRepository.findById(id)
 								.orElseThrow(() -> new ResourceNotFoundException("Parceiro não encontrado: " + id)));
 
-				Material material = materialCache.computeIfAbsent(itemDto.getCode(),
-						id -> materialRepository.findByCode(id)
+				Material material = materialCache.computeIfAbsent(itemDto.getMaterialCode(),
+						id -> materialRepository.findByMaterialCode(id)
 								.orElseThrow(() -> new ResourceNotFoundException("Material não encontrado: " + id)));
 
-				ReceiptItem item = new ReceiptItem();
+				// 🔑 PK COMPLETA
+				ReceiptItemPK pk = new ReceiptItemPK(entity, partner, material);
+				pk.setItemSequence(sequence);
 
-				copyItemDtoToEntity(itemDto, item, entity, partner, material, sequence);
-				entity.getReceiptItems().add(item);
+				ReceiptItem item = currentItems.remove(pk);
+
+				if (item == null) {
+					// ➕ NOVO ITEM
+					item = new ReceiptItem();
+					item.setId(pk);
+					copyItemDtoToEntity(itemDto, item, entity, partner, material, sequence);
+					entity.getReceiptItems().add(item);
+				} else {
+					// ✏️ UPDATE DE ITEM EXISTENTE
+					copyItemDtoToEntity(itemDto, item, entity, partner, material, sequence);
+				}
+
 				sequence++;
 			}
 		}
 
+		/*
+		 * ===================================================== 7️⃣ REMOVE ORPHANS
+		 * (SEGURANÇA TOTAL) =====================================================
+		 */
+		for (ReceiptItem orphan : currentItems.values()) {
+			entity.getReceiptItems().remove(orphan);
+		}
+
+		/*
+		 * ===================================================== 8️⃣ SALVA (CASCADE +
+		 * ORPHAN OK) =====================================================
+		 */
 		entity = receiptRepository.save(entity);
 
-		// Atualiza estoque (entrada)
+		/*
+		 * ===================================================== 9️⃣ ATUALIZA ESTOQUE
+		 * =====================================================
+		 */
 		inventoryService.updateFromReceipt(entity);
 
 		return new ReceiptDTO(entity);
@@ -238,22 +302,40 @@ public class ReceiptService {
 	}
 
 	// REPORT
-	public Page<ReceiptReportProjection> getReportRange(String description, Long numTicket, Long people_id,
-			LocalDate startDate, LocalDate endDate, Long code, Pageable pageable) {
+	@Transactional(readOnly = true)
+	public Page<ReceiptReportDTO> findDetails(
+	        Long id,
+			Long numTicket,
+	        LocalDate startDate,
+	        LocalDate endDate,
+	        Pageable pageable) {
 
-		if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
-			throw new IllegalArgumentException("A data inicial não pode ser maior que a final.");
-		}
+	    Page<ReceiptReportProjection> page =
+	            receiptRepository.reportReceipt(
+	            		numTicket,
+	                    startDate,
+	                    endDate,
+	                    pageable
+	            );
 
-		if (code != null) {
-			boolean exists = materialRepository.existsByCode(code);
+	    List<Long> receiptIds = page.stream()
+	            .map(ReceiptReportProjection::getReceiptId)
+	            .toList();
 
-			if (!exists) {
-				throw new IllegalArgumentException("Nenhum material encontrado com o código: " + code);
-			}
-		}
+	    Map<Long, List<ReceiptItemDTO>> itemsMap =
+	            receiptItemRepository.findItemsByReceiptIds(receiptIds)
+	                    .stream()
+	                    .map(p -> new ReceiptItemDTO(p))
+	                    .collect(Collectors.groupingBy(ReceiptItemDTO::getReceiptId));
 
-		return receiptRepository.reportReceipt(description, numTicket, people_id, startDate, endDate, code, pageable);
+	    return page.map(p -> new ReceiptReportDTO(
+	            p.getReceiptId(),
+	    		p.getNumTicket(),
+	            p.getDateTicket(),
+	            p.getNumberPlate(),
+	            p.getNetWeight(),
+	            itemsMap.getOrDefault(p.getReceiptId(), List.of())
+	    ));
 	}
 
 }

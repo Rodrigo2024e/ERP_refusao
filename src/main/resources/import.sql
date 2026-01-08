@@ -87,28 +87,29 @@ INSERT INTO tb_material_group (description) VALUES ('DIVERSOS');
 
 
 --TB_MATERIAL
-INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (1001, 'PERFIL DE PROCESSO', 'SCRAP', 1, 1, 1);
-INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (1002, 'PERFIL NATURAL',  'SCRAP', 1, 1, 1);
-INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (1003, 'PERFIL PINTADO', 'SCRAP', 1, 1, 1);
-INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (2001, 'GLP - GAS LIQUEFEITO',  'SUPPLIES', 1, 2, 2);
-INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (2002, 'FILTRO - CAIXA FILTRO', 'SUPPLIES', 1, 2, 2);
-INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (3001, 'TARUGO DE ALUMINIO', 'FINISHED_PRODUCTS', 1, 3, 3);
-INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (3002, 'TARUGO DE ALUMINIO',  'FINISHED_PRODUCTS', 1, 3, 3);
-INSERT INTO tb_material (code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (3003, 'TARUGO DE ALUMINIO',  'FINISHED_PRODUCTS', 1, 3, 3);
+INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (1001, 'PERFIL DE PROCESSO', 'SCRAP', 1, 1, 1);
+INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (1002, 'PERFIL NATURAL',  'SCRAP', 1, 1, 1);
+INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (1003, 'PERFIL PINTADO', 'SCRAP', 1, 1, 1);
+INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (2001, 'GLP - GAS LIQUEFEITO',  'SUPPLIES', 1, 2, 2);
+INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (2002, 'FILTRO - CAIXA FILTRO', 'SUPPLIES', 1, 2, 2);
+INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (3001, 'TARUGO DE ALUMINIO', 'FINISHED_PRODUCTS', 1, 3, 3);
+INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (3002, 'TARUGO DE ALUMINIO',  'FINISHED_PRODUCTS', 1, 3, 3);
+INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (3003, 'TARUGO DE ALUMINIO',  'FINISHED_PRODUCTS', 1, 3, 3);
 
 --TB_TICKET
-INSERT INTO tb_ticket (num_ticket, date_ticket, number_plate, net_weight) VALUES (34950,'2022-07-25', 'ABC-1245', 15000);
-INSERT INTO tb_ticket (num_ticket, date_ticket, number_plate, net_weight) VALUES (36425,'2025-11-07', 'ALU-2025', 17475);
+--INSERT INTO tb_ticket (num_ticket, date_ticket, number_plate, net_weight) VALUES (34950,'2022-07-25', 'ABC-1245', 15000);
+--INSERT INTO tb_ticket (num_ticket, date_ticket, number_plate, net_weight) VALUES (36425,'2025-11-07', 'ALU-2025', 17475);
 
 --TB_RECEIPT
-INSERT INTO tb_receipt (id) VALUES (1);
+--INSERT INTO tb_receipt (id) VALUES (1);
 
 --TB_RECEIPT_ITEM
 --INSERT INTO tb_receipt_item (receipt_id, item_sequence, partner_id, material_id, document_number, quantity, price, total_value, observation, type_receipt, type_costs) VALUES (1, 1, 4, 1, '125.147', 10000.00, 1.00, 10000.00, 'Material para seleção', 'PURCHASE', 'DIRECT_COSTS');
 
 --TB_DISPATCH
-INSERT INTO tb_dispatch (id) VALUES (2);
+--INSERT INTO tb_dispatch (id) VALUES (2);
+
 
 --TB_DISPATCH_ITEM
-INSERT INTO tb_dispatch_item (dispatch_id, item_sequence, partner_id, code, document_number, type_dispatch, alloy, alloy_pol, alloy_footage, quantity, price, total_value, observation) VALUES (2, 1, 4, 3001, '174.254', 'JOB_RETURN_TO_CUSTOMER', 'AL6060', 'POLEGADA_6', 'METRAGEM_6', 6124.96, 3, 18374.88, 'MO/OUT/25 ECO/MATRIZ');
-INSERT INTO tb_dispatch_item (dispatch_id, item_sequence, partner_id, code, document_number, type_dispatch, alloy, alloy_pol, alloy_footage, quantity, price, total_value, observation) VALUES (2, 2, 4, 3001, '174.254', 'JOB_RETURN_TO_CUSTOMER', 'AL6060', 'POLEGADA_6', 'METRAGEM_6', 11350.04, 3, 34050.12, 'MO/OUT/25 ECO/FILIAL');
+--INSERT INTO tb_dispatch_item (dispatch_id, item_sequence, partner_id, material_code, document_number, type_dispatch, alloy, alloy_pol, alloy_footage, quantity, price, total_value, observation) VALUES (2, 1, 4, 3001, '174.254', 'JOB_RETURN_TO_CUSTOMER', 'AL6060', 'POLEGADA_6', 'METRAGEM_6', 6124.96, 3, 18374.88, 'MO/OUT/25 ECO/MATRIZ');
+--INSERT INTO tb_dispatch_item (dispatch_id, item_sequence, partner_id, material_code, document_number, type_dispatch, alloy, alloy_pol, alloy_footage, quantity, price, total_value, observation) VALUES (2, 2, 4, 3001, '174.254', 'JOB_RETURN_TO_CUSTOMER', 'AL6060', 'POLEGADA_6', 'METRAGEM_6', 11350.04, 3, 34050.12, 'MO/OUT/25 ECO/FILIAL');

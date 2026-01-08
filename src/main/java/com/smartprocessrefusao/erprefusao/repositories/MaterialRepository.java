@@ -19,7 +19,7 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
 
 	@Query(value = """
 				SELECT
-					m.code,
+					m.material_code,
 					m.description As Description,
 					m.type,
 					u.id as unitId,
@@ -35,9 +35,9 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
 				INNER JOIN tb_material_group mg ON mg.id = m.material_group_id
 				WHERE (:groupId IS NULL OR m.material_group_id = :groupId)
 				AND (:description IS NULL OR LOWER(m.description) LIKE LOWER(CONCAT('%', :description, '%')))
-				AND (:code IS NULL OR m.code = :code)
+				AND (:materialCode IS NULL OR m.material_code = :materialCode)
 				AND (:type IS NULL OR LOWER(m.type) LIKE LOWER(CONCAT('%', :type, '%')))
-				ORDER BY m.code
+				ORDER BY m.material_code
 			""", countQuery = """
 				SELECT COUNT(m.id)
 					FROM tb_material m
@@ -46,16 +46,16 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
 					INNER JOIN tb_material_group mg ON mg.id = m.material_group_id
 					WHERE (:groupId IS NULL OR m.material_group_id = :groupId)
 					AND (:description IS NULL OR LOWER(m.description) LIKE LOWER(CONCAT('%', :description, '%')))
-					AND (:code IS NULL OR m.code = :code)
+					AND (:materialCode IS NULL OR m.material_code = :materialCode)
 					AND (:type IS NULL OR LOWER(m.type) LIKE LOWER(CONCAT('%', :type, '%')))
 			""", nativeQuery = true)
-	Page<MaterialReportProjection> searchMaterialByNameOrGroup(@Param("type") String type, @Param("code") Long code, @Param("description") String description,
+	Page<MaterialReportProjection> searchMaterialByNameOrGroup(@Param("type") String type, @Param("materialCode") Long materialCode, @Param("description") String description,
 			@Param("groupId") Long groupId, Pageable pageable);
 
-	Optional<Material> findByCode(Long code);
+	Optional<Material> findByMaterialCode(Long materialCode);
 	
 	@Transactional
-    void deleteByCode(Long code);
+    void deleteByMaterialCode(Long materialCode);
 	
-	boolean existsByCode(Long code);
+	boolean existsByMaterialCode(Long materialCode);
 }

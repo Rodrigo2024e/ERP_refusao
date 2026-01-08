@@ -10,7 +10,7 @@ public interface MeltingItemProjection {
 
 	Long getMaterialCode();
 
-	String getCodeDescription();
+	String getDescription();
 
 	BigDecimal getQuantity();
 

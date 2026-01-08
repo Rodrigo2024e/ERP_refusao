@@ -104,7 +104,7 @@ public class MaterialServiceTest {
 	@Test
 	public void findByIdShouldReturnMaterialDTOWhenIdExists() {
 
-		when(materialRepository.findByCode(materialExistingCode)).thenReturn(Optional.of(material));
+		when(materialRepository.findByMaterialCode(materialExistingCode)).thenReturn(Optional.of(material));
 
 		MaterialDTO result = materialService.findByCode(materialExistingCode);
 		assertNotNull(result);

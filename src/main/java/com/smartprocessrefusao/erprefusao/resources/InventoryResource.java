@@ -71,11 +71,11 @@ public class InventoryResource {
 	public ResponseEntity<?> reportRange(
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@RequestParam(required = false) Long code, Pageable pageable) {
+			@RequestParam(required = false) Long materialCode, Pageable pageable) {
 
 		try {
 
-			Page<InventoryReportProjection> reportPage = inventoryService.getReportRange(startDate, endDate, code, pageable);
+			Page<InventoryReportProjection> reportPage = inventoryService.getReportRange(startDate, endDate, materialCode, pageable);
 
 			Page<InventoryReportDTO> dtoPage = reportPage.map(InventoryReportDTO::new);
 

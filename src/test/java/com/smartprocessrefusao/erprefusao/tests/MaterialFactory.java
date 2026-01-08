@@ -36,8 +36,7 @@ public class MaterialFactory {
 
 	public static Material createMaterial() {
 		Material material = new Material();
-		material.setCode(1001L);
-		material.setCode(1111L);
+		material.setMaterialCode(1001L);
 		material.setDescription("PERFIL DE PROCESSO");
 		material.setType(TypeMaterial.SCRAP);
 		material.setUnit(createUnit());
@@ -65,7 +64,7 @@ public class MaterialFactory {
 			}
 
 			@Override
-			public Long getCode() {
+			public Long getMaterialCode() {
 				return 1111L;
 			}
 

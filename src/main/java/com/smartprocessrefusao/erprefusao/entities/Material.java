@@ -12,6 +12,8 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -27,7 +29,9 @@ public class Material extends Auditable<String> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	private Long code;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	private Long materialCode;
 	private String description;
 
 	@Enumerated(EnumType.STRING)
@@ -48,7 +52,7 @@ public class Material extends Auditable<String> implements Serializable {
 	@OneToMany(mappedBy = "id.material", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ReceiptItem> receiptItems = new ArrayList<>();
 
-	@OneToMany(mappedBy = "id.materialCode", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "id.material", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<MeltingItem> meltingItems = new ArrayList<>();
 
 	@ManyToOne
@@ -62,9 +66,10 @@ public class Material extends Auditable<String> implements Serializable {
 
 	}
 
-	public Material(Long code, String description, TypeMaterial type, Unit unit, TaxClassification taxClass,
-			MaterialGroup materialGroup) {
-		this.code = code;
+	public Material(Long id, Long materialCode, String description, TypeMaterial type, Unit unit,
+			TaxClassification taxClass, MaterialGroup materialGroup) {
+		this.id = id;
+		this.materialCode = materialCode;
 		this.description = description;
 		this.type = type;
 		this.unit = unit;
@@ -72,12 +77,20 @@ public class Material extends Auditable<String> implements Serializable {
 		this.materialGroup = materialGroup;
 	}
 
-	public Long getCode() {
-		return code;
+	public Long getId() {
+		return id;
 	}
 
-	public void setCode(Long code) {
-		this.code = code;
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getMaterialCode() {
+		return materialCode;
+	}
+
+	public void setMaterialCode(Long materialCode) {
+		this.materialCode = materialCode;
 	}
 
 	public String getDescription() {
@@ -145,7 +158,7 @@ public class Material extends Auditable<String> implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(code);
+		result = prime * result + Objects.hash(materialCode);
 		return result;
 	}
 
@@ -158,7 +171,7 @@ public class Material extends Auditable<String> implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Material other = (Material) obj;
-		return Objects.equals(code, other.code);
+		return Objects.equals(materialCode, other.materialCode);
 	}
 
 }

@@ -22,10 +22,5 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("SELECT t FROM Ticket t WHERE t.numTicket = :numTicket")
 	Optional<Ticket> findByNumTicketForUpdate(@Param("numTicket") Long numTicket);
-	
 
 }
-
-	
-
-	

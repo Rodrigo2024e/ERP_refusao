@@ -16,6 +16,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tb_receipt")
 public class Receipt extends Ticket implements Serializable {
+
 	private static final long serialVersionUID = 1L;
 
 	@OneToMany(mappedBy = "id.receipt", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -37,6 +38,21 @@ public class Receipt extends Ticket implements Serializable {
 
 	public List<Inventory> getInventories() {
 		return inventories;
+	}
+
+	/*
+	 * ========================== MÉTODOS DE CONTROLE DA RELAÇÃO 🔥 ESSENCIAIS
+	 * ==========================
+	 */
+
+	public void addReceiptItem(ReceiptItem item) {
+		receiptItems.add(item);
+
+	}
+
+	public void removeReceiptItem(ReceiptItem item) {
+		receiptItems.remove(item);
+
 	}
 
 }

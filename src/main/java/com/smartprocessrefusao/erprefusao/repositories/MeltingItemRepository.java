@@ -18,8 +18,8 @@ public interface MeltingItemRepository extends JpaRepository<MeltingItem, Meltin
 			   SELECT
 			       mi.id.melting.id AS meltingId,
 			       mi.id.itemSequence AS itemSequence,
-			       m.code AS materialCode,
-			       m.description AS codeDescription,
+			       m.materialCode AS materialCode,
+			       m.description AS description,
 			       mi.quantity AS quantity,
 			       mi.averagePrice AS averagePrice,
 			       mi.totalValue AS totalValue,
@@ -27,22 +27,9 @@ public interface MeltingItemRepository extends JpaRepository<MeltingItem, Meltin
 			       mi.quantityMco AS quantityMco,
 			       mi.slagWeight AS slagWeight
 			   FROM MeltingItem mi
-			   JOIN mi.id.materialCode m
+			   JOIN mi.id.material m
 			   WHERE mi.id.melting.id IN :meltingIds
 			""")
-			List<MeltingItemProjection> findItemsByMeltingIds(
-			    @Param("meltingIds") List<Long> meltingIds
-			);
+	List<MeltingItemProjection> findItemsByMeltingIds(@Param("meltingIds") List<Long> meltingIds);
 
-	
-	
-	/*
-	 @Query("""
-		       SELECT mi
-			    FROM MeltingItem mi
-			    WHERE mi.id.meltingId.id = :meltingId
-			""")
-	 		List<MeltingItem> findItemsByMeltingId(@Param("meltingId") Long meltingId);
-	 */
-	  
 }

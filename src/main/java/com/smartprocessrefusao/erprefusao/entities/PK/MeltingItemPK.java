@@ -21,7 +21,7 @@ public class MeltingItemPK implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "material_code")
-	private Material materialCode;
+	private Material material;
 
 	@Column(name = "ITEM_SEQUENCE")
 	private Integer itemSequence;
@@ -29,9 +29,9 @@ public class MeltingItemPK implements Serializable {
 	public MeltingItemPK() {
 	}
 
-	public MeltingItemPK(Melting melting, Material materialCode) {
+	public MeltingItemPK(Melting melting, Material material) {
 		this.melting = melting;
-		this.materialCode = materialCode;
+		this.material = material;
 	}
 
 	public Melting getMelting() {
@@ -42,12 +42,12 @@ public class MeltingItemPK implements Serializable {
 		this.melting = melting;
 	}
 
-	public Material getMaterialCode() {
-		return materialCode;
+	public Material getMaterial() {
+		return material;
 	}
 
-	public void setMaterial(Material materialCode) {
-		this.materialCode = materialCode;
+	public void setMaterial(Material material) {
+		this.material = material;
 	}
 
 	public Integer getItemSequence() {
@@ -63,13 +63,13 @@ public class MeltingItemPK implements Serializable {
 	        if (this == o) return true;
 	        if (!(o instanceof MeltingItemPK that)) return false;
 	        return Objects.equals(melting, that.melting)
-	            && Objects.equals(materialCode, that.materialCode)
+	            && Objects.equals(material, that.material)
 	            && Objects.equals(itemSequence, that.itemSequence);
 	    }
 
 	    @Override
 	    public int hashCode() {
-	        return Objects.hash(melting, materialCode, itemSequence);
+	        return Objects.hash(melting, material, itemSequence);
 	    }
 
 }

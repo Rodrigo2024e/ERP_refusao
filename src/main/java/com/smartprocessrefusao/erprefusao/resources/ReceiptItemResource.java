@@ -42,14 +42,14 @@ public class ReceiptItemResource {
      * Busca um Item de Recibo pela sua Chave Composta (ReceiptId, PartnerId, MaterialId).
      * GET /receipts/{receiptId}/items/{partnerId}/{materialId}
      */
-    @GetMapping(value = "/{partnerId}/{materialId}")
+    @GetMapping(value = "/{partnerId}/{materialCode}")
     public ResponseEntity<ReceiptItemDTO> findById(
             @PathVariable Long receiptId,
             @PathVariable Long partnerId,
-            @PathVariable Long materialId) {
+            @PathVariable Long materialCode) {
         
         // Chamada direta, pois os IDs do Path são passados ao Service.
-        ReceiptItemDTO dto = itemService.findById(receiptId, partnerId, materialId);
+        ReceiptItemDTO dto = itemService.findById(receiptId, partnerId, materialCode);
         return ResponseEntity.ok(dto);
     }
 
@@ -70,8 +70,8 @@ public class ReceiptItemResource {
 
         // Retorna 201 Created com a URI completa da chave composta.
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .path("/{partnerId}/{materialId}")
-                .buildAndExpand(newDto.getPartnerId(), newDto.getCode())
+                .path("/{partnerId}/{materialCode}")
+                .buildAndExpand(newDto.getPartnerId(), newDto.getMaterialCode())
                 .toUri();
 
         return ResponseEntity.created(uri).body(newDto);
@@ -83,15 +83,15 @@ public class ReceiptItemResource {
      * Atualiza um Item de Recibo existente pela sua Chave Composta.
      * PUT /receipts/{receiptId}/items/{partnerId}/{materialId}
      */
-    @PutMapping(value = "/{partnerId}/{materialId}")
+    @PutMapping(value = "/{partnerId}/{materialCode}")
     public ResponseEntity<ReceiptItemDTO> update(
             @PathVariable Long receiptId,
             @PathVariable Long partnerId,
-            @PathVariable Long materialId,
+            @PathVariable Long materialCode,
             @Valid @RequestBody ReceiptItemDTO dto) {
         
         // Passamos todos os componentes da PK e o corpo (o Service se encarrega de mapear os dados)
-        ReceiptItemDTO updatedDto = itemService.update(receiptId, partnerId, materialId, dto);
+        ReceiptItemDTO updatedDto = itemService.update(receiptId, partnerId, materialCode, dto);
         return ResponseEntity.ok(updatedDto);
     }
 
@@ -101,13 +101,13 @@ public class ReceiptItemResource {
      * Deleta um Item de Recibo pela sua Chave Composta.
      * DELETE /receipts/{receiptId}/items/{partnerId}/{materialId}
      */
-    @DeleteMapping(value = "/{partnerId}/{materialId}")
+    @DeleteMapping(value = "/{partnerId}/{materialCode}")
     public ResponseEntity<Void> delete(
             @PathVariable Long receiptId,
             @PathVariable Long partnerId,
-            @PathVariable Long materialId) {
+            @PathVariable Long materialCode) {
         
-        itemService.delete(receiptId, partnerId, materialId);
+        itemService.delete(receiptId, partnerId, materialCode);
         return ResponseEntity.noContent().build();
     }
 }

@@ -45,13 +45,13 @@ public class DispatchItem {
 	public DispatchItem() {
 	}
 
-	public DispatchItem(Dispatch dispatch, Partner partner, Material code, String documentNumber,
+	public DispatchItem(Dispatch dispatch, Partner partner, Material materialCode, String documentNumber,
 			BigDecimal quantity, BigDecimal price, BigDecimal totalValue, String observation,
 			TypeTransactionOutGoing typeDispatch, AluminumAlloy alloy, AluminumAlloyPol alloyPol,
 			AluminumAlloyFootage alloyFootage) {
 		id.setDispatch(dispatch);
 		id.setPartner(partner);
-		id.setMaterial(code);
+		id.setMaterial(materialCode);
 		this.documentNumber = documentNumber;
 		this.quantity = quantity;
 		this.price = price;

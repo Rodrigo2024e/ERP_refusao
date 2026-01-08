@@ -19,7 +19,8 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
 	@Query(value = """
 			    SELECT
-					m.code, m.description, 
+					m.material_code, 
+					m.description, 
 					
 					sb.total_adjustment_entries, 
 					sb.recovery_yield_adjustment_entries,
@@ -29,8 +30,8 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 					sb.recovery_yield_purchase, 
 					sb.total_purchase_mco, 
 					sb.total_value,
-					sb.average_cost,
-					sb.average_cost_mco,
+					sb.average_price,
+					sb.average_price_mco,
 					
 					sb.total_sent_for_processing, 
 					sb.recovery_yield_sent_for_processing,
@@ -57,17 +58,17 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 			    WHERE
 			        (:startDate IS NULL OR sb.date_stock >= :startDate)
 			        AND (:endDate IS NULL OR sb.date_stock <= :endDate)
-			        AND (:code IS NULL OR m.code = :code)
+			        AND (:materialCode IS NULL OR m.material_code = :materialCode)
 
 			    GROUP BY
-			        m.code,
+			        m.material_code,
 			        m.description
 
 			    ORDER BY
-			        m.code
+			        m.material_code
 			""", nativeQuery = true)
 	Page<InventoryReportProjection> reportInventory(@Param("startDate") LocalDate startDate,
-			@Param("endDate") LocalDate endDate, @Param("code") Long code, Pageable pageable);
+			@Param("endDate") LocalDate endDate, @Param("materialCode") Long materialCode, Pageable pageable);
 
 	Optional<Inventory> findByReceipt(Receipt receipt);
 

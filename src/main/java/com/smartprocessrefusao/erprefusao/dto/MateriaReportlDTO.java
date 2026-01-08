@@ -4,7 +4,7 @@ import com.smartprocessrefusao.erprefusao.projections.MaterialReportProjection;
 
 public class MateriaReportlDTO {
 
-	private Long code;
+	private Long materialCode;
 	private String description;
 	private String type;
 	private Long unitId;
@@ -20,7 +20,7 @@ public class MateriaReportlDTO {
 	}
 
 	public MateriaReportlDTO(MaterialReportProjection projection) {
-		this.code = projection.getCode();
+		this.materialCode = projection.getMaterialCode();
 		this.description = projection.getDescription();
 		this.type = projection.getType();
 		this.unitId = projection.getUnitId();
@@ -33,8 +33,8 @@ public class MateriaReportlDTO {
 
 	}
 
-	public Long getCode() {
-		return code;
+	public Long getMaterialCode() {
+		return materialCode;
 	}
 
 	public String getDescription() {

@@ -7,8 +7,6 @@ import com.smartprocessrefusao.erprefusao.entities.PK.MeltingItemPK;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 @Entity
@@ -95,16 +93,6 @@ public class MeltingItem {
 
 	public void setSlagWeight(BigDecimal slagWeight) {
 		this.slagWeight = slagWeight;
-	}
-
-	@PrePersist
-	@PreUpdate
-	private void calculateTotalValue() {
-		if (quantity != null && averagePrice != null) {
-			totalValue = quantity.multiply(averagePrice);
-		} else {
-			totalValue = BigDecimal.ZERO;
-		}
 	}
 
 	@Override
