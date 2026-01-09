@@ -32,10 +32,7 @@ public class ReceiptResource {
 
 	@Autowired
 	private ReceiptService receiptService;
-/*
-	@Autowired
-	private ReceiptReportService receiptReportService;
-*/
+
 	@PostMapping
 	public ResponseEntity<ReceiptDTO> insert(@Valid @RequestBody ReceiptDTO dto) {
 		ReceiptDTO newDto = receiptService.insert(dto);
@@ -63,18 +60,23 @@ public class ReceiptResource {
 	// REPORT
 	@GetMapping("/report-page")
 	public ResponseEntity<Page<ReceiptReportDTO>> reportReceipt(
-			@RequestParam(required = false) Long id,
+			@RequestParam(required = false) Long receiptIds,
 			@RequestParam(required = false) Long numTicket, 
 			@RequestParam(required = false) Long partnerId,
+			@RequestParam(required = false) String materialDescription,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@RequestParam(required = false) Long materialCode, Pageable pageable) {
+			@RequestParam(required = false) Long materialCode, 
+			Pageable pageable) {
 
 		Page<ReceiptReportDTO> page = receiptService.findDetails(
-				id,
-				numTicket, 
+				receiptIds,
+				numTicket,
 				startDate,
-				endDate, 
+				endDate,
+				partnerId,
+				materialDescription,
+				materialCode,
 				pageable);
 
 		return ResponseEntity.ok(page);

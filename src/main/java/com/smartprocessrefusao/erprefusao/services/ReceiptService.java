@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.dto.ReceiptDTO;
 import com.smartprocessrefusao.erprefusao.dto.ReceiptItemDTO;
+import com.smartprocessrefusao.erprefusao.dto.ReceiptItemReportDTO;
 import com.smartprocessrefusao.erprefusao.dto.ReceiptReportDTO;
 import com.smartprocessrefusao.erprefusao.entities.Material;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
@@ -304,10 +305,13 @@ public class ReceiptService {
 	// REPORT
 	@Transactional(readOnly = true)
 	public Page<ReceiptReportDTO> findDetails(
-	        Long id,
+			Long id,
 			Long numTicket,
-	        LocalDate startDate,
+			LocalDate startDate,
 	        LocalDate endDate,
+	        Long partnerId,
+			String materialDescription,
+			Long materialCode,
 	        Pageable pageable) {
 
 	    Page<ReceiptReportProjection> page =
@@ -318,18 +322,25 @@ public class ReceiptService {
 	                    pageable
 	            );
 
-	    List<Long> receiptIds = page.stream()
+		List<Long> receiptIds = page.stream()
 	            .map(ReceiptReportProjection::getReceiptId)
 	            .toList();
 
-	    Map<Long, List<ReceiptItemDTO>> itemsMap =
-	            receiptItemRepository.findItemsByReceiptIds(receiptIds)
+	    Map<Long, List<ReceiptItemReportDTO>> itemsMap =
+	            receiptItemRepository.findItemsByReceiptIds(
+	            		receiptIds,
+	            		numTicket,
+	            		startDate,
+	            		endDate,
+	            		partnerId,
+	            		materialDescription,
+	            		materialCode)
 	                    .stream()
-	                    .map(p -> new ReceiptItemDTO(p))
-	                    .collect(Collectors.groupingBy(ReceiptItemDTO::getReceiptId));
+	                    .map(p -> new ReceiptItemReportDTO(p))
+	                    .collect(Collectors.groupingBy(ReceiptItemReportDTO::getReceiptId));
 
 	    return page.map(p -> new ReceiptReportDTO(
-	            p.getReceiptId(),
+	    		p.getReceiptId(),
 	    		p.getNumTicket(),
 	            p.getDateTicket(),
 	            p.getNumberPlate(),

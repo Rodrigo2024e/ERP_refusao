@@ -20,14 +20,14 @@ public class ReceiptReportDTO {
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal netWeight;
 
-	private List<ReceiptItemDTO> receiptItems;
+	private List<ReceiptItemReportDTO> receiptItems;
 
 	public ReceiptReportDTO() {
 
 	}
 
 	public ReceiptReportDTO(Long id, Long numTicket, LocalDate dateTicket, String numberPlate, BigDecimal netWeight,
-			List<ReceiptItemDTO> receiptItems) {
+			List<ReceiptItemReportDTO> receiptItems) {
 		this.id = id;
 		this.numTicket = numTicket;
 		this.dateTicket = dateTicket;
@@ -56,7 +56,7 @@ public class ReceiptReportDTO {
 		return netWeight;
 	}
 
-	public List<ReceiptItemDTO> getReceiptItems() {
+	public List<ReceiptItemReportDTO> getReceiptItems() {
 		return receiptItems;
 	}
 

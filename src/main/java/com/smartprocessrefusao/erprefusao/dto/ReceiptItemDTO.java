@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.smartprocessrefusao.erprefusao.entities.ReceiptItem;
 import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSerializer;
-import com.smartprocessrefusao.erprefusao.projections.ReceiptItemReportProjection;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -13,6 +12,8 @@ import jakarta.validation.constraints.Positive;
 public class ReceiptItemDTO {
 
 	private Long receiptId;
+
+	private Long numTicketId;
 
 	private Integer itemSequence;
 
@@ -23,6 +24,8 @@ public class ReceiptItemDTO {
 
 	@NotNull(message = "Informe o tipo material")
 	private Long materialCode;
+
+	private String description;
 
 	@NotNull(message = "Campo requerido")
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
@@ -56,14 +59,17 @@ public class ReceiptItemDTO {
 	public ReceiptItemDTO() {
 	}
 
-	public ReceiptItemDTO(Long receiptId, Integer itemSequence, Long partnerId, String partnerName, Long materialCode,
-			BigDecimal recoveryYield, String documentNumber, String typeReceipt, String typeCosts, BigDecimal quantity,
-			BigDecimal price, BigDecimal totalValue, BigDecimal quantityMco, String observation) {
+	public ReceiptItemDTO(Long receiptId, Long numTicketId, Integer itemSequence, Long partnerId, String partnerName,
+			Long materialCode, String description, BigDecimal recoveryYield, String documentNumber, String typeReceipt,
+			String typeCosts, BigDecimal quantity, BigDecimal price, BigDecimal totalValue, BigDecimal quantityMco,
+			String observation) {
 		this.receiptId = receiptId;
+		this.numTicketId = numTicketId;
 		this.itemSequence = itemSequence;
 		this.partnerId = partnerId;
 		this.partnerName = partnerName;
 		this.materialCode = materialCode;
+		this.description = description;
 		this.recoveryYield = recoveryYield;
 		this.documentNumber = documentNumber;
 		this.typeReceipt = typeReceipt;
@@ -77,10 +83,12 @@ public class ReceiptItemDTO {
 
 	public ReceiptItemDTO(ReceiptItem entity) {
 		this.receiptId = entity.getId().getReceipt().getId();
+		this.numTicketId = entity.getId().getReceipt().getNumTicket();
 		this.itemSequence = entity.getId().getItemSequence();
 		this.partnerId = entity.getId().getPartner().getId();
 		this.partnerName = entity.getId().getPartner().getName();
 		this.materialCode = entity.getId().getMaterial().getMaterialCode();
+		this.description = entity.getId().getMaterial().getDescription();
 		this.recoveryYield = entity.getRecoveryYield();
 		this.documentNumber = entity.getDocumentNumber();
 		this.typeReceipt = entity.getTypeReceipt().toString();
@@ -92,25 +100,12 @@ public class ReceiptItemDTO {
 		this.observation = entity.getObservation();
 	}
 
-	public ReceiptItemDTO(ReceiptItemReportProjection p) {
-		receiptId = p.getReceiptId();
-		itemSequence = p.getItemSequence();
-		partnerId = p.getPartnerId();
-		partnerName = p.getPartnerName();
-		materialCode = p.getMaterialCode();
-		recoveryYield = p.getRecoveryYield();
-		documentNumber = p.getDocumentNumber();
-		typeReceipt = p.getTypeReceipt();
-		typeCosts = p.getTypeCosts();
-		quantity = p.getQuantity();
-		price = p.getPrice();
-		totalValue = p.getTotalValue();
-		quantityMco = p.getQuantity();
-		observation = p.getObservation();
-	}
-
 	public Long getReceiptId() {
 		return receiptId;
+	}
+
+	public Long getNumTicketId() {
+		return numTicketId;
 	}
 
 	public Integer getItemSequence() {
@@ -127,6 +122,10 @@ public class ReceiptItemDTO {
 
 	public Long getMaterialCode() {
 		return materialCode;
+	}
+
+	public String getDescription() {
+		return description;
 	}
 
 	public BigDecimal getRecoveryYield() {

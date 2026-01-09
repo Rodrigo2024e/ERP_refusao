@@ -5,10 +5,12 @@ import java.math.BigDecimal;
 public interface ReceiptItemReportProjection {
 
 	Long getReceiptId();
+	Long getNumTicketId();
 	Integer getItemSequence();
 	Long getPartnerId();
 	String getPartnerName();
 	Long getMaterialCode();
+	String getMaterialDescription();
 	BigDecimal getRecoveryYield();
 	String getDocumentNumber();
 	String getTypeReceipt();
