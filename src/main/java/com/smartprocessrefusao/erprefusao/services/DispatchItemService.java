@@ -83,14 +83,14 @@ public class DispatchItemService {
         DispatchItemPK pk = buildDispatchItemPK(
             parentDispatchId, 
             dto.getPartnerId(), 
-            dto.getMaterialId()
+            dto.getMaterialCode()
         );
 
         // 3. Verifica se o item já existe (para evitar duplicidade em uma inserção de chave composta)
         if (dispatchItemRepository.existsById(pk)) {
             throw new IllegalArgumentException("Um DispatchItem com esta chave (DispatchID: " + parentDispatchId + 
                                                 ", PartnerID: " + dto.getPartnerId() + 
-                                                ", MaterialID: " + dto.getMaterialId() + ") já existe.");
+                                                ", MaterialID: " + dto.getMaterialCode() + ") já existe.");
         }
         
         // 4. Cria a nova entidade e seta a PK (que está totalmente inicializada)

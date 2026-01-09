@@ -5,40 +5,13 @@ import java.time.LocalDate;
 
 public interface DispatchReportProjection {
 
+	Long getDispatchId();
+
 	Long getNumTicket();
 
-	LocalDate getDate_ticket();
+	LocalDate getDateTicket();
 
-	Long getItem_sequence();
+	String getNumberPlate();
 
-	Long getPartner_id();
-
-	String getName();
-
-	String getNumber_plate();
-
-	BigDecimal getNet_weight();
-
-	Long getMaterial_id();
-
-	String getDescription();
-
-	String getDocumentNumber();
-
-	String getTransactionDescription();
-
-	String getAlloy();
-
-	String getAlloyPol();
-
-	String getAlloyFootage();
-
-	BigDecimal getQuantity();
-
-	BigDecimal getPrice();
-
-	BigDecimal getTotal_value();
-
-	String getObservation();
-
+	BigDecimal getNetWeight();
 }

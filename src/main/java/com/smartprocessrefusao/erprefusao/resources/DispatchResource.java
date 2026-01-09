@@ -1,10 +1,12 @@
 package com.smartprocessrefusao.erprefusao.resources;
 
 import java.net.URI;
+import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,17 +33,6 @@ public class DispatchResource {
 	@Autowired
 	private DispatchService dispatchService;
 
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-	@GetMapping(value = "/report")
-	public ResponseEntity<Page<DispatchReportDTO>> getReportDispatch(@RequestParam(required = false) String description,
-			@RequestParam(required = false) Long numTicket, @RequestParam(required = false) Long people_id,
-			Pageable pageable) {
-
-		Page<DispatchReportDTO> result = dispatchService.reportDispatch(description, numTicket, people_id, pageable);
-		return ResponseEntity.ok(result);
-
-	}
-
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PostMapping
 	public ResponseEntity<DispatchDTO> insert(@Valid @RequestBody DispatchDTO dto) {
@@ -62,6 +53,30 @@ public class DispatchResource {
 	public ResponseEntity<Void> delete(@PathVariable Long numTicket) {
 		dispatchService.delete(numTicket);
 		return ResponseEntity.noContent().build();
+	}
+
+	// REPORT
+	@GetMapping("/report-page")
+	public ResponseEntity<Page<DispatchReportDTO>> reportDispatch(
+			@RequestParam(required = false) Long dispatchIds,
+			@RequestParam(required = false) Long numTicket, 
+			@RequestParam(required = false) Long partnerId,
+			@RequestParam(required = false) String productDescription,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+			@RequestParam(required = false) Long productCode, Pageable pageable) {
+
+		Page<DispatchReportDTO> page = dispatchService.findDetails(
+				dispatchIds, 
+				numTicket, 
+				startDate, 
+				endDate, 
+				partnerId,
+				productDescription, 
+				productCode, 
+				pageable);
+
+		return ResponseEntity.ok(page);
 	}
 
 }

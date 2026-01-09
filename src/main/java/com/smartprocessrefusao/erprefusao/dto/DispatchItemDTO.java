@@ -13,15 +13,19 @@ public class DispatchItemDTO {
 
 	private Long dispatchId;
 
+	private Long numTicketId;
+
 	private Long itemSequence;
 
 	@NotNull(message = "Informe o id do partner")
 	private Long partnerId;
-
-	@NotNull(message = "Informe o tipo material")
-	private Long materialId;
+	private String partnerName;
 
 	private String documentNumber;
+
+	@NotNull(message = "Informe o tipo material")
+	private Long materialCode;
+	private String materialDescription;
 
 	@NotNull(message = "Informe o tipo de saída")
 	private String typeDispatch;
@@ -53,14 +57,18 @@ public class DispatchItemDTO {
 	public DispatchItemDTO() {
 	}
 
-	public DispatchItemDTO(Long dispatchId, Long itemSequence, Long partnerId, Long materialId, String documentNumber,
-			String typeDispatch, String alloy, String alloyPol, String alloyFootage, BigDecimal quantity,
-			BigDecimal price, BigDecimal totalValue, String observation) {
+	public DispatchItemDTO(Long dispatchId, Long numTicketId, Long itemSequence, Long partnerId, String partnerName,
+			String documentNumber, Long materialCode, String materialDescription, String typeDispatch, String alloy,
+			String alloyPol, String alloyFootage, BigDecimal quantity, BigDecimal price, BigDecimal totalValue,
+			String observation) {
 		this.dispatchId = dispatchId;
+		this.numTicketId = numTicketId;
 		this.itemSequence = itemSequence;
 		this.partnerId = partnerId;
-		this.materialId = materialId;
+		this.partnerName = partnerName;
 		this.documentNumber = documentNumber;
+		this.materialCode = materialCode;
+		this.materialDescription = materialDescription;
 		this.typeDispatch = typeDispatch;
 		this.alloy = alloy;
 		this.alloyPol = alloyPol;
@@ -73,9 +81,12 @@ public class DispatchItemDTO {
 
 	public DispatchItemDTO(DispatchItem entity) {
 		dispatchId = entity.getId().getDispatch().getId();
+		numTicketId = entity.getId().getDispatch().getNumTicket();
 		itemSequence = entity.getId().getItemSequence();
 		partnerId = entity.getId().getPartner().getId();
-		materialId = entity.getId().getMaterial().getMaterialCode();
+		partnerName = entity.getId().getPartner().getName();
+		materialCode = entity.getId().getMaterial().getMaterialCode();
+		materialDescription = entity.getId().getMaterial().getDescription();
 		documentNumber = entity.getDocumentNumber();
 		typeDispatch = entity.getTypeDispatch().toString();
 		alloy = entity.getAlloy().toString();
@@ -92,6 +103,10 @@ public class DispatchItemDTO {
 		return dispatchId;
 	}
 
+	public Long getNumTicketId() {
+		return numTicketId;
+	}
+
 	public Long getItemSequence() {
 		return itemSequence;
 	}
@@ -100,12 +115,20 @@ public class DispatchItemDTO {
 		return partnerId;
 	}
 
-	public Long getMaterialId() {
-		return materialId;
+	public String getPartnerName() {
+		return partnerName;
 	}
 
 	public String getDocumentNumber() {
 		return documentNumber;
+	}
+
+	public Long getMaterialCode() {
+		return materialCode;
+	}
+
+	public String getMaterialDescription() {
+		return materialDescription;
 	}
 
 	public String getTypeDispatch() {

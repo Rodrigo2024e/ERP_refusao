@@ -97,12 +97,12 @@ public class ReceiptService {
 				Partner partner = partnerCache.computeIfAbsent(partnerId, id -> partnerRepository.findById(id)
 						.orElseThrow(() -> new ResourceNotFoundException("Partner não encontrado: id = " + id)));
 
-				Long code = Optional.ofNullable(itemDto.getMaterialCode())
+				Long materialCode = Optional.ofNullable(itemDto.getMaterialCode())
 						.orElseThrow(() -> new ResourceNotFoundException("Código do material é obrigatório."));
 
-				Material material = materialCache.computeIfAbsent(code,
-						id -> materialRepository.findByMaterialCode(code).orElseThrow(
-								() -> new ResourceNotFoundException("Material não encontrado para o code: " + code)));
+				Material material = materialCache.computeIfAbsent(materialCode,
+						id -> materialRepository.findByMaterialCode(materialCode).orElseThrow(
+								() -> new ResourceNotFoundException("Material não encontrado para o code: " + materialCode)));
 
 				copyItemDtoToEntity(itemDto, item, entity, partner, material, sequence);
 				entity.getReceiptItems().add(item);
@@ -306,7 +306,7 @@ public class ReceiptService {
 	@Transactional(readOnly = true)
 	public Page<ReceiptReportDTO> findDetails(
 			Long id,
-			Long numTicket,
+			Long numTicketId,
 			LocalDate startDate,
 	        LocalDate endDate,
 	        Long partnerId,
@@ -316,7 +316,7 @@ public class ReceiptService {
 
 	    Page<ReceiptReportProjection> page =
 	            receiptRepository.reportReceipt(
-	            		numTicket,
+	            		numTicketId,
 	                    startDate,
 	                    endDate,
 	                    pageable
@@ -329,7 +329,7 @@ public class ReceiptService {
 	    Map<Long, List<ReceiptItemReportDTO>> itemsMap =
 	            receiptItemRepository.findItemsByReceiptIds(
 	            		receiptIds,
-	            		numTicket,
+	            		numTicketId,
 	            		startDate,
 	            		endDate,
 	            		partnerId,

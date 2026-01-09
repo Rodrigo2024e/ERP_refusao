@@ -25,7 +25,7 @@ public class DispatchItemPK implements Serializable {
 	private Partner partner;
 
 	@ManyToOne
-	@JoinColumn(name = "material_code")
+	@JoinColumn(name = "material_id")
 	private Material material;
 
 	@Column(name = "ITEM_SEQUENCE")

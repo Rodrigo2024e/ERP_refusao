@@ -1,9 +1,12 @@
 package com.smartprocessrefusao.erprefusao.services;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.smartprocessrefusao.erprefusao.dto.DispatchDTO;
 import com.smartprocessrefusao.erprefusao.dto.DispatchItemDTO;
+import com.smartprocessrefusao.erprefusao.dto.DispatchItemReportDTO;
 import com.smartprocessrefusao.erprefusao.dto.DispatchReportDTO;
 import com.smartprocessrefusao.erprefusao.entities.Dispatch;
 import com.smartprocessrefusao.erprefusao.entities.DispatchItem;
@@ -25,6 +29,7 @@ import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyFootage;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyPol;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionOutGoing;
 import com.smartprocessrefusao.erprefusao.projections.DispatchReportProjection;
+import com.smartprocessrefusao.erprefusao.repositories.DispatchItemRepository;
 import com.smartprocessrefusao.erprefusao.repositories.DispatchRepository;
 import com.smartprocessrefusao.erprefusao.repositories.MaterialRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
@@ -37,6 +42,9 @@ public class DispatchService {
 
 	@Autowired
 	private DispatchRepository dispatchRepository;
+	
+	@Autowired
+	private DispatchItemRepository dispatchItemRepository;
 
 	@Autowired
 	private PartnerRepository partnerRepository;
@@ -47,13 +55,6 @@ public class DispatchService {
 	@Autowired
 	private TicketRepository ticketRepository;
 
-	@Transactional(readOnly = true)
-	public Page<DispatchReportDTO> reportDispatch(String description, Long numTicket, Long people_id,
-			Pageable pageable) {
-		Page<DispatchReportProjection> page = dispatchRepository.searchDescriptionMaterialOrNumTicketPeople(description,
-				numTicket, people_id, pageable);
-		return page.map(DispatchReportDTO::new);
-	}
 
 	@Transactional
 	public DispatchDTO insert(DispatchDTO dto) {
@@ -109,12 +110,13 @@ public class DispatchService {
 				}
 				Partner partner = partnerCache.computeIfAbsent(partnerId, id -> partnerRepository.getReferenceById(id));
 
-				Long materialId = itemDto.getMaterialId();
-				if (materialId == null) {
-					throw new ResourceNotFoundException("Material ID é obrigatório para a PK do Item.");
+				Long materialCode = itemDto.getMaterialCode();
+				if (materialCode == null) {
+					throw new ResourceNotFoundException("Material CODE é obrigatório para a PK do Item.");
 				}
-				Material material = materialCache.computeIfAbsent(materialId,
-						id -> materialRepository.getReferenceById(id));
+				Material material = materialCache.computeIfAbsent(materialCode,
+						id -> materialRepository.findByMaterialCode(materialCode).orElseThrow(
+								() -> new ResourceNotFoundException("Material não encontrado para o code: " + materialCode)));
 
 				// 5b. Configurar a chave composta (PK) e copiar os dados.
 				copyItemDtoToItemEntity(itemDto, itemEntity, newDispatch, partner, material, sequenceCounter
@@ -175,8 +177,8 @@ public class DispatchService {
 				Partner partner = partnerCache.computeIfAbsent(partnerId,
 						pid -> partnerRepository.getReferenceById(pid));
 
-				Long materialId = itemDto.getMaterialId();
-				Material material = materialCache.computeIfAbsent(materialId,
+				Long materialCode = itemDto.getMaterialCode();
+				Material material = materialCache.computeIfAbsent(materialCode,
 						mid -> materialRepository.getReferenceById(mid));
 
 				// Configura a chave composta (PK) e copia os dados.
@@ -261,6 +263,53 @@ public class DispatchService {
 
 	}
 
+	// REPORT
+	@Transactional(readOnly = true)
+	public Page<DispatchReportDTO> findDetails(
+			Long dispatchId,
+			Long numTicketId,
+			LocalDate startDate,
+	        LocalDate endDate,
+	        Long partnerId,
+			String productDescription,
+			Long productCode,
+	        Pageable pageable) {
+
+	    Page<DispatchReportProjection> page =
+	            dispatchRepository.reportDispatch(
+	            		numTicketId,
+	                    startDate,
+	                    endDate,
+	                    pageable
+	            );
+
+		List<Long> dispatchIds = page.stream()
+	            .map(DispatchReportProjection::getDispatchId)
+	            .toList();
+
+	    Map<Long, List<DispatchItemReportDTO>> itemsMap =
+	            dispatchItemRepository.findItemsByDispatchIds(
+	            		dispatchIds,
+	            		numTicketId,
+	            		startDate,
+	            		endDate,
+	            		partnerId,
+	            		productDescription,
+	            		productCode)
+	                    .stream()
+	                    .map(p -> new DispatchItemReportDTO(p))
+	                    .collect(Collectors.groupingBy(DispatchItemReportDTO::getDispatchId));
+
+	    return page.map(p -> new DispatchReportDTO(
+	    		p.getDispatchId(),
+	    		p.getNumTicket(),
+	            p.getDateTicket(),
+	            p.getNumberPlate(),
+	            p.getNetWeight(),
+	            itemsMap.getOrDefault(p.getDispatchId(), List.of())
+	    ));
+	}
+	
 	/**
 	 * Calcula a soma total das quantidades dos itens e valida o formato. * @param
 	 * dto O DispatchDTO contendo a lista de DispatchItemDTOs.
