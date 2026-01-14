@@ -27,6 +27,9 @@ public class TaxClassification extends Auditable<String> {
 	@OneToMany(mappedBy = "taxClass")
 	private Set<Material> materials = new HashSet<>();
 
+	@OneToMany(mappedBy = "taxClass")
+	private Set<Product> products = new HashSet<>();
+
 	public TaxClassification() {
 
 	}
@@ -63,6 +66,10 @@ public class TaxClassification extends Auditable<String> {
 
 	public Set<Material> getMaterials() {
 		return materials;
+	}
+
+	public Set<Product> getProducts() {
+		return products;
 	}
 
 	@Override

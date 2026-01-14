@@ -22,6 +22,9 @@ public class MaterialGroup {
 
 	@OneToMany(mappedBy = "materialGroup")
 	private Set<Material> materials = new HashSet<>();
+	
+	@OneToMany(mappedBy = "materialGroup")
+	private Set<Product> products = new HashSet<>();
 
 	public MaterialGroup() {
 
@@ -51,6 +54,10 @@ public class MaterialGroup {
 
 	public Set<Material> getMaterials() {
 		return materials;
+	}
+	
+	public Set<Product> getProducts() {
+		return products;
 	}
 
 	@Override

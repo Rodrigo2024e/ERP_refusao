@@ -1,17 +1,16 @@
 package com.smartprocessrefusao.erprefusao.projections;
 
 public interface ProductReportProjection {
-
-	Long getCode();
+	
+	Long getProductCode();
 	String getDescription();
-	String getType();
 	String getAlloy();
-	Integer getBilletDiameter();
-	Double getBilletLength();
+	String getAlloyPol();
+	String getAlloyFootage();
 	String getAcronym();
 	Long getTaxClassId();
-	String getDescription_taxclass();
+	String getDescriptionTaxclass();
 	Integer getNcmCode();
 	Long getMatGroupId();
-	String getDescription_matGroup();
+	String getDescriptionMatGroup();
 }

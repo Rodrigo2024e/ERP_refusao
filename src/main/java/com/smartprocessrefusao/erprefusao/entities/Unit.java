@@ -27,6 +27,9 @@ public class Unit extends Auditable<String> {
 	@OneToMany(mappedBy = "unit")
 	private Set<Material> materials = new HashSet<>();
 
+	@OneToMany(mappedBy = "unit")
+	private Set<Product> products = new HashSet<>();
+
 	public Unit() {
 
 	}
@@ -63,6 +66,10 @@ public class Unit extends Auditable<String> {
 
 	public Set<Material> getMaterials() {
 		return materials;
+	}
+
+	public Set<Product> getProducts() {
+		return products;
 	}
 
 	@Override

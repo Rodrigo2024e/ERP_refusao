@@ -49,8 +49,12 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
 					AND (:materialCode IS NULL OR m.material_code = :materialCode)
 					AND (:type IS NULL OR LOWER(m.type) LIKE LOWER(CONCAT('%', :type, '%')))
 			""", nativeQuery = true)
-	Page<MaterialReportProjection> searchMaterialByNameOrGroup(@Param("type") String type, @Param("materialCode") Long materialCode, @Param("description") String description,
-			@Param("groupId") Long groupId, Pageable pageable);
+	Page<MaterialReportProjection> searchMaterialByNameOrGroup(
+			@Param("type") String type, 
+			@Param("materialCode") Long materialCode, 
+			@Param("description") String description,
+			@Param("groupId") Long groupId, 
+			Pageable pageable);
 
 	Optional<Material> findByMaterialCode(Long materialCode);
 	

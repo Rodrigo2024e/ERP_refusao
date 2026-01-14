@@ -11,7 +11,7 @@ public class DispatchReportDTO {
 
 	private Long dispatchId;
 
-	private Long numTicket;
+	private Long numTicketId;
 
 	private LocalDate dateTicket;
 
@@ -26,10 +26,10 @@ public class DispatchReportDTO {
 
 	}
 
-	public DispatchReportDTO(Long dispatchId, Long numTicket, LocalDate dateTicket, String numberPlate,
+	public DispatchReportDTO(Long dispatchId, Long numTicketId, LocalDate dateTicket, String numberPlate,
 			BigDecimal net_weight, List<DispatchItemReportDTO> dispatchItems) {
 		this.dispatchId = dispatchId;
-		this.numTicket = numTicket;
+		this.numTicketId = numTicketId;
 		this.dateTicket = dateTicket;
 		this.numberPlate = numberPlate;
 		this.netWeight = net_weight;
@@ -40,8 +40,8 @@ public class DispatchReportDTO {
 		return dispatchId;
 	}
 
-	public Long getNumTicket() {
-		return numTicket;
+	public Long getNumTicketId() {
+		return numTicketId;
 	}
 
 	public LocalDate getDateTicket() {

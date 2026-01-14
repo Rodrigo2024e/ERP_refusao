@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.smartprocessrefusao.erprefusao.entities.StockBalance;
+import com.smartprocessrefusao.erprefusao.entities.MaterialStockBalance;
 
-public class StockBalanceDTO {
+public class MaterialStockBalanceDTO {
 
 	private Long id;
 	private LocalDate dateStock;
@@ -42,10 +42,10 @@ public class StockBalanceDTO {
 
 	private List<MaterialDTO> materials = new ArrayList<>();
 
-	public StockBalanceDTO() {
+	public MaterialStockBalanceDTO() {
 	}
 
-	public StockBalanceDTO(Long id, LocalDate dateStock, BigDecimal totalPurchase, BigDecimal totalPurchaseMco,
+	public MaterialStockBalanceDTO(Long id, LocalDate dateStock, BigDecimal totalPurchase, BigDecimal totalPurchaseMco,
 			BigDecimal recoveryYieldPurchase, BigDecimal totalSentForProcessing, BigDecimal totalSentForProcessingMco,
 			BigDecimal recoveryYieldSentForProcessing, BigDecimal totalScrapSalesReturn,
 			BigDecimal totalScrapSalesReturnMco, BigDecimal recoveryYieldScrapSalesReturn,
@@ -79,7 +79,7 @@ public class StockBalanceDTO {
 		this.recoveryYieldFinalBalance = recoveryYieldFinalBalance;
 	}
 
-	public StockBalanceDTO(StockBalance entity) {
+	public MaterialStockBalanceDTO(MaterialStockBalance entity) {
 		id = entity.getId();
 		dateStock = entity.getDateStock();
 

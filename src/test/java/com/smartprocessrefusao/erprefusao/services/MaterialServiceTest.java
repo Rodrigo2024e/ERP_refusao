@@ -111,9 +111,9 @@ public class MaterialServiceTest {
 		assertEquals("SCRAP", result.getType());
 		assertEquals("PERFIL DE PROCESSO", result.getDescription());
 		assertEquals("kg", result.getAcronym());
-		assertEquals("SUCATA DE ALUMINIO", result.getDescription_taxclass());
+		assertEquals("SUCATA DE ALUMINIO", result.getDescriptionTaxclass());
 		assertEquals(7602000, result.getNcmCode());
-		assertEquals("SUCATA DE ALUMINIO", result.getDescription_matGroup());
+		assertEquals("SUCATA DE ALUMINIO", result.getDescriptionMatGroup());
 	}
 
 	// 3 - FindById-EntityNotFoundException

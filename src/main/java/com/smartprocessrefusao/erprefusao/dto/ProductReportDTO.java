@@ -4,63 +4,55 @@ import com.smartprocessrefusao.erprefusao.projections.ProductReportProjection;
 
 public class ProductReportDTO {
 
-	private Long code;
+	private Long productCode;
 	private String description;
-	private String type;
 	private String alloy;
-	private Integer billetDiameter;
-	private Double billetLength;
+	private String alloyPol;
+	private String alloyFootage;
 	private String acronym;
 	private Long taxClassId;
-	private String description_taxclass;
+	private String descriptionTaxclass;
 	private Integer ncmCode;
 	private Long matGroupId;
-	private String description_matGroup;
+	private String descriptionMatGroup;
 
 	public ProductReportDTO() {
 
 	}
 
-	public ProductReportDTO(ProductReportProjection projection) {
-		code = projection.getCode();
-		description = projection.getDescription();
-		type = projection.getType();
-		alloy = projection.getAlloy();
-		billetDiameter = projection.getBilletDiameter();
-		billetLength = projection.getBilletLength();
-		acronym = projection.getAcronym();
-		taxClassId = projection.getTaxClassId();
-		description_taxclass = projection.getDescription_taxclass();
-		ncmCode = projection.getNcmCode();
-		matGroupId = projection.getMatGroupId();
-		description_matGroup = projection.getDescription_matGroup();
-
+	public ProductReportDTO(ProductReportProjection p) {
+		productCode = p.getProductCode();
+		description = p.getDescription();
+		alloy = p.getAlloy();
+		alloyPol = p.getAlloyPol();
+		alloyFootage = p.getAlloyFootage();
+		acronym = p.getAcronym();
+		taxClassId = p.getTaxClassId();
+		descriptionTaxclass = p.getDescriptionTaxclass();
+		ncmCode = p.getNcmCode();
+		matGroupId = p.getMatGroupId();
+		descriptionMatGroup = p.getDescriptionMatGroup();
 	}
 
-	public Long getCode() {
-		return code;
+	public Long getProductCode() {
+		return productCode;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public String getType() {
-		return type;
-	}
-
 	public String getAlloy() {
 		return alloy;
 	}
 
-	public Integer getBilletDiameter() {
-		return billetDiameter;
+	public String getAlloyPol() {
+		return alloyPol;
 	}
 
-	public Double getBilletLength() {
-		return billetLength;
+	public String getAlloyFootage() {
+		return alloyFootage;
 	}
-
 
 	public String getAcronym() {
 		return acronym;
@@ -70,8 +62,8 @@ public class ProductReportDTO {
 		return taxClassId;
 	}
 
-	public String getDescription_taxclass() {
-		return description_taxclass;
+	public String getDescriptionTaxclass() {
+		return descriptionTaxclass;
 	}
 
 	public Integer getNcmCode() {
@@ -82,8 +74,8 @@ public class ProductReportDTO {
 		return matGroupId;
 	}
 
-	public String getDescription_matGroup() {
-		return description_matGroup;
+	public String getDescriptionMatGroup() {
+		return descriptionMatGroup;
 	}
 
 }

@@ -46,9 +46,9 @@ public class ReceiptItemService {
 				.orElseThrow(() -> new ResourceNotFoundException("Partner não encontrado: id = " + partnerId));
 	}
 
-	private Material validateMaterial(Long code) {
-		return materialRepository.findById(code)
-				.orElseThrow(() -> new ResourceNotFoundException("Material não encontrado: code = " + code));
+	private Material validateMaterial(Long materialCode) {
+		return materialRepository.findById(materialCode)
+				.orElseThrow(() -> new ResourceNotFoundException("Material não encontrado: code = " + materialCode));
 	}
 
 	// --- MÉTODOS AUXILIARES DE PK ---
@@ -61,11 +61,11 @@ public class ReceiptItemService {
 	 * @param code      do Material (parte da PK).
 	 * @return A chave ReceiptItemPK totalmente inicializada.
 	 */
-	private ReceiptItemPK buildReceiptItemPK(Long receiptId, Long partnerId, Long code) {
+	private ReceiptItemPK buildReceiptItemPK(Long receiptId, Long partnerId, Long materialCode) {
 
 		Receipt receipt = validateReceipt(receiptId);
 		Partner partner = validatePartner(partnerId);
-		Material material = validateMaterial(code);
+		Material material = validateMaterial(materialCode);
 
 		return new ReceiptItemPK(receipt, partner, material);
 	}
@@ -76,8 +76,8 @@ public class ReceiptItemService {
 	}
 
 	@Transactional(readOnly = true)
-	public ReceiptItemDTO findById(Long receiptId, Long partnerId, Long code) {
-		ReceiptItemPK pk = buildReceiptItemPK(receiptId, partnerId, code);
+	public ReceiptItemDTO findById(Long receiptId, Long partnerId, Long materialCode) {
+		ReceiptItemPK pk = buildReceiptItemPK(receiptId, partnerId, materialCode);
 
 		ReceiptItem entity = receiptItemRepository.findById(pk)
 				.orElseThrow(() -> new ResourceNotFoundException("ReceiptItem não encontrado para os IDs informados"));
@@ -113,10 +113,10 @@ public class ReceiptItemService {
 	}
 
 	@Transactional
-	public ReceiptItemDTO update(Long receiptId, Long partnerId, Long code, ReceiptItemDTO dto) {
+	public ReceiptItemDTO update(Long receiptId, Long partnerId, Long materialCode, ReceiptItemDTO dto) {
 
 		// 1. Constrói a PK para localizar o item existente
-		ReceiptItemPK pk = buildReceiptItemPK(receiptId, partnerId, code);
+		ReceiptItemPK pk = buildReceiptItemPK(receiptId, partnerId, materialCode);
 
 		ReceiptItem entity = receiptItemRepository.findById(pk)
 				.orElseThrow(() -> new ResourceNotFoundException("ReceiptItem não encontrado para update."));
@@ -128,8 +128,8 @@ public class ReceiptItemService {
 	}
 
 	@Transactional
-	public void delete(Long receiptId, Long partnerId, Long code) {
-		ReceiptItemPK pk = buildReceiptItemPK(receiptId, partnerId, code);
+	public void delete(Long receiptId, Long partnerId, Long materialCode) {
+		ReceiptItemPK pk = buildReceiptItemPK(receiptId, partnerId, materialCode);
 
 		// Se a validação for necessária
 		if (!receiptItemRepository.existsById(pk)) {

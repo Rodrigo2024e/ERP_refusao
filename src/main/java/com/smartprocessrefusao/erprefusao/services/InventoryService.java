@@ -23,13 +23,13 @@ import com.smartprocessrefusao.erprefusao.entities.Material;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.entities.Receipt;
 import com.smartprocessrefusao.erprefusao.entities.ReceiptItem;
-import com.smartprocessrefusao.erprefusao.entities.StockBalance;
+import com.smartprocessrefusao.erprefusao.entities.MaterialStockBalance;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
 import com.smartprocessrefusao.erprefusao.projections.InventoryReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.InventoryRepository;
 import com.smartprocessrefusao.erprefusao.repositories.MaterialRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
-import com.smartprocessrefusao.erprefusao.repositories.StockBalanceRepository;
+import com.smartprocessrefusao.erprefusao.repositories.MaterialStockBalanceRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
 
@@ -48,7 +48,7 @@ public class InventoryService {
 	private PartnerRepository partnerRepository;
 
 	@Autowired
-	private StockBalanceRepository stockBalanceRepository;
+	private MaterialStockBalanceRepository stockBalanceRepository;
 
 	private static final Logger logger = LoggerFactory.getLogger(InventoryService.class);
 
@@ -241,10 +241,10 @@ public class InventoryService {
 		for (InventoryItem item : entity.getItems()) {
 
 			Material material = item.getMaterial();
-			StockBalance stock = material.getStockBalance();
+			MaterialStockBalance stock = material.getStockBalance();
 
 			if (stock == null) {
-				stock = new StockBalance();
+				stock = new MaterialStockBalance();
 				stock.setMaterials(new ArrayList<>());
 				stock.getMaterials().add(material);
 				material.setStockBalance(stock);
@@ -388,7 +388,7 @@ public class InventoryService {
 		for (InventoryItem item : entity.getItems()) {
 
 			Material material = item.getMaterial();
-			StockBalance stock = material.getStockBalance();
+			MaterialStockBalance stock = material.getStockBalance();
 
 			if (stock == null)
 				continue;

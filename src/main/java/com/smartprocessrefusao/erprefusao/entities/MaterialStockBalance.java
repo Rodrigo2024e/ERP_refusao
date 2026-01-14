@@ -17,7 +17,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_stock_balance")
-public class StockBalance implements Serializable {
+public class MaterialStockBalance implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -63,10 +63,10 @@ public class StockBalance implements Serializable {
 	private BigDecimal finalBalanceMco = BigDecimal.ZERO;
 	private BigDecimal recoveryYieldFinalBalance = BigDecimal.ZERO;
 
-	public StockBalance() {
+	public MaterialStockBalance() {
 	}
 
-	public StockBalance(Long id, LocalDate dateStock, List<Material> materials, BigDecimal totalPurchase,
+	public MaterialStockBalance(Long id, LocalDate dateStock, List<Material> materials, BigDecimal totalPurchase,
 			BigDecimal totalPurchaseMco, BigDecimal recoveryYieldPurchase, BigDecimal totalValue,
 			BigDecimal averagePrice, BigDecimal averagePriceMco, BigDecimal totalSentForProcessing,
 			BigDecimal totalSentForProcessingMco, BigDecimal recoveryYieldSentForProcessing,
@@ -369,7 +369,7 @@ public class StockBalance implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		StockBalance other = (StockBalance) obj;
+		MaterialStockBalance other = (MaterialStockBalance) obj;
 		return Objects.equals(id, other.id);
 	}
 }

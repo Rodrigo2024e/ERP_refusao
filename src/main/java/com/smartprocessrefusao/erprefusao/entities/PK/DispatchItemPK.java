@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import com.smartprocessrefusao.erprefusao.entities.Dispatch;
-import com.smartprocessrefusao.erprefusao.entities.Material;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
+import com.smartprocessrefusao.erprefusao.entities.Product;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -25,19 +25,19 @@ public class DispatchItemPK implements Serializable {
 	private Partner partner;
 
 	@ManyToOne
-	@JoinColumn(name = "material_id")
-	private Material material;
+	@JoinColumn(name = "product_id")
+	private Product product;
 
 	@Column(name = "ITEM_SEQUENCE")
-	private Long itemSequence;
+	private Integer itemSequence;
 
 	public DispatchItemPK() {
 	}
 
-	public DispatchItemPK(Dispatch dispatch, Partner partner, Material material) {
+	public DispatchItemPK(Dispatch dispatch, Partner partner, Product product) {
 		this.dispatch = dispatch;
 		this.partner = partner;
-		this.material = material;
+		this.product = product;
 	}
 
 	public Dispatch getDispatch() {
@@ -56,25 +56,25 @@ public class DispatchItemPK implements Serializable {
 		this.partner = partner;
 	}
 
-	public Material getMaterial() {
-		return material;
+	public Product getProduct() {
+		return product;
 	}
 
-	public void setMaterial(Material material) {
-		this.material = material;
+	public void setProduct(Product product) {
+		this.product = product;
 	}
 
-	public Long getItemSequence() {
+	public Integer getItemSequence() {
 		return itemSequence;
 	}
 
-	public void setItemSequence(Long itemSequence) {
+	public void setItemSequence(Integer itemSequence) {
 		this.itemSequence = itemSequence;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(itemSequence, material, partner, dispatch);
+		return Objects.hash(itemSequence, product, partner, dispatch);
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class DispatchItemPK implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		DispatchItemPK other = (DispatchItemPK) obj;
-		return Objects.equals(itemSequence, other.itemSequence) && Objects.equals(material, other.material)
+		return Objects.equals(itemSequence, other.itemSequence) && Objects.equals(product, other.product)
 				&& Objects.equals(partner, other.partner) && Objects.equals(dispatch, other.dispatch);
 	}
 

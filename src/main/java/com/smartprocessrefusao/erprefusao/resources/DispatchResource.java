@@ -59,16 +59,17 @@ public class DispatchResource {
 	@GetMapping("/report-page")
 	public ResponseEntity<Page<DispatchReportDTO>> reportDispatch(
 			@RequestParam(required = false) Long dispatchIds,
-			@RequestParam(required = false) Long numTicket, 
+			@RequestParam(required = false) Long numTicketId, 
 			@RequestParam(required = false) Long partnerId,
 			@RequestParam(required = false) String productDescription,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@RequestParam(required = false) Long productCode, Pageable pageable) {
+			@RequestParam(required = false) Long productCode, 
+			Pageable pageable) {
 
 		Page<DispatchReportDTO> page = dispatchService.findDetails(
 				dispatchIds, 
-				numTicket, 
+				numTicketId, 
 				startDate, 
 				endDate, 
 				partnerId,

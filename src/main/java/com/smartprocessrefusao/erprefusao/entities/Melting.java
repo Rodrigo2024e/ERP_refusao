@@ -39,6 +39,7 @@ public class Melting extends Auditable<String> implements IdProjection<Long> {
 
 	@Column(name = "numberMelting", unique = true)
 	private Long numberMelting;
+	
 
 	@Enumerated(EnumType.STRING)
 	private TypeTransactionOutGoing typeTransaction;

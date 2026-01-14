@@ -1,7 +1,6 @@
 package com.smartprocessrefusao.erprefusao.services;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.smartprocessrefusao.erprefusao.dto.DispatchItemDTO;
 import com.smartprocessrefusao.erprefusao.entities.Dispatch;
 import com.smartprocessrefusao.erprefusao.entities.DispatchItem;
-import com.smartprocessrefusao.erprefusao.entities.Material;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
+import com.smartprocessrefusao.erprefusao.entities.Product;
 import com.smartprocessrefusao.erprefusao.entities.PK.DispatchItemPK;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloy;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyFootage;
@@ -20,8 +19,8 @@ import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyPol;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionOutGoing;
 import com.smartprocessrefusao.erprefusao.repositories.DispatchItemRepository;
 import com.smartprocessrefusao.erprefusao.repositories.DispatchRepository;
-import com.smartprocessrefusao.erprefusao.repositories.MaterialRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
+import com.smartprocessrefusao.erprefusao.repositories.ProductRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
 
 @Service
@@ -37,7 +36,7 @@ public class DispatchItemService {
     private PartnerRepository partnerRepository; 
 
     @Autowired
-    private MaterialRepository materialRepository;
+    private ProductRepository productRepository;
 
     // --- MÉTODOS AUXILIARES DE PK ---
 
@@ -45,25 +44,21 @@ public class DispatchItemService {
      * Constrói a chave primária composta (DispatchItemPK) usando referências.
      * @param dispatchId O ID da Dispatch (parte da PK).
      * @param partnerId O ID do Partner (parte da PK).
-     * @param materialId O ID do Material (parte da PK).
+     * @param productId O ID do Product (parte da PK).
      * @return A chave DispatchItemPK totalmente inicializada.
      */
-    private DispatchItemPK buildDispatchItemPK(Long dispatchId, Long partnerId, Long materialId) {
+    private DispatchItemPK buildDispatchItemPK(Long dispatchId, Long partnerId, Long productCode) {
         Dispatch dispatchRef = dispatchRepository.getReferenceById(dispatchId);
         Partner partnerRef = partnerRepository.getReferenceById(partnerId);
-        Material materialRef = materialRepository.getReferenceById(materialId);
+        Product productRef = productRepository.getReferenceById(productCode);
 
-        return new DispatchItemPK(dispatchRef, partnerRef, materialRef);
+        return new DispatchItemPK(dispatchRef, partnerRef, productRef);
     }
 
-    @Transactional(readOnly = true)
-    public List<DispatchItemDTO> findAll() {
-        return dispatchItemRepository.findAll().stream().map(DispatchItemDTO::new).toList();
-    }
 
     @Transactional(readOnly = true)
-    public DispatchItemDTO findById(Long dispatchId, Long partnerId, Long materialId) {
-        DispatchItemPK pk = buildDispatchItemPK(dispatchId, partnerId, materialId);
+    public DispatchItemDTO findById(Long dispatchId, Long partnerId, Long productCode) {
+        DispatchItemPK pk = buildDispatchItemPK(dispatchId, partnerId, productCode);
         
         Optional<DispatchItem> obj = dispatchItemRepository.findById(pk);
         DispatchItem entity = obj.orElseThrow(() -> new ResourceNotFoundException("DispatchItem not found for the given IDs"));
@@ -79,18 +74,18 @@ public class DispatchItemService {
         }
 
         // 2. Constrói a PK usando o ID da URL (priorizando o parentDispatchId)
-        // O buildDispatchItemPK carrega as referências de Dispatch, Partner e Material.
+        // O buildDispatchItemPK carrega as referências de Dispatch, Partner e Product.
         DispatchItemPK pk = buildDispatchItemPK(
             parentDispatchId, 
             dto.getPartnerId(), 
-            dto.getMaterialCode()
+            dto.getProductCode()
         );
 
         // 3. Verifica se o item já existe (para evitar duplicidade em uma inserção de chave composta)
         if (dispatchItemRepository.existsById(pk)) {
             throw new IllegalArgumentException("Um DispatchItem com esta chave (DispatchID: " + parentDispatchId + 
                                                 ", PartnerID: " + dto.getPartnerId() + 
-                                                ", MaterialID: " + dto.getMaterialCode() + ") já existe.");
+                                                ", ProductID: " + dto.getProductCode() + ") já existe.");
         }
         
         // 4. Cria a nova entidade e seta a PK (que está totalmente inicializada)
@@ -107,10 +102,10 @@ public class DispatchItemService {
     }
 
     @Transactional
-    public DispatchItemDTO update(Long dispatchId, Long partnerId, Long materialId, DispatchItemDTO dto) {
+    public DispatchItemDTO update(Long dispatchId, Long partnerId, Long productCode, DispatchItemDTO dto) {
         
         // 1. Constrói a PK para localizar o item existente
-        DispatchItemPK pk = buildDispatchItemPK(dispatchId, partnerId, materialId);
+        DispatchItemPK pk = buildDispatchItemPK(dispatchId, partnerId, productCode);
 
         try {
             // 2. Obtém a referência da entidade
@@ -129,8 +124,8 @@ public class DispatchItemService {
     }
 
     @Transactional
-    public void delete(Long dispatchId, Long partnerId, Long materialId) {
-        DispatchItemPK pk = buildDispatchItemPK(dispatchId, partnerId, materialId);
+    public void delete(Long dispatchId, Long partnerId, Long productCode) {
+        DispatchItemPK pk = buildDispatchItemPK(dispatchId, partnerId, productCode);
         
         // Se a validação for necessária
         if (!dispatchItemRepository.existsById(pk)) {

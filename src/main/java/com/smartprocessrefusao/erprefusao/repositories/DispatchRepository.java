@@ -21,13 +21,13 @@ public interface DispatchRepository extends JpaRepository<Dispatch, Long> {
 	@Query(value = """
 			SELECT
 			    d.id AS dispatchId,
-			    t.num_ticket AS numTicket,
+			    t.num_ticket AS numTicketId,
 			    t.date_ticket AS dateTicket,
 			    t.number_plate AS numberPlate,
 			    t.net_weight AS netWeight
 			FROM tb_dispatch d
 			INNER JOIN tb_ticket t ON t.id = d.id
-			WHERE (:numTicket IS NULL OR t.num_ticket = :numTicket)
+			WHERE (:numTicketId IS NULL OR t.num_ticket = :numTicketId)
 			  AND (:startDate IS NULL OR t.date_ticket >= :startDate)
 			  AND (:endDate IS NULL OR t.date_ticket <= :endDate)
 			""", countQuery = """
@@ -39,7 +39,7 @@ public interface DispatchRepository extends JpaRepository<Dispatch, Long> {
 			  AND (:endDate IS NULL OR t.date_ticket <= :endDate)
 			""", nativeQuery = true)
 	Page<DispatchReportProjection> reportDispatch(
-			@Param("numTicket") Long numTicket,
+			@Param("numTicketId") Long numTicketId,
 			@Param("startDate") LocalDate startDate, 
 			@Param("endDate") LocalDate endDate, Pageable pageable);
 

@@ -24,8 +24,8 @@ public interface DispatchItemRepository extends JpaRepository<DispatchItem, Disp
 				    pt.id AS partnerId,
 				    p.name AS partnerName,
 				    di.document_number AS documentNumber,
-				    m.material_code AS productCode,
-				    m.description AS productDescription,
+				    pr.product_code AS productCode,
+				    pr.description AS productDescription,
 				    di.type_dispatch AS typeDispatch,
 				    di.alloy AS alloy,
 				    di.alloy_pol AS alloyPol,
@@ -39,11 +39,11 @@ public interface DispatchItemRepository extends JpaRepository<DispatchItem, Disp
 				INNER JOIN tb_ticket t ON t.id = d.id
 				INNER JOIN tb_partner pt ON pt.id = di.partner_id
 				INNER JOIN tb_people p ON p.id = pt.id
-				INNER JOIN tb_material m ON m.id = di.material_id
+				INNER JOIN tb_product pr ON pr.id = di.product_id
 				WHERE di.dispatch_id IN (:dispatchIds)
 				AND (:numTicketId IS NULL OR t.num_ticket = :numTicketId)
-				AND (:productCode IS NULL OR m.material_code = :productCode)
-				AND (:productDescription IS NULL OR LOWER(m.description) LIKE LOWER(CONCAT('%', :productDescription, '%')))
+				AND (:productCode IS NULL OR pr.product_code = :productCode)
+				AND (:productDescription IS NULL OR LOWER(pr.description) LIKE LOWER(CONCAT('%', :productDescription, '%')))
 				AND (:partnerId IS NULL OR pt.id = :partnerId)
 				AND (:startDate IS NULL OR t.date_ticket >= :startDate)
 				AND (:endDate IS NULL OR t.date_ticket <= :endDate)

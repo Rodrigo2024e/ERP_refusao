@@ -2,8 +2,8 @@ package com.smartprocessrefusao.erprefusao.enumerados;
 
 public enum TypeMaterial {
 
-	SCRAP(1L, "SCRAP"), SUPPLIES(2L, "SUPPLIES"), FINISHED_PRODUCTS(3L, "FINISHED_PRODUCTS"),
-	MISC_MATERIALS(4L, "MISC_MATERIALS");
+	SCRAP(1L, "SCRAP"), SUPPLIES(2L, "SUPPLIES"),
+	MISC_MATERIALS(3L, "MISC_MATERIALS");
 
 	private final Long id;
 	private final String description;

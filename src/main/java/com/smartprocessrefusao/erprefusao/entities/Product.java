@@ -1,14 +1,13 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import com.smartprocessrefusao.erprefusao.audit.Auditable;
-import com.smartprocessrefusao.erprefusao.enumerados.TypeMaterial;
+import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloy;
+import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyFootage;
+import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyPol;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,23 +18,28 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "tb_material")
+@Table(name = "tb_product")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Material extends Auditable<String> implements Serializable {
+public class Product extends Auditable<String> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Long materialCode;
+	private Long productCode;
 	private String description;
 
 	@Enumerated(EnumType.STRING)
-	private TypeMaterial type;
+	private AluminumAlloy alloy;
+
+	@Enumerated(EnumType.STRING)
+	private AluminumAlloyPol alloyPol;
+
+	@Enumerated(EnumType.STRING)
+	private AluminumAlloyFootage alloyFootage;
 
 	@ManyToOne
 	@JoinColumn(name = "unit_id")
@@ -49,29 +53,24 @@ public class Material extends Auditable<String> implements Serializable {
 	@JoinColumn(name = "material_group_id")
 	private MaterialGroup materialGroup;
 
-	@OneToMany(mappedBy = "id.material", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ReceiptItem> receiptItems = new ArrayList<>();
+//	@OneToMany(mappedBy = "id.material", cascade = CascadeType.ALL, orphanRemoval = true)
+//	private List<ReceiptItem> receiptItems = new ArrayList<>();
 
-	@OneToMany(mappedBy = "id.material", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<MeltingItem> meltingItems = new ArrayList<>();
+//	@OneToMany(mappedBy = "id.material", cascade = CascadeType.ALL, orphanRemoval = true)
+//	private List<MeltingItem> meltingItems = new ArrayList<>();
 
-	@ManyToOne
-	@JoinColumn(name = "stock_balance_id")
-	private MaterialStockBalance stockBalance;
-
-	@OneToMany(mappedBy = "material")
-	private List<InventoryItem> inventoryItems = new ArrayList<>();
-
-	public Material() {
+	public Product() {
 
 	}
 
-	public Material(Long id, Long materialCode, String description, TypeMaterial type, Unit unit,
-			TaxClassification taxClass, MaterialGroup materialGroup) {
+	public Product(Long id, Long productCode, String description, AluminumAlloy alloy, AluminumAlloyPol alloyPol,
+			AluminumAlloyFootage alloyFootage, Unit unit, TaxClassification taxClass, MaterialGroup materialGroup) {
 		this.id = id;
-		this.materialCode = materialCode;
+		this.productCode = productCode;
 		this.description = description;
-		this.type = type;
+		this.alloy = alloy;
+		this.alloyPol = alloyPol;
+		this.alloyFootage = alloyFootage;
 		this.unit = unit;
 		this.taxClass = taxClass;
 		this.materialGroup = materialGroup;
@@ -85,12 +84,12 @@ public class Material extends Auditable<String> implements Serializable {
 		this.id = id;
 	}
 
-	public Long getMaterialCode() {
-		return materialCode;
+	public Long getProductCode() {
+		return productCode;
 	}
 
-	public void setMaterialCode(Long materialCode) {
-		this.materialCode = materialCode;
+	public void setProductCode(Long productCode) {
+		this.productCode = productCode;
 	}
 
 	public String getDescription() {
@@ -101,12 +100,28 @@ public class Material extends Auditable<String> implements Serializable {
 		this.description = description;
 	}
 
-	public TypeMaterial getType() {
-		return type;
+	public AluminumAlloy getAlloy() {
+		return alloy;
 	}
 
-	public void setType(TypeMaterial type) {
-		this.type = type;
+	public void setAlloy(AluminumAlloy alloy) {
+		this.alloy = alloy;
+	}
+
+	public AluminumAlloyPol getAlloyPol() {
+		return alloyPol;
+	}
+
+	public void setAlloyPol(AluminumAlloyPol alloyPol) {
+		this.alloyPol = alloyPol;
+	}
+
+	public AluminumAlloyFootage getAlloyFootage() {
+		return alloyFootage;
+	}
+
+	public void setAlloyFootage(AluminumAlloyFootage alloyFootage) {
+		this.alloyFootage = alloyFootage;
 	}
 
 	public Unit getUnit() {
@@ -133,32 +148,11 @@ public class Material extends Auditable<String> implements Serializable {
 		this.materialGroup = materialGroup;
 	}
 
-	public List<ReceiptItem> getReceiptItems() {
-		return receiptItems;
-
-	}
-
-	public MaterialStockBalance getStockBalance() {
-		return stockBalance;
-	}
-
-	public void setStockBalance(MaterialStockBalance stockBalance) {
-		this.stockBalance = stockBalance;
-	}
-
-	public List<InventoryItem> getInventoryItems() {
-		return inventoryItems;
-	}
-
-	public List<MeltingItem> getMeltingItems() {
-		return meltingItems;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(materialCode);
+		result = prime * result + Objects.hash(productCode);
 		return result;
 	}
 
@@ -170,8 +164,8 @@ public class Material extends Auditable<String> implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Material other = (Material) obj;
-		return Objects.equals(materialCode, other.materialCode);
+		Product other = (Product) obj;
+		return Objects.equals(productCode, other.productCode);
 	}
 
 }

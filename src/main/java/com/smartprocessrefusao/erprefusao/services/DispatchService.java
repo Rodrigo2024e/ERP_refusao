@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,9 @@ import com.smartprocessrefusao.erprefusao.dto.DispatchItemReportDTO;
 import com.smartprocessrefusao.erprefusao.dto.DispatchReportDTO;
 import com.smartprocessrefusao.erprefusao.entities.Dispatch;
 import com.smartprocessrefusao.erprefusao.entities.DispatchItem;
-import com.smartprocessrefusao.erprefusao.entities.Material;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
+import com.smartprocessrefusao.erprefusao.entities.Product;
+import com.smartprocessrefusao.erprefusao.entities.PK.DispatchItemPK;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloy;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyFootage;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyPol;
@@ -31,8 +33,8 @@ import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionOutGoing;
 import com.smartprocessrefusao.erprefusao.projections.DispatchReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.DispatchItemRepository;
 import com.smartprocessrefusao.erprefusao.repositories.DispatchRepository;
-import com.smartprocessrefusao.erprefusao.repositories.MaterialRepository;
 import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
+import com.smartprocessrefusao.erprefusao.repositories.ProductRepository;
 import com.smartprocessrefusao.erprefusao.repositories.TicketRepository;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
@@ -42,7 +44,7 @@ public class DispatchService {
 
 	@Autowired
 	private DispatchRepository dispatchRepository;
-	
+
 	@Autowired
 	private DispatchItemRepository dispatchItemRepository;
 
@@ -50,147 +52,180 @@ public class DispatchService {
 	private PartnerRepository partnerRepository;
 
 	@Autowired
-	private MaterialRepository materialRepository;
+	private ProductRepository productRepository;
 
 	@Autowired
 	private TicketRepository ticketRepository;
 
-
 	@Transactional
 	public DispatchDTO insert(DispatchDTO dto) {
 
-		Long numTicket = java.util.Optional.ofNullable(dto.getNumTicket())
+		// 1. Validação de número de ticket
+		Long numTicket = Optional.ofNullable(dto.getNumTicket())
 				.orElseThrow(() -> new IllegalArgumentException("O número do ticket é obrigatório."));
-
-		// 2. VALIDAÇÃO DE UNICIDADE (sem 'if' explícito)
-		// Se o repositório encontrar um ticket com esse numTicket, lança uma exceção.
 		ticketRepository.findByNumTicket(numTicket).ifPresent(e -> {
-			throw new IllegalArgumentException(
-					String.format("O número de ticket '%d' já existe no sistema.", numTicket));
+			throw new IllegalArgumentException("O número de ticket '" + numTicket + "' já existe no sistema.");
 		});
 
-		// 1. VALIDAÇÃO DE NEGÓCIO: A soma das quantidades dos itens não pode exceder o
-		// Net Weight.
-		BigDecimal totalItemsQuantity = calculateAndValidateItemQuantities(dto);
-
+		// 2. Validação de soma das quantidades
+		BigDecimal totalItemsQuantity = calculateTotalItemQuantity(dto);
 		if (dto.getNetWeight() != null && totalItemsQuantity.compareTo(dto.getNetWeight()) > 0) {
 			throw new IllegalArgumentException("A soma das quantidades dos itens (" + totalItemsQuantity
 					+ ") não pode ultrapassar o Peso Líquido (Net Weight) do ticket (" + dto.getNetWeight() + ").");
 		}
 
-		// 2. Inicializa o Cache (para evitar NonUniqueObjectException com
-		// Partner/Material)
+		// 3. Mapeamento DTO → Entidade
+		Dispatch entity = new Dispatch();
+		copyDtoToEntity(dto, entity);
+		entity = dispatchRepository.save(entity);
+
+		// 4. Itens
 		Map<Long, Partner> partnerCache = new HashMap<>();
-		Map<Long, Material> materialCache = new HashMap<>();
+		Map<Long, Product> productCache = new HashMap<>();
+		entity.getDispatchItems().clear();
 
-		// 3. Mapear DTO para a entidade principal
-		Dispatch newDispatch = new Dispatch();
-		copyDispatchDtoToEntity(dto, newDispatch);
-
-		// 4. Persistir o Dispatch principal para obter o ID gerado
-		newDispatch = dispatchRepository.save(newDispatch);
-
-		// 5. Iterar sobre os DTOs de itens e configurar as entidades.
 		if (dto.getDispatchItems() != null) {
-
-			newDispatch.getDispatchItems().clear();
-
-			// Necessário para a unicidade do item, pois a PK é (ID, Partner, Material,
-			// Sequência)
-			Long sequenceCounter = 1L;
-
+			Integer sequence = 1;
 			for (DispatchItemDTO itemDto : dto.getDispatchItems()) {
 
-				DispatchItem itemEntity = new DispatchItem();
+				DispatchItem item = new DispatchItem();
 
-				// 5a. Obter instâncias gerenciadas do Cache (Partner/Material)
-				Long partnerId = itemDto.getPartnerId();
-				if (partnerId == null) {
-					throw new ResourceNotFoundException("Partner ID é obrigatório para a PK do Item.");
-				}
-				Partner partner = partnerCache.computeIfAbsent(partnerId, id -> partnerRepository.getReferenceById(id));
+				Long partnerId = Optional.ofNullable(itemDto.getPartnerId())
+						.orElseThrow(() -> new ResourceNotFoundException("Partner ID é obrigatório."));
 
-				Long materialCode = itemDto.getMaterialCode();
-				if (materialCode == null) {
-					throw new ResourceNotFoundException("Material CODE é obrigatório para a PK do Item.");
-				}
-				Material material = materialCache.computeIfAbsent(materialCode,
-						id -> materialRepository.findByMaterialCode(materialCode).orElseThrow(
-								() -> new ResourceNotFoundException("Material não encontrado para o code: " + materialCode)));
+				Partner partner = partnerCache.computeIfAbsent(partnerId, id -> partnerRepository.findById(id)
+						.orElseThrow(() -> new ResourceNotFoundException("Partner não encontrado: id = " + id)));
 
-				// 5b. Configurar a chave composta (PK) e copiar os dados.
-				copyItemDtoToItemEntity(itemDto, itemEntity, newDispatch, partner, material, sequenceCounter
+				Long productCode = Optional.ofNullable(itemDto.getProductCode())
+						.orElseThrow(() -> new ResourceNotFoundException("Código do product é obrigatório."));
 
-				);
+				Product product = productCache.computeIfAbsent(productCode,
+						id -> productRepository.findByProductCode(productCode)
+								.orElseThrow(() -> new ResourceNotFoundException(
+										"Product não encontrado para o code: " + productCode)));
 
-				// Adiciona o item à coleção.
-				newDispatch.getDispatchItems().add(itemEntity);
-
-				sequenceCounter++;
+				copyItemDtoToEntity(itemDto, item, entity, partner, product, sequence);
+				entity.getDispatchItems().add(item);
+				sequence++;
 			}
 		}
 
-		return new DispatchDTO(newDispatch);
+		return new DispatchDTO(entity);
 	}
 
 	@Transactional
 	public DispatchDTO updateByNumTicket(Long numTicket, DispatchDTO dto) {
-		Dispatch entity = dispatchRepository.findByNumTicket(numTicket)
-				.orElseThrow(() -> new ResourceNotFoundException("Dispatch não encontrado para atualização, ID: " + numTicket));
 
-		// 2. VALIDAÇÃO DE UNICIDADE DO numTicket (Herdado de Ticket)
-		// a) Garante que o numTicket do DTO não é nulo e obtém o valor
+		Dispatch entity = dispatchRepository.findByNumTicket(numTicket).orElseThrow(
+				() -> new ResourceNotFoundException("Dispatch não encontrado para atualização, ID: " + numTicket));
+
+		/*
+		 * ===================================================== 1️⃣ VALIDAÇÃO DE
+		 * UNICIDADE DO NUMTICKET =====================================================
+		 */
 		Long newNumTicket = Optional.ofNullable(dto.getNumTicket())
 				.orElseThrow(() -> new IllegalArgumentException("O número do ticket é obrigatório."));
 
+		final Long entityId = entity.getId();
+
 		ticketRepository.findByNumTicket(newNumTicket).ifPresent(existing -> {
-			if (!existing.getId().equals(entity.getId())) {
+			if (!existing.getId().equals(entityId)) {
 				throw new IllegalArgumentException(
 						String.format("O número de ticket '%d' já está em uso por outro registro.", newNumTicket));
 			}
 		});
 
-		// 1. VALIDAÇÃO DE NEGÓCIO: A soma das quantidades dos itens não pode exceder o
-		// Net Weight.
-		BigDecimal totalItemsQuantity = calculateAndValidateItemQuantities(dto);
+		/*
+		 * ===================================================== 2️⃣ REGRA DE NEGÓCIO —
+		 * PESO LÍQUIDO =====================================================
+		 */
+		BigDecimal totalItemsQuantity = calculateTotalItemQuantity(dto);
 
 		if (dto.getNetWeight() != null && totalItemsQuantity.compareTo(dto.getNetWeight()) > 0) {
+
 			throw new IllegalArgumentException("A soma das quantidades dos itens (" + totalItemsQuantity
-					+ ") não pode ultrapassar o Peso Líquido (Net Weight) do ticket (" + dto.getNetWeight() + ").");
+					+ ") não pode ultrapassar o Peso Líquido (" + dto.getNetWeight() + ").");
 		}
 
-		copyDispatchDtoToEntity(dto, entity);
+		/*
+		 * ===================================================== 3️⃣ ATUALIZA CAMPOS
+		 * SIMPLES =====================================================
+		 */
+		copyDtoToEntity(dto, entity);
 
+		/*
+		 * ===================================================== 4️⃣ MAPA DOS ITENS
+		 * ATUAIS (CHAVE = PK) =====================================================
+		 */
+		Map<DispatchItemPK, DispatchItem> currentItems = entity.getDispatchItems().stream()
+				.collect(Collectors.toMap(DispatchItem::getId, Function.identity()));
+
+		/*
+		 * ===================================================== 5️⃣ CACHE DE APOIO
+		 * =====================================================
+		 */
 		Map<Long, Partner> partnerCache = new HashMap<>();
-		Map<Long, Material> materialCache = new HashMap<>();
+		Map<Long, Product> productCache = new HashMap<>();
 
-		entity.getDispatchItems().clear();
-
+		/*
+		 * ===================================================== 6️⃣ PROCESSA ITENS DO
+		 * DTO (DIFF INTELIGENTE) =====================================================
+		 */
 		if (dto.getDispatchItems() != null) {
-			Long sequenceCounter = 1L;
+
+			Integer sequence = 1;
 
 			for (DispatchItemDTO itemDto : dto.getDispatchItems()) {
 
-				DispatchItem itemEntity = new DispatchItem();
+				Partner partner = partnerCache.computeIfAbsent(itemDto.getPartnerId(),
+						id -> partnerRepository.findById(id)
+								.orElseThrow(() -> new ResourceNotFoundException("Parceiro não encontrado: " + id)));
 
-				Long partnerId = itemDto.getPartnerId();
-				Partner partner = partnerCache.computeIfAbsent(partnerId,
-						pid -> partnerRepository.getReferenceById(pid));
+				Product product = productCache.computeIfAbsent(itemDto.getProductCode(),
+						id -> productRepository.findByProductCode(id)
+								.orElseThrow(() -> new ResourceNotFoundException("Product não encontrado: " + id)));
 
-				Long materialCode = itemDto.getMaterialCode();
-				Material material = materialCache.computeIfAbsent(materialCode,
-						mid -> materialRepository.getReferenceById(mid));
+				// 🔑 PK COMPLETA
+				DispatchItemPK pk = new DispatchItemPK(entity, partner, product);
+				pk.setItemSequence(sequence);
 
-				// Configura a chave composta (PK) e copia os dados.
-				copyItemDtoToItemEntity(itemDto, itemEntity, entity, partner, material, sequenceCounter);
+				DispatchItem item = currentItems.remove(pk);
 
-				entity.getDispatchItems().add(itemEntity);
+				if (item == null) {
+					// ➕ NOVO ITEM
+					item = new DispatchItem();
+					item.setId(pk);
+					copyItemDtoToEntity(itemDto, item, entity, partner, product, sequence);
+					entity.getDispatchItems().add(item);
+				} else {
+					// ✏️ UPDATE DE ITEM EXISTENTE
+					copyItemDtoToEntity(itemDto, item, entity, partner, product, sequence);
+				}
 
-				sequenceCounter++;
+				sequence++;
 			}
 		}
 
-		return new DispatchDTO(dispatchRepository.save(entity));
+		/*
+		 * ===================================================== 7️⃣ REMOVE ORPHANS
+		 * (SEGURANÇA TOTAL) =====================================================
+		 */
+		for (DispatchItem orphan : currentItems.values()) {
+			entity.getDispatchItems().remove(orphan);
+		}
+
+		/*
+		 * ===================================================== 8️⃣ SALVA (CASCADE +
+		 * ORPHAN OK) =====================================================
+		 */
+		entity = dispatchRepository.save(entity);
+
+		/*
+		 * ===================================================== 9️⃣ ATUALIZA ESTOQUE
+		 * =====================================================
+		 */
+
+		return new DispatchDTO(entity);
 	}
 
 	@Transactional(propagation = Propagation.SUPPORTS)
@@ -207,20 +242,20 @@ public class DispatchService {
 
 	// --- MÉTODOS AUXILIARES ---
 
-	private void copyDispatchDtoToEntity(DispatchDTO dto, Dispatch entity) {
+	private void copyDtoToEntity(DispatchDTO dto, Dispatch entity) {
 		entity.setNumTicket(Long.valueOf(dto.getNumTicket()));
 		entity.setDateTicket(dto.getDateTicket());
 		entity.setNumberPlate(dto.getNumberPlate().toUpperCase());
 		entity.setNetWeight(dto.getNetWeight());
 	}
 
-	private void copyItemDtoToItemEntity(DispatchItemDTO itemDto, DispatchItem itemEntity, Dispatch parentDispatch,
-			Partner partner, Material material, Long itemSequence) {
+	private void copyItemDtoToEntity(DispatchItemDTO itemDto, DispatchItem itemEntity, Dispatch dispatch,
+			Partner partner, Product product, Integer itemSequence) {
 
 		// --- 1. SETA OS COMPONENTES DA CHAVE COMPOSTA (PK) ---
-		itemEntity.getId().setDispatch(parentDispatch);
+		itemEntity.getId().setDispatch(dispatch);
 		itemEntity.getId().setPartner(partner);
-		itemEntity.getId().setMaterial(material);
+		itemEntity.getId().setProduct(product);
 		itemEntity.getId().setItemSequence(itemSequence); // Novo campo sequencial
 
 		// --- 2. SETA OUTROS ATRIBUTOS (Dados Simples) ---
@@ -263,78 +298,47 @@ public class DispatchService {
 
 	}
 
+	private BigDecimal calculateTotalItemQuantity(DispatchDTO dto) {
+		if (dto.getDispatchItems() == null)
+			return BigDecimal.ZERO;
+
+		return dto.getDispatchItems().stream().map(i -> Optional.ofNullable(i.getQuantity()).orElse(BigDecimal.ZERO))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
 	// REPORT
 	@Transactional(readOnly = true)
 	public Page<DispatchReportDTO> findDetails(
-			Long dispatchId,
-			Long numTicketId,
+			Long dispatchId, 
+			Long numTicketId, 
 			LocalDate startDate,
-	        LocalDate endDate,
-	        Long partnerId,
-			String productDescription,
-			Long productCode,
-	        Pageable pageable) {
+			LocalDate endDate, 
+			Long partnerId, 
+			String productDescription, 
+			Long productCode, 
+			Pageable pageable) {
 
-	    Page<DispatchReportProjection> page =
-	            dispatchRepository.reportDispatch(
-	            		numTicketId,
-	                    startDate,
-	                    endDate,
-	                    pageable
-	            );
+		Page<DispatchReportProjection> page = dispatchRepository.reportDispatch(
+				numTicketId, 
+				startDate, 
+				endDate,
+				pageable);
 
-		List<Long> dispatchIds = page.stream()
-	            .map(DispatchReportProjection::getDispatchId)
-	            .toList();
+		List<Long> dispatchIds = page.stream().map(DispatchReportProjection::getDispatchId).toList();
 
-	    Map<Long, List<DispatchItemReportDTO>> itemsMap =
-	            dispatchItemRepository.findItemsByDispatchIds(
-	            		dispatchIds,
-	            		numTicketId,
-	            		startDate,
-	            		endDate,
-	            		partnerId,
-	            		productDescription,
-	            		productCode)
-	                    .stream()
-	                    .map(p -> new DispatchItemReportDTO(p))
-	                    .collect(Collectors.groupingBy(DispatchItemReportDTO::getDispatchId));
+		Map<Long, List<DispatchItemReportDTO>> itemsMap = dispatchItemRepository
+				.findItemsByDispatchIds(dispatchIds, 
+						numTicketId, 
+						startDate, 
+						endDate, 
+						partnerId, 
+						productDescription,
+						productCode)
+				.stream().map(p -> new DispatchItemReportDTO(p))
+				.collect(Collectors.groupingBy(DispatchItemReportDTO::getDispatchId));
 
-	    return page.map(p -> new DispatchReportDTO(
-	    		p.getDispatchId(),
-	    		p.getNumTicket(),
-	            p.getDateTicket(),
-	            p.getNumberPlate(),
-	            p.getNetWeight(),
-	            itemsMap.getOrDefault(p.getDispatchId(), List.of())
-	    ));
+		return page.map(p -> new DispatchReportDTO(p.getDispatchId(), p.getNumTicketId(), p.getDateTicket(),
+				p.getNumberPlate(), p.getNetWeight(), itemsMap.getOrDefault(p.getDispatchId(), List.of())));
 	}
-	
-	/**
-	 * Calcula a soma total das quantidades dos itens e valida o formato. * @param
-	 * dto O DispatchDTO contendo a lista de DispatchItemDTOs.
-	 * 
-	 * @return A soma total das quantidades dos itens como BigDecimal.
-	 */
-	private BigDecimal calculateAndValidateItemQuantities(DispatchDTO dto) {
-		if (dto.getDispatchItems() == null || dto.getDispatchItems().isEmpty()) {
-			return BigDecimal.ZERO;
-		}
 
-		BigDecimal totalQuantity = BigDecimal.ZERO;
-
-		for (DispatchItemDTO itemDto : dto.getDispatchItems()) {
-
-			BigDecimal itemQuantity = itemDto.getQuantity();
-
-			if (itemQuantity == null) {
-
-				itemQuantity = BigDecimal.ZERO;
-			}
-
-			totalQuantity = totalQuantity.add(itemQuantity);
-		}
-
-		return totalQuantity;
-	}
 }

@@ -92,9 +92,7 @@ INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_i
 INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (1003, 'PERFIL PINTADO', 'SCRAP', 1, 1, 1);
 INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (2001, 'GLP - GAS LIQUEFEITO',  'SUPPLIES', 1, 2, 2);
 INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (2002, 'FILTRO - CAIXA FILTRO', 'SUPPLIES', 1, 2, 2);
-INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (3001, 'TARUGO DE ALUMINIO', 'FINISHED_PRODUCTS', 1, 3, 3);
-INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (3002, 'TARUGO DE ALUMINIO',  'FINISHED_PRODUCTS', 1, 3, 3);
-INSERT INTO tb_material (material_code, description,  type, unit_id, tax_class_id, material_group_id) VALUES (3003, 'TARUGO DE ALUMINIO',  'FINISHED_PRODUCTS', 1, 3, 3);
+
 
 --TB_TICKET
 --INSERT INTO tb_ticket (num_ticket, date_ticket, number_plate, net_weight) VALUES (34950,'2022-07-25', 'ABC-1245', 15000);

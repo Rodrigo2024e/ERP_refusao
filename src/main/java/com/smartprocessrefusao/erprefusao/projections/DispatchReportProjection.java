@@ -7,7 +7,7 @@ public interface DispatchReportProjection {
 
 	Long getDispatchId();
 
-	Long getNumTicket();
+	Long getNumTicketId();
 
 	LocalDate getDateTicket();
 
