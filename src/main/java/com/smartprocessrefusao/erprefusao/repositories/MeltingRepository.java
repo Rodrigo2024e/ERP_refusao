@@ -23,6 +23,9 @@ public interface MeltingRepository extends JpaRepository<Melting, Long> {
     		m.id AS meltingId,
             m.dateMelting AS dateMelting,
             m.numberMelting AS numberMelting,
+            m.alloy As alloy,
+            m.alloyPol As alloyPol,
+            m.alloyFootage As alloyFootage,
             
             p.id AS partnerId,
             p.name AS partnerName,
@@ -38,12 +41,8 @@ public interface MeltingRepository extends JpaRepository<Melting, Long> {
             m.startOfFurnaceToFurnaceMetalTransfer AS startOfFurnaceToFurnaceMetalTransfer,
             m.endOfFurnaceToFurnaceMetalTransfer AS endOfFurnaceToFurnaceMetalTransfer,
 
-            m.startOfFurnaceTapping AS startOfFurnaceTapping,
-            m.endOfFurnaceTapping AS endOfFurnaceTapping,
-
             m.totalChargingTime AS totalChargingTime,
             m.totalTransferTime AS totalTransferTime,
-            m.totalTappingTime AS totalTappingTime,
             m.totalCycleTime AS totalCycleTime,
 
             m.observation AS observation

@@ -1,7 +1,6 @@
 package com.smartprocessrefusao.erprefusao.resources;
 
 import java.net.URI;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +26,6 @@ public class ReceiptItemResource {
 
     @Autowired
     private ReceiptItemService itemService;
-
-    // --- BUSCA GERAL (mantido global, mas idealmente seria findByReceiptId) ---
-    @GetMapping
-    public ResponseEntity<List<ReceiptItemDTO>> findAll() {
-        List<ReceiptItemDTO> list = itemService.findAll();
-        return ResponseEntity.ok(list);
-    }
-    
 
     // --- BUSCA POR CHAVE COMPOSTA ---
 

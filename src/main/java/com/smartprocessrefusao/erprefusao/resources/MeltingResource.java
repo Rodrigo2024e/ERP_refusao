@@ -2,7 +2,6 @@ package com.smartprocessrefusao.erprefusao.resources;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,13 +32,6 @@ public class MeltingResource {
 
 	@Autowired
 	private MeltingService meltingService;
-
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-	@GetMapping
-	public ResponseEntity<List<MeltingDTO>> findAll() {
-		List<MeltingDTO> list = meltingService.findAll();
-		return ResponseEntity.ok().body(list);
-	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@GetMapping(value = "/{numberMelting}")

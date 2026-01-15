@@ -11,6 +11,12 @@ public interface MeltingProjection {
 	LocalDate getDateMelting();
 
 	Long getNumberMelting();
+	
+	String getAlloy();
+	
+	String getAlloyPol();
+	
+	String getAlloyFootage();
 
 	Long getPartnerId();
 
@@ -30,15 +36,9 @@ public interface MeltingProjection {
 
 	LocalDateTime getEndOfFurnaceToFurnaceMetalTransfer();
 
-	LocalDateTime getStartOfFurnaceTapping();
-
-	LocalDateTime getEndOfFurnaceTapping();
-
 	Duration getTotalChargingTime();
 
 	Duration getTotalTransferTime();
-
-	Duration getTotalTappingTime();
 
 	Duration getTotalCycleTime();
 

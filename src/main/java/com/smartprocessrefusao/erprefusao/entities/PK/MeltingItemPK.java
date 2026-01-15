@@ -20,7 +20,7 @@ public class MeltingItemPK implements Serializable {
 	private Melting melting;
 
 	@ManyToOne
-	@JoinColumn(name = "material_code")
+	@JoinColumn(name = "material_id")
 	private Material material;
 
 	@Column(name = "ITEM_SEQUENCE")

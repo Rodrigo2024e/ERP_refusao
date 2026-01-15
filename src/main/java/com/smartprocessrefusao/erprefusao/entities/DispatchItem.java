@@ -1,5 +1,6 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -19,7 +20,8 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_dispatch_item")
-public class DispatchItem {
+public class DispatchItem implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	private DispatchItemPK id = new DispatchItemPK();
@@ -45,10 +47,9 @@ public class DispatchItem {
 	public DispatchItem() {
 	}
 
-	public DispatchItem(Dispatch dispatch, Partner partner, Product product, String documentNumber,
-			BigDecimal quantity, BigDecimal price, BigDecimal totalValue, String observation,
-			TypeTransactionOutGoing typeDispatch, AluminumAlloy alloy, AluminumAlloyPol alloyPol,
-			AluminumAlloyFootage alloyFootage) {
+	public DispatchItem(Dispatch dispatch, Partner partner, Product product, String documentNumber, BigDecimal quantity,
+			BigDecimal price, BigDecimal totalValue, String observation, TypeTransactionOutGoing typeDispatch,
+			AluminumAlloy alloy, AluminumAlloyPol alloyPol, AluminumAlloyFootage alloyFootage) {
 		id.setDispatch(dispatch);
 		id.setPartner(partner);
 		id.setProduct(product);
@@ -61,16 +62,6 @@ public class DispatchItem {
 		this.alloy = alloy;
 		this.alloyPol = alloyPol;
 		this.alloyFootage = alloyFootage;
-	}
-
-	@PrePersist
-	@PreUpdate
-	private void calculateTotalValue() {
-		if (quantity != null && price != null) {
-			totalValue = quantity.multiply(price);
-		} else {
-			totalValue = BigDecimal.ZERO;
-		}
 	}
 
 	public DispatchItemPK getId() {
@@ -151,6 +142,16 @@ public class DispatchItem {
 
 	public void setAlloyFootage(AluminumAlloyFootage alloyFootage) {
 		this.alloyFootage = alloyFootage;
+	}
+
+	@PrePersist
+	@PreUpdate
+	private void calculateTotalValue() {
+		if (quantity != null && price != null) {
+			totalValue = quantity.multiply(price);
+		} else {
+			totalValue = BigDecimal.ZERO;
+		}
 	}
 
 	@Override

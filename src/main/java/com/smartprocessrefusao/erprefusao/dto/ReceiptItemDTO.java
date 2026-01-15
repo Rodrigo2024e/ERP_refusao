@@ -19,19 +19,18 @@ public class ReceiptItemDTO {
 
 	@NotNull(message = "Informe o id do partner")
 	private Long partnerId;
-
 	private String partnerName;
+	
+	private String documentNumber;
 
 	@NotNull(message = "Informe o tipo material")
 	private Long materialCode;
-
 	private String description;
 
 	@NotNull(message = "Campo requerido")
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal recoveryYield;
 
-	private String documentNumber;
 
 	@NotNull(message = "Informe o tipo do recebimento")
 	private String typeReceipt;

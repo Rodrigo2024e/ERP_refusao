@@ -20,16 +20,17 @@ import com.smartprocessrefusao.erprefusao.dto.InventoryDTO;
 import com.smartprocessrefusao.erprefusao.entities.Inventory;
 import com.smartprocessrefusao.erprefusao.entities.InventoryItem;
 import com.smartprocessrefusao.erprefusao.entities.Material;
+import com.smartprocessrefusao.erprefusao.entities.MaterialStockBalance;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.entities.Receipt;
 import com.smartprocessrefusao.erprefusao.entities.ReceiptItem;
-import com.smartprocessrefusao.erprefusao.entities.MaterialStockBalance;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
 import com.smartprocessrefusao.erprefusao.projections.InventoryReportProjection;
 import com.smartprocessrefusao.erprefusao.repositories.InventoryRepository;
 import com.smartprocessrefusao.erprefusao.repositories.MaterialRepository;
-import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
 import com.smartprocessrefusao.erprefusao.repositories.MaterialStockBalanceRepository;
+import com.smartprocessrefusao.erprefusao.repositories.PartnerRepository;
+import com.smartprocessrefusao.erprefusao.services.exceptions.BusinessException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.DatabaseException;
 import com.smartprocessrefusao.erprefusao.services.exceptions.ResourceNotFoundException;
 
@@ -105,6 +106,7 @@ public class InventoryService {
 	/**
 	 * Cria automaticamente um registro no inventário a partir de um recebimento.
 	 */
+
 	@Transactional
 	public void insertFromReceipt(Receipt receipt) {
 		logger.info("Gerando movimentação de inventário a partir do Receipt ID: {}", receipt.getId());
@@ -117,19 +119,33 @@ public class InventoryService {
 
 		BigDecimal totalValue = BigDecimal.ZERO;
 
-		// Mapeia itens do recebimento
 		for (ReceiptItem item : receipt.getReceiptItems()) {
+
 			InventoryItem invItem = new InventoryItem();
 			invItem.setInventory(inventory);
 			invItem.setTypeReceipt(item.getTypeReceipt());
 			invItem.setItemSequence(item.getId().getItemSequence());
-			invItem.setPartner(item.getId().getPartner());
-			invItem.setMaterial(item.getId().getMaterial());
+
+			// ✅ Partner vem do ReceiptItemPK
+			Partner partner = item.getId().getPartner();
+			if (partner == null) {
+				throw new BusinessException("ReceiptItem sem Partner. Item seq: " + item.getId().getItemSequence());
+			}
+			invItem.setPartner(partner);
+
+			// ✅ Material vem do ReceiptItemPK
+			Material material = item.getId().getMaterial();
+			if (material == null) {
+				throw new BusinessException("ReceiptItem sem Material. Item seq: " + item.getId().getItemSequence());
+			}
+			invItem.setMaterial(material);
+
 			invItem.setRecoveryYield(calcRecoveryYield(item.getQuantityMco(), item.getQuantity()));
 			invItem.setQuantity(item.getQuantity());
 			invItem.setPrice(item.getPrice());
 			invItem.setTotalValue(item.getTotalValue());
 			invItem.setQuantityMco(item.getQuantityMco());
+
 			inventory.getItems().add(invItem);
 
 			totalValue = totalValue.add(item.getTotalValue());
@@ -142,6 +158,7 @@ public class InventoryService {
 	/**
 	 * Atualiza a movimentação de inventário associada a um recebimento.
 	 */
+
 	@Transactional
 	public void updateFromReceipt(Receipt receipt) {
 		logger.info("Atualizando movimentação de inventário do Receipt ID: {}", receipt.getId());
@@ -149,26 +166,41 @@ public class InventoryService {
 		Inventory inventory = inventoryRepository.findByReceipt(receipt).orElseThrow(
 				() -> new ResourceNotFoundException("Inventory entry not found for Receipt ID: " + receipt.getId()));
 
-		// 1️⃣ Reverte o saldo existente ANTES de recalcular
+		// 1️⃣ Reverte saldo anterior
 		rollbackStockBalance(inventory);
 
-		// 2️⃣ Limpa itens anteriores
+		// 2️⃣ Remove itens antigos (orphanRemoval deve estar ativo)
 		inventory.getItems().clear();
 
 		BigDecimal totalValue = BigDecimal.ZERO;
 
 		for (ReceiptItem item : receipt.getReceiptItems()) {
+
 			InventoryItem invItem = new InventoryItem();
 			invItem.setInventory(inventory);
 			invItem.setTypeReceipt(item.getTypeReceipt());
 			invItem.setItemSequence(item.getId().getItemSequence());
-			invItem.setPartner(item.getId().getPartner());
-			invItem.setMaterial(item.getId().getMaterial());
+
+			// ✅ Partner vem do ReceiptItemPK
+			Partner partner = item.getId().getPartner();
+			if (partner == null) {
+				throw new BusinessException("ReceiptItem sem Partner. Item seq: " + item.getId().getItemSequence());
+			}
+			invItem.setPartner(partner);
+
+			// ✅ Material vem do ReceiptItemPK
+			Material material = item.getId().getMaterial();
+			if (material == null) {
+				throw new BusinessException("ReceiptItem sem Material. Item seq: " + item.getId().getItemSequence());
+			}
+			invItem.setMaterial(material);
+
 			invItem.setRecoveryYield(calcRecoveryYield(item.getQuantityMco(), item.getQuantity()));
 			invItem.setQuantity(item.getQuantity());
 			invItem.setPrice(item.getPrice());
 			invItem.setTotalValue(item.getTotalValue());
 			invItem.setQuantityMco(item.getQuantityMco());
+
 			inventory.getItems().add(invItem);
 
 			totalValue = totalValue.add(item.getTotalValue());
@@ -176,10 +208,58 @@ public class InventoryService {
 
 		inventoryRepository.save(inventory);
 
+		// 3️⃣ Reaplica saldo
 		updateStockBalance(inventory);
-
 	}
 
+	/*
+	 * @Transactional public void updateFromReceipt(Receipt receipt) {
+	 * logger.info("Atualizando movimentação de inventário do Receipt ID: {}",
+	 * receipt.getId());
+	 * 
+	 * Inventory inventory = inventoryRepository.findByReceipt(receipt).orElseThrow(
+	 * () -> new
+	 * ResourceNotFoundException("Inventory entry not found for Receipt ID: " +
+	 * receipt.getId()));
+	 * 
+	 * // 1️⃣ Reverte o saldo existente ANTES de recalcular
+	 * rollbackStockBalance(inventory);
+	 * 
+	 * // 2️⃣ Limpa itens anteriores inventory.getItems().clear();
+	 * 
+	 * BigDecimal totalValue = BigDecimal.ZERO;
+	 * 
+	 * for (ReceiptItem item : receipt.getReceiptItems()) { InventoryItem invItem =
+	 * new InventoryItem(); invItem.setInventory(inventory);
+	 * invItem.setTypeReceipt(item.getTypeReceipt());
+	 * invItem.setItemSequence(item.getId().getItemSequence());
+	 * 
+	 * Partner partner =
+	 * partnerRepository.findById(invItem.getPartner().getId()).orElseThrow( () ->
+	 * new ResourceNotFoundException("Partner not found: " + invItem.getPartner()));
+	 * item.getId().setPartner(partner);
+	 * 
+	 * Material material =
+	 * materialRepository.findByMaterialCode(invItem.getMaterial().getMaterialCode()
+	 * ).orElseThrow( () -> new ResourceNotFoundException("Material not found: " +
+	 * invItem.getMaterial().getMaterialCode()));
+	 * item.getId().setMaterial(material);
+	 * 
+	 * invItem.setRecoveryYield(calcRecoveryYield(item.getQuantityMco(),
+	 * item.getQuantity())); invItem.setQuantity(item.getQuantity());
+	 * invItem.setPrice(item.getPrice());
+	 * invItem.setTotalValue(item.getTotalValue());
+	 * invItem.setQuantityMco(item.getQuantityMco());
+	 * inventory.getItems().add(invItem);
+	 * 
+	 * totalValue = totalValue.add(item.getTotalValue()); }
+	 * 
+	 * inventoryRepository.save(inventory);
+	 * 
+	 * updateStockBalance(inventory);
+	 * 
+	 * }
+	 */
 	/**
 	 * Exclui a movimentação de inventário vinculada a um recebimento.
 	 */
@@ -219,13 +299,14 @@ public class InventoryService {
 			item.setTotalValue(itemDto.getTotalValue());
 			item.setQuantityMco(itemDto.getQuantityMco());
 
-			Material material = materialRepository.findById(itemDto.getMaterial().getMaterialCode()).orElseThrow(
-					() -> new ResourceNotFoundException("Material not found: " + itemDto.getMaterial().getMaterialCode()));
+			Material material = materialRepository.findByMaterialCode(itemDto.getMaterial().getMaterialCode())
+					.orElseThrow(() -> new ResourceNotFoundException(
+							"Material not found: " + itemDto.getMaterial().getMaterialCode()));
 
 			item.setMaterial(material);
 
-			Partner partner = partnerRepository.findById(itemDto.getPartner().getId()).orElseThrow(
-					() -> new ResourceNotFoundException("Material not found: " + itemDto.getMaterial().getMaterialCode()));
+			Partner partner = partnerRepository.findById(itemDto.getPartner().getId())
+					.orElseThrow(() -> new ResourceNotFoundException("Partner not found: " + itemDto.getPartner()));
 
 			item.setPartner(partner);
 
@@ -264,8 +345,8 @@ public class InventoryService {
 				BigDecimal finalBalance = stock.getFinalBalance() != null ? stock.getFinalBalance() : BigDecimal.ZERO;
 
 				if (finalBalance.subtract(qty).compareTo(BigDecimal.ZERO) < 0) {
-					throw new IllegalArgumentException("Saldo insuficiente para o material " + material.getMaterialCode()
-							+ ". Saldo atual: " + finalBalance + " | Saída: " + qty);
+					throw new IllegalArgumentException("Saldo insuficiente para o material "
+							+ material.getMaterialCode() + ". Saldo atual: " + finalBalance + " | Saída: " + qty);
 				}
 			}
 

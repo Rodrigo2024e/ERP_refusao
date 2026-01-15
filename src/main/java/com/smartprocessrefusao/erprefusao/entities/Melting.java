@@ -8,6 +8,9 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.smartprocessrefusao.erprefusao.audit.Auditable;
+import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloy;
+import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyFootage;
+import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyPol;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionOutGoing;
 import com.smartprocessrefusao.erprefusao.projections.IdProjection;
 
@@ -34,12 +37,20 @@ public class Melting extends Auditable<String> implements IdProjection<Long> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	private LocalDate dateMelting;
 
 	@Column(name = "numberMelting", unique = true)
 	private Long numberMelting;
-	
+
+	@Enumerated(EnumType.STRING)
+	private AluminumAlloy alloy;
+
+	@Enumerated(EnumType.STRING)
+	private AluminumAlloyPol alloyPol;
+
+	@Enumerated(EnumType.STRING)
+	private AluminumAlloyFootage alloyFootage;
 
 	@Enumerated(EnumType.STRING)
 	private TypeTransactionOutGoing typeTransaction;
@@ -47,11 +58,8 @@ public class Melting extends Auditable<String> implements IdProjection<Long> {
 	private LocalDateTime endOfFurnaceCharging;
 	private LocalDateTime startOfFurnaceToFurnaceMetalTransfer;
 	private LocalDateTime endOfFurnaceToFurnaceMetalTransfer;
-	private LocalDateTime startOfFurnaceTapping;
-	private LocalDateTime endOfFurnaceTapping;
 	private Duration totalChargingTime;
 	private Duration totalTransferTime;
-	private Duration totalTappingTime;
 	private Duration totalCycleTime;
 	private String observation;
 
@@ -72,28 +80,30 @@ public class Melting extends Auditable<String> implements IdProjection<Long> {
 	public Melting() {
 	}
 
-	public Melting(Long id, LocalDate dateMelting, Long numberMelting, TypeTransactionOutGoing typeTransaction,
+	public Melting(Long id, LocalDate dateMelting, Long numberMelting, AluminumAlloy alloy, AluminumAlloyPol alloyPol,
+			AluminumAlloyFootage alloyFootage, TypeTransactionOutGoing typeTransaction,
 			LocalDateTime startOfFurnaceCharging, LocalDateTime endOfFurnaceCharging,
 			LocalDateTime startOfFurnaceToFurnaceMetalTransfer, LocalDateTime endOfFurnaceToFurnaceMetalTransfer,
-			LocalDateTime startOfFurnaceTapping, LocalDateTime endOfFurnaceTapping, Duration totalChargingTime,
-			Duration totalTransferTime, Duration totalTappingTime, Duration totalCycleTime, String observation,
+			Duration totalChargingTime, Duration totalTransferTime, Duration totalCycleTime, String observation,
 			Partner partner, Machine machine) {
 		this.id = id;
 		this.dateMelting = dateMelting;
 		this.numberMelting = numberMelting;
+		this.alloy = alloy;
+		this.alloyPol = alloyPol;
+		this.alloyFootage = alloyFootage;
 		this.typeTransaction = typeTransaction;
 		this.startOfFurnaceCharging = startOfFurnaceCharging;
 		this.endOfFurnaceCharging = endOfFurnaceCharging;
 		this.startOfFurnaceToFurnaceMetalTransfer = startOfFurnaceToFurnaceMetalTransfer;
 		this.endOfFurnaceToFurnaceMetalTransfer = endOfFurnaceToFurnaceMetalTransfer;
-		this.startOfFurnaceTapping = startOfFurnaceTapping;
-		this.endOfFurnaceTapping = endOfFurnaceTapping;
 		this.totalChargingTime = totalChargingTime;
 		this.totalTransferTime = totalTransferTime;
-		this.totalTappingTime = totalTappingTime;
+		this.totalCycleTime = totalCycleTime;
 		this.observation = observation;
 		this.partner = partner;
 		this.machine = machine;
+
 	}
 
 	public Long getId() {
@@ -118,6 +128,30 @@ public class Melting extends Auditable<String> implements IdProjection<Long> {
 
 	public void setNumberMelting(Long numberMelting) {
 		this.numberMelting = numberMelting;
+	}
+
+	public AluminumAlloy getAlloy() {
+		return alloy;
+	}
+
+	public void setAlloy(AluminumAlloy alloy) {
+		this.alloy = alloy;
+	}
+
+	public AluminumAlloyPol getAlloyPol() {
+		return alloyPol;
+	}
+
+	public void setAlloyPol(AluminumAlloyPol alloyPol) {
+		this.alloyPol = alloyPol;
+	}
+
+	public AluminumAlloyFootage getAlloyFootage() {
+		return alloyFootage;
+	}
+
+	public void setAlloyFootage(AluminumAlloyFootage alloyFootage) {
+		this.alloyFootage = alloyFootage;
 	}
 
 	public TypeTransactionOutGoing getTypeTransaction() {
@@ -160,22 +194,6 @@ public class Melting extends Auditable<String> implements IdProjection<Long> {
 		this.endOfFurnaceToFurnaceMetalTransfer = endOfFurnaceToFurnaceMetalTransfer;
 	}
 
-	public LocalDateTime getStartOfFurnaceTapping() {
-		return startOfFurnaceTapping;
-	}
-
-	public void setStartOfFurnaceTapping(LocalDateTime startOfFurnaceTapping) {
-		this.startOfFurnaceTapping = startOfFurnaceTapping;
-	}
-
-	public LocalDateTime getEndOfFurnaceTapping() {
-		return endOfFurnaceTapping;
-	}
-
-	public void setEndOfFurnaceTapping(LocalDateTime endOfFurnaceTapping) {
-		this.endOfFurnaceTapping = endOfFurnaceTapping;
-	}
-
 	public Duration getTotalChargingTime() {
 		return totalChargingTime;
 	}
@@ -190,14 +208,6 @@ public class Melting extends Auditable<String> implements IdProjection<Long> {
 
 	public void setTotalTransferTime(Duration totalTransferTime) {
 		this.totalTransferTime = totalTransferTime;
-	}
-
-	public Duration getTotalTappingTime() {
-		return totalTappingTime;
-	}
-
-	public void setTotalTappingTime(Duration totalTappingTime) {
-		this.totalTappingTime = totalTappingTime;
 	}
 
 	public Duration getTotalCycleTime() {
@@ -216,10 +226,6 @@ public class Melting extends Auditable<String> implements IdProjection<Long> {
 		this.observation = observation;
 	}
 
-	public Set<Employee> getEmployees() {
-		return employees;
-	}
-
 	public Partner getPartner() {
 		return partner;
 	}
@@ -234,6 +240,14 @@ public class Melting extends Auditable<String> implements IdProjection<Long> {
 
 	public void setMachine(Machine machine) {
 		this.machine = machine;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public Set<Employee> getEmployees() {
+		return employees;
 	}
 
 	public Set<MeltingItem> getMeltingItems() {

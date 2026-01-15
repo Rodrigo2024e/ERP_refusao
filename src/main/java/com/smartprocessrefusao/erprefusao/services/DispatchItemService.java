@@ -55,7 +55,7 @@ public class DispatchItemService {
         return new DispatchItemPK(dispatchRef, partnerRef, productRef);
     }
 
-
+    //FINDBYID
     @Transactional(readOnly = true)
     public DispatchItemDTO findById(Long dispatchId, Long partnerId, Long productCode) {
         DispatchItemPK pk = buildDispatchItemPK(dispatchId, partnerId, productCode);
@@ -66,6 +66,7 @@ public class DispatchItemService {
         return new DispatchItemDTO(entity);
     }
 
+    //INSERT
     @Transactional
     public DispatchItemDTO insert(Long parentDispatchId, DispatchItemDTO dto) {
 
@@ -101,6 +102,7 @@ public class DispatchItemService {
         return new DispatchItemDTO(entity);
     }
 
+    //UPDATE
     @Transactional
     public DispatchItemDTO update(Long dispatchId, Long partnerId, Long productCode, DispatchItemDTO dto) {
         
@@ -123,6 +125,7 @@ public class DispatchItemService {
         }
     }
 
+    //DELETE
     @Transactional
     public void delete(Long dispatchId, Long partnerId, Long productCode) {
         DispatchItemPK pk = buildDispatchItemPK(dispatchId, partnerId, productCode);

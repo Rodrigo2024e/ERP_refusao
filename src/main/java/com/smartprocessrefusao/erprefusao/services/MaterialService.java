@@ -50,13 +50,13 @@ public class MaterialService {
 	}
 
 	@Transactional(readOnly = true)
-	public MaterialDTO findByCode(Long code) {
+	public MaterialDTO findByCode(Long materialCode) {
 		try {
-			Optional<Material> obj = materialRepository.findByMaterialCode(code);
+			Optional<Material> obj = materialRepository.findByMaterialCode(materialCode);
 			Material entity = obj.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
 			return new MaterialDTO(entity);
 		} catch (EntityNotFoundException e) {
-			throw new ResourceNotFoundException("Id not found " + code);
+			throw new ResourceNotFoundException("Id not found " + materialCode);
 		}
 
 	}

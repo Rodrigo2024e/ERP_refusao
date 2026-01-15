@@ -26,10 +26,10 @@ public class MeltingItem {
 	public MeltingItem() {
 	}
 
-	public MeltingItem(Melting melting, Material materialCode, BigDecimal quantity, BigDecimal averagePrice,
+	public MeltingItem(Melting melting, Material material, BigDecimal quantity, BigDecimal averagePrice,
 			BigDecimal totalValue, BigDecimal averageRecoveryYield, BigDecimal quantityMco, BigDecimal slagWeight) {
 		id.setMelting(melting);
-		id.setMaterial(materialCode);
+		id.setMaterial(material);
 		this.quantity = quantity;
 		this.averagePrice = averagePrice;
 		this.totalValue = totalValue;

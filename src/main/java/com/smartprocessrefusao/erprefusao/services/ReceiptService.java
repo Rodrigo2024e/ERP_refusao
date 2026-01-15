@@ -58,6 +58,7 @@ public class ReceiptService {
 	@Autowired
 	private InventoryService inventoryService;
 
+	//INSERT
 	@Transactional
 	public ReceiptDTO insert(ReceiptDTO dto) {
 
@@ -86,7 +87,7 @@ public class ReceiptService {
 		entity.getReceiptItems().clear();
 
 		if (dto.getReceiptItems() != null) {
-			Integer sequence = 1;
+			int sequence = 1;
 			for (ReceiptItemDTO itemDto : dto.getReceiptItems()) {
 
 				ReceiptItem item = new ReceiptItem();
@@ -100,9 +101,9 @@ public class ReceiptService {
 				Long materialCode = Optional.ofNullable(itemDto.getMaterialCode())
 						.orElseThrow(() -> new ResourceNotFoundException("Código do material é obrigatório."));
 
-				Material material = materialCache.computeIfAbsent(materialCode,
-						id -> materialRepository.findByMaterialCode(materialCode).orElseThrow(
-								() -> new ResourceNotFoundException("Material não encontrado para o code: " + materialCode)));
+				Material material = materialCache.computeIfAbsent(itemDto.getMaterialCode(),
+						code -> materialRepository.findByMaterialCode(materialCode)
+								.orElseThrow(() -> new ResourceNotFoundException("Material não encontrado: " + code)));
 
 				copyItemDtoToEntity(itemDto, item, entity, partner, material, sequence);
 				entity.getReceiptItems().add(item);
@@ -110,27 +111,27 @@ public class ReceiptService {
 			}
 		}
 
-		// 5. Movimenta o estoque (entrada)
 		inventoryService.insertFromReceipt(entity);
-
 		return new ReceiptDTO(entity);
 	}
 
-	// --------------------------------------------------------------------------
-	// UPDATE
-	// --------------------------------------------------------------------------
+	/*
+	 * ===================================================== UPDATE
+	 * =====================================================
+	 */
+	
+	//UPDATE
 	@Transactional
 	public ReceiptDTO updateByNumTicket(Long numTicket, ReceiptDTO dto) {
 
-		Receipt entity = receiptRepository.findByNumTicket(numTicket).orElseThrow(
-				() -> new ResourceNotFoundException("Receipt não encontrado para atualização, ID: " + numTicket));
+		Receipt entity = receiptRepository.findByNumTicket(numTicket)
+				.orElseThrow(() -> new ResourceNotFoundException("Receipt não encontrado."));
 
 		/*
-		 * ===================================================== 1️⃣ VALIDAÇÃO DE
-		 * UNICIDADE DO NUMTICKET =====================================================
+		 * == 1️⃣ VALIDAÇÃO DE UNICIDADE DO NUMTICKET ===
 		 */
 		Long newNumTicket = Optional.ofNullable(dto.getNumTicket())
-				.orElseThrow(() -> new IllegalArgumentException("O número do ticket é obrigatório."));
+				.orElseThrow(() -> new IllegalArgumentException("Número do ticket é obrigatório."));
 
 		final Long entityId = entity.getId();
 
@@ -142,40 +143,37 @@ public class ReceiptService {
 		});
 
 		/*
-		 * ===================================================== 2️⃣ REGRA DE NEGÓCIO —
-		 * PESO LÍQUIDO =====================================================
+		 * 2️ REGRA DE NEGÓCIO — PESO LÍQUIDO
+		 * =====================================================
 		 */
 		BigDecimal totalItemsQuantity = calculateTotalItemQuantity(dto);
 
 		if (dto.getNetWeight() != null && totalItemsQuantity.compareTo(dto.getNetWeight()) > 0) {
-
 			throw new IllegalArgumentException("A soma das quantidades dos itens (" + totalItemsQuantity
 					+ ") não pode ultrapassar o Peso Líquido (" + dto.getNetWeight() + ").");
 		}
 
 		/*
-		 * ===================================================== 3️⃣ ATUALIZA CAMPOS
-		 * SIMPLES =====================================================
+		 * 3️ ATUALIZA CAMPOS SIMPLES
+		 * =====================================================
 		 */
 		copyDtoToEntity(dto, entity);
 
 		/*
-		 * ===================================================== 4️⃣ MAPA DOS ITENS
-		 * ATUAIS (CHAVE = PK) =====================================================
+		 * 4️ MAPA DOS ITENS ATUAIS (CHAVE = PK)
+		 * =====================================================
 		 */
 		Map<ReceiptItemPK, ReceiptItem> currentItems = entity.getReceiptItems().stream()
 				.collect(Collectors.toMap(ReceiptItem::getId, Function.identity()));
 
 		/*
-		 * ===================================================== 5️⃣ CACHE DE APOIO
-		 * =====================================================
+		 * 5️ CACHE DE APOIO =====================================================
 		 */
 		Map<Long, Partner> partnerCache = new HashMap<>();
 		Map<Long, Material> materialCache = new HashMap<>();
 
 		/*
-		 * ===================================================== 6️⃣ PROCESSA ITENS DO
-		 * DTO (DIFF INTELIGENTE) =====================================================
+		 * 6️ PROCESSA ITENS DO DTO (DIFF INTELIGENTE) ===============================
 		 */
 		if (dto.getReceiptItems() != null) {
 
@@ -188,8 +186,8 @@ public class ReceiptService {
 								.orElseThrow(() -> new ResourceNotFoundException("Parceiro não encontrado: " + id)));
 
 				Material material = materialCache.computeIfAbsent(itemDto.getMaterialCode(),
-						id -> materialRepository.findByMaterialCode(id)
-								.orElseThrow(() -> new ResourceNotFoundException("Material não encontrado: " + id)));
+						code -> materialRepository.findByMaterialCode(code)
+								.orElseThrow(() -> new ResourceNotFoundException("Material não encontrado: " + code)));
 
 				// 🔑 PK COMPLETA
 				ReceiptItemPK pk = new ReceiptItemPK(entity, partner, material);
@@ -213,85 +211,75 @@ public class ReceiptService {
 		}
 
 		/*
-		 * ===================================================== 7️⃣ REMOVE ORPHANS
-		 * (SEGURANÇA TOTAL) =====================================================
+		 * 7️ REMOVE ORPHANS (SEGURANÇA TOTAL) ================================
 		 */
+
 		for (ReceiptItem orphan : currentItems.values()) {
 			entity.getReceiptItems().remove(orphan);
 		}
 
 		/*
-		 * ===================================================== 8️⃣ SALVA (CASCADE +
-		 * ORPHAN OK) =====================================================
+		 * 8️ SALVA (CASCADE + ORPHAN OK)
+		 * =====================================================
 		 */
 		entity = receiptRepository.save(entity);
 
-		/*
-		 * ===================================================== 9️⃣ ATUALIZA ESTOQUE
-		 * =====================================================
-		 */
 		inventoryService.updateFromReceipt(entity);
 
+		/*
+		 * 9️ ATUALIZA ESTOQUE =====================================================
+		 */
 		return new ReceiptDTO(entity);
 	}
 
-	// --------------------------------------------------------------------------
-	// DELETE
-	// --------------------------------------------------------------------------
-	@Transactional(propagation = Propagation.REQUIRED)
+	/*
+	 * ===================================================== DELETE
+	 * =====================================================
+	 */
+	
+	//DELETE
+	@Transactional(propagation = Propagation.SUPPORTS)
 	public void delete(Long numTicket) {
-		Receipt receipt = receiptRepository.findByNumTicket(numTicket)
-				.orElseThrow(() -> new ResourceNotFoundException("Ticket não encontrado: " + numTicket));
-
+		if (!receiptRepository.existsByNumTicket(numTicket)) {
+			throw new ResourceNotFoundException("Ticket not found " + numTicket);
+		}
 		try {
-			// Remove movimento de estoque
-			inventoryService.deleteByReceipt(receipt);
-
-			// Remove o recebimento
-			receiptRepository.delete(receipt);
+			receiptRepository.deleteByNumTicket(numTicket);
 		} catch (DataIntegrityViolationException e) {
-			throw new DatabaseException("Violação de integridade ao excluir o recebimento.");
+			throw new DatabaseException("Integrity violation");
 		}
 	}
 
+	// --- MÉTODOS AUXILIARES ---
 	private void copyDtoToEntity(ReceiptDTO dto, Receipt entity) {
 		entity.setNumTicket(dto.getNumTicket());
 		entity.setDateTicket(dto.getDateTicket());
 		entity.setNumberPlate(dto.getNumberPlate() != null ? dto.getNumberPlate().toUpperCase() : null);
 		entity.setNetWeight(dto.getNetWeight());
-
 	}
 
-	private void copyItemDtoToEntity(ReceiptItemDTO dto, ReceiptItem entity, Receipt receipt, Partner partner,
-			Material material, Integer sequence) {
-		entity.getId().setReceipt(receipt);
-		entity.getId().setPartner(partner);
-		entity.getId().setMaterial(material);
-		entity.getId().setItemSequence(sequence);
+	private void copyItemDtoToEntity(ReceiptItemDTO itemDto, ReceiptItem itemEntity, Receipt receipt, Partner partner,
+			Material material, Integer itemSequence) {
 
-		entity.setRecoveryYield(dto.getRecoveryYield());
-		entity.setQuantity(dto.getQuantity());
-		entity.setPrice(dto.getPrice());
-		entity.setTotalValue(dto.getQuantity().multiply(dto.getPrice()));
-		entity.setQuantityMco(dto.getQuantity().multiply(dto.getRecoveryYield()));
-		entity.setObservation(dto.getObservation() != null ? dto.getObservation().toUpperCase() : null);
-		entity.setDocumentNumber(dto.getDocumentNumber());
+		// --- 1. SETA OS COMPONENTES DA CHAVE COMPOSTA (PK) ---
+		itemEntity.getId().setReceipt(receipt);
+		itemEntity.getId().setPartner(partner);
+		itemEntity.getId().setMaterial(material);
+		itemEntity.getId().setItemSequence(itemSequence); // Novo campo sequencial
+		
+		// --- 2. SETA OUTROS ATRIBUTOS (Dados Simples) ---
+		itemEntity.setRecoveryYield(itemDto.getRecoveryYield());
+		itemEntity.setQuantity(itemDto.getQuantity());
+		itemEntity.setPrice(itemDto.getPrice());
+		itemEntity.setQuantityMco(itemDto.getQuantity().multiply(itemDto.getRecoveryYield()));
+		itemEntity.setObservation(itemDto.getObservation() != null ? itemDto.getObservation().toUpperCase() : null);
+		itemEntity.setDocumentNumber(itemDto.getDocumentNumber());
 
-		try {
-			TypeTransactionReceipt typeReceipt = TypeTransactionReceipt.fromDescription(dto.getTypeReceipt());
-			entity.setTypeReceipt(typeReceipt);
-		} catch (
-
-		IllegalArgumentException e) {
-			throw new ResourceNotFoundException("Tipo de recebimento inválido: " + dto.getTypeReceipt());
-		}
-
-		try {
-			TypeCosts typeCosts = TypeCosts.fromDescription(dto.getTypeCosts());
-			entity.setTypeCosts(typeCosts);
-		} catch (IllegalArgumentException e) {
-			throw new ResourceNotFoundException("Tipo de custo inválido: " + dto.getTypeCosts());
-		}
+		itemEntity.setTypeReceipt(TypeTransactionReceipt.fromDescription(itemDto.getTypeReceipt()));
+		itemEntity.setTypeCosts(TypeCosts.fromDescription(itemDto.getTypeCosts()));
+		
+		BigDecimal totalValue = itemEntity.getQuantity().multiply(itemEntity.getPrice());
+		itemEntity.setTotalValue(totalValue);
 	}
 
 	private BigDecimal calculateTotalItemQuantity(ReceiptDTO dto) {
@@ -305,48 +293,37 @@ public class ReceiptService {
 	// REPORT
 	@Transactional(readOnly = true)
 	public Page<ReceiptReportDTO> findDetails(
-			Long id,
-			Long numTicketId,
-			LocalDate startDate,
-	        LocalDate endDate,
-	        Long partnerId,
-			String materialDescription,
-			Long materialCode,
-	        Pageable pageable) {
+			Long id, 
+			Long numTicketId, 
+			LocalDate startDate, 
+			LocalDate endDate,
+			Long partnerId, 
+			String materialDescription, 
+			Long materialCode, 
+			Pageable pageable) {
 
-	    Page<ReceiptReportProjection> page =
-	            receiptRepository.reportReceipt(
-	            		numTicketId,
-	                    startDate,
-	                    endDate,
-	                    pageable
-	            );
-
-		List<Long> receiptIds = page.stream()
-	            .map(ReceiptReportProjection::getReceiptId)
-	            .toList();
-
-	    Map<Long, List<ReceiptItemReportDTO>> itemsMap =
-	            receiptItemRepository.findItemsByReceiptIds(
-	            		receiptIds,
-	            		numTicketId,
-	            		startDate,
-	            		endDate,
-	            		partnerId,
-	            		materialDescription,
-	            		materialCode)
-	                    .stream()
-	                    .map(p -> new ReceiptItemReportDTO(p))
-	                    .collect(Collectors.groupingBy(ReceiptItemReportDTO::getReceiptId));
-
-	    return page.map(p -> new ReceiptReportDTO(
-	    		p.getReceiptId(),
-	    		p.getNumTicket(),
-	            p.getDateTicket(),
-	            p.getNumberPlate(),
-	            p.getNetWeight(),
-	            itemsMap.getOrDefault(p.getReceiptId(), List.of())
-	    ));
+		Page<ReceiptReportProjection> page = receiptRepository.reportReceipt(
+				numTicketId, 
+				startDate, 
+				endDate, 
+				pageable);
+		List<Long> receiptIds = page.stream().map(ReceiptReportProjection::getReceiptId).toList();
+		Map<Long, List<ReceiptItemReportDTO>> itemsMap = receiptItemRepository
+				.findItemsByReceiptIds(receiptIds, 
+						numTicketId, 
+						startDate, 
+						endDate, 
+						partnerId, 
+						materialDescription,
+						materialCode)
+				.stream().map(p -> new ReceiptItemReportDTO(p))
+				.collect(Collectors.groupingBy(ReceiptItemReportDTO::getReceiptId));
+		return page.map(p -> new ReceiptReportDTO(
+				p.getReceiptId(), 
+				p.getNumTicket(), 
+				p.getDateTicket(),
+				p.getNumberPlate(), 
+				p.getNetWeight(), 
+				itemsMap.getOrDefault(p.getReceiptId(), List.of())));
 	}
-
 }

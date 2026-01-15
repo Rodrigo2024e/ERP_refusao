@@ -57,6 +57,8 @@ public class DispatchService {
 	@Autowired
 	private TicketRepository ticketRepository;
 
+	
+	//INSERT
 	@Transactional
 	public DispatchDTO insert(DispatchDTO dto) {
 
@@ -113,6 +115,7 @@ public class DispatchService {
 		return new DispatchDTO(entity);
 	}
 
+	//UPDATE
 	@Transactional
 	public DispatchDTO updateByNumTicket(Long numTicket, DispatchDTO dto) {
 
@@ -120,8 +123,8 @@ public class DispatchService {
 				() -> new ResourceNotFoundException("Dispatch não encontrado para atualização, ID: " + numTicket));
 
 		/*
-		 * ===================================================== 1️⃣ VALIDAÇÃO DE
-		 * UNICIDADE DO NUMTICKET =====================================================
+		 * == 1️⃣ VALIDAÇÃO DE
+		 * UNICIDADE DO NUMTICKET ===
 		 */
 		Long newNumTicket = Optional.ofNullable(dto.getNumTicket())
 				.orElseThrow(() -> new IllegalArgumentException("O número do ticket é obrigatório."));
@@ -136,40 +139,39 @@ public class DispatchService {
 		});
 
 		/*
-		 * ===================================================== 2️⃣ REGRA DE NEGÓCIO —
+		 * 2️ REGRA DE NEGÓCIO —
 		 * PESO LÍQUIDO =====================================================
 		 */
 		BigDecimal totalItemsQuantity = calculateTotalItemQuantity(dto);
-
+		
 		if (dto.getNetWeight() != null && totalItemsQuantity.compareTo(dto.getNetWeight()) > 0) {
-
 			throw new IllegalArgumentException("A soma das quantidades dos itens (" + totalItemsQuantity
 					+ ") não pode ultrapassar o Peso Líquido (" + dto.getNetWeight() + ").");
 		}
 
 		/*
-		 * ===================================================== 3️⃣ ATUALIZA CAMPOS
+		 * 3️ ATUALIZA CAMPOS
 		 * SIMPLES =====================================================
 		 */
 		copyDtoToEntity(dto, entity);
 
 		/*
-		 * ===================================================== 4️⃣ MAPA DOS ITENS
+		 *  4️ MAPA DOS ITENS
 		 * ATUAIS (CHAVE = PK) =====================================================
 		 */
 		Map<DispatchItemPK, DispatchItem> currentItems = entity.getDispatchItems().stream()
 				.collect(Collectors.toMap(DispatchItem::getId, Function.identity()));
 
 		/*
-		 * ===================================================== 5️⃣ CACHE DE APOIO
+		 * 5️ CACHE DE APOIO
 		 * =====================================================
 		 */
 		Map<Long, Partner> partnerCache = new HashMap<>();
 		Map<Long, Product> productCache = new HashMap<>();
 
 		/*
-		 * ===================================================== 6️⃣ PROCESSA ITENS DO
-		 * DTO (DIFF INTELIGENTE) =====================================================
+		 *  6️ PROCESSA ITENS DO
+		 * DTO (DIFF INTELIGENTE) ===============================
 		 */
 		if (dto.getDispatchItems() != null) {
 
@@ -207,27 +209,27 @@ public class DispatchService {
 		}
 
 		/*
-		 * ===================================================== 7️⃣ REMOVE ORPHANS
-		 * (SEGURANÇA TOTAL) =====================================================
+		 * 7️ REMOVE ORPHANS
+		 * (SEGURANÇA TOTAL) ================================
 		 */
 		for (DispatchItem orphan : currentItems.values()) {
 			entity.getDispatchItems().remove(orphan);
 		}
 
 		/*
-		 * ===================================================== 8️⃣ SALVA (CASCADE +
+		 *  8️ SALVA (CASCADE +
 		 * ORPHAN OK) =====================================================
 		 */
 		entity = dispatchRepository.save(entity);
 
 		/*
-		 * ===================================================== 9️⃣ ATUALIZA ESTOQUE
+		 * 9️ ATUALIZA ESTOQUE
 		 * =====================================================
 		 */
 
 		return new DispatchDTO(entity);
 	}
-
+	//DELETE
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public void delete(Long numTicket) {
 		if (!dispatchRepository.existsByNumTicket(numTicket)) {

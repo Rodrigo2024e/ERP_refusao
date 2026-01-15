@@ -28,6 +28,10 @@ import com.smartprocessrefusao.erprefusao.entities.Melting;
 import com.smartprocessrefusao.erprefusao.entities.MeltingItem;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.entities.PK.MeltingItemPK;
+import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloy;
+import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyFootage;
+import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyPol;
+import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionOutGoing;
 import com.smartprocessrefusao.erprefusao.projections.MeltingProjection;
 import com.smartprocessrefusao.erprefusao.repositories.EmployeeRepository;
 import com.smartprocessrefusao.erprefusao.repositories.MachineRepository;
@@ -60,10 +64,6 @@ public class MeltingService {
 
 	/* ===================== FIND ===================== */
 
-	@Transactional(readOnly = true)
-	public List<MeltingDTO> findAll() {
-		return meltingRepository.findAll().stream().map(MeltingDTO::new).toList();
-	}
 
 	@Transactional(readOnly = true)
 	public MeltingDTO findByNumberMelting(Long numberMelting) {
@@ -147,8 +147,36 @@ public class MeltingService {
 
 		entity.setDateMelting(dto.getDateMelting());
 		entity.setNumberMelting(dto.getNumberMelting());
+		
+		try {
+			AluminumAlloy alloy = AluminumAlloy.fromDescription(dto.getAlloy());
+			entity.setAlloy(alloy);
+		} catch (IllegalArgumentException e) {
+			throw new ResourceNotFoundException("Tipo de liga inválida: " + dto.getAlloy());
+		}
+
+		try {
+			AluminumAlloyPol alloyPol = AluminumAlloyPol.valueOf(dto.getAlloyPol());
+			entity.setAlloyPol(alloyPol);
+		} catch (IllegalArgumentException e) {
+			throw new ResourceNotFoundException("Tipo de polegada inválida: " + dto.getAlloyPol());
+		}
+		
+		try {
+			AluminumAlloyFootage alloyFootage = AluminumAlloyFootage.valueOf(dto.getAlloyFootage());
+			entity.setAlloyFootage(alloyFootage);
+		} catch (IllegalArgumentException e) {
+			throw new ResourceNotFoundException("Tipo de metragem inválida: " + dto.getAlloyFootage());
+		}
+
 		entity.setObservation(dto.getObservation());
-		entity.setTypeTransaction(dto.getTypeTransaction());
+		
+		try {
+			TypeTransactionOutGoing typeTransaction = TypeTransactionOutGoing.valueOf(dto.getTypeTransaction());
+			entity.setTypeTransaction(typeTransaction);
+		} catch (IllegalArgumentException e) {
+			throw new ResourceNotFoundException("Tipo de transação inválida: " + dto.getAlloyFootage());
+		}
 
 		if (dto.getPartnerId() != null) {
 			Partner partner = partnerRepository.findById(dto.getPartnerId())
@@ -166,8 +194,6 @@ public class MeltingService {
 		entity.setEndOfFurnaceCharging(dto.getEndOfFurnaceCharging());
 		entity.setStartOfFurnaceToFurnaceMetalTransfer(dto.getStartOfFurnaceToFurnaceMetalTransfer());
 		entity.setEndOfFurnaceToFurnaceMetalTransfer(dto.getEndOfFurnaceToFurnaceMetalTransfer());
-		entity.setStartOfFurnaceTapping(dto.getStartOfFurnaceTapping());
-		entity.setEndOfFurnaceTapping(dto.getEndOfFurnaceTapping());
 
 		calcTimes(entity);
 	}
@@ -231,9 +257,7 @@ public class MeltingService {
 		entity.setTotalTransferTime(calcDuration(entity.getStartOfFurnaceToFurnaceMetalTransfer(),
 				entity.getEndOfFurnaceToFurnaceMetalTransfer()));
 
-		entity.setTotalTappingTime(calcDuration(entity.getStartOfFurnaceTapping(), entity.getEndOfFurnaceTapping()));
-
-		entity.setTotalCycleTime(calcDuration(entity.getStartOfFurnaceCharging(), entity.getEndOfFurnaceTapping()));
+		entity.setTotalCycleTime(calcDuration(entity.getStartOfFurnaceCharging(), entity.getEndOfFurnaceToFurnaceMetalTransfer()));
 	}
 
 	// REPORT
@@ -287,6 +311,9 @@ public class MeltingService {
 				p.getMeltingId(), 
 				p.getDateMelting(), 
 				p.getNumberMelting(),
+				p.getAlloy(),
+				p.getAlloyPol(),
+				p.getAlloyFootage(),
 				p.getPartnerId(), 
 				p.getPartnerName(), 
 				p.getTypeTransaction(), 
@@ -296,11 +323,8 @@ public class MeltingService {
 				p.getEndOfFurnaceCharging(), 
 				p.getStartOfFurnaceToFurnaceMetalTransfer(),
 				p.getEndOfFurnaceToFurnaceMetalTransfer(), 
-				p.getStartOfFurnaceTapping(), 
-				p.getEndOfFurnaceTapping(),
 				p.getTotalChargingTime(), 
 				p.getTotalTransferTime(), 
-				p.getTotalTappingTime(), 
 				p.getTotalCycleTime(),
 				p.getObservation(), 
 				itemsMap.getOrDefault(

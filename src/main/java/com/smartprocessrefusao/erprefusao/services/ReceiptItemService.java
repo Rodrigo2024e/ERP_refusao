@@ -1,7 +1,7 @@
 package com.smartprocessrefusao.erprefusao.services;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,97 +36,92 @@ public class ReceiptItemService {
 	@Autowired
 	private MaterialRepository materialRepository;
 
-	private Receipt validateReceipt(Long receiptId) {
-		return receiptRepository.findById(receiptId)
-				.orElseThrow(() -> new ResourceNotFoundException("Receipt não encontrado: id = " + receiptId));
-	}
-
-	private Partner validatePartner(Long partnerId) {
-		return partnerRepository.findById(partnerId)
-				.orElseThrow(() -> new ResourceNotFoundException("Partner não encontrado: id = " + partnerId));
-	}
-
-	private Material validateMaterial(Long materialCode) {
-		return materialRepository.findById(materialCode)
-				.orElseThrow(() -> new ResourceNotFoundException("Material não encontrado: code = " + materialCode));
-	}
-
-	// --- MÉTODOS AUXILIARES DE PK ---
-
 	/**
-	 * Constrói a chave primária composta (ReceiptItemPK) usando referências.
+	 * Constrói a chave primária composta (DispatchItemPK) usando referências.
 	 * 
-	 * @param receiptId O ID da Receipt (parte da PK).
-	 * @param partnerId O ID do Partner (parte da PK).
-	 * @param code      do Material (parte da PK).
-	 * @return A chave ReceiptItemPK totalmente inicializada.
+	 * @param dispatchId O ID da Dispatch (parte da PK).
+	 * @param partnerId  O ID do Partner (parte da PK).
+	 * @param productId  O ID do Product (parte da PK).
+	 * @return A chave DispatchItemPK totalmente inicializada.
 	 */
 	private ReceiptItemPK buildReceiptItemPK(Long receiptId, Long partnerId, Long materialCode) {
+		Receipt receiptRef = receiptRepository.getReferenceById(receiptId);
+		Partner partnerRef = partnerRepository.getReferenceById(partnerId);
+		Material materialRef = materialRepository.getReferenceById(materialCode);
 
-		Receipt receipt = validateReceipt(receiptId);
-		Partner partner = validatePartner(partnerId);
-		Material material = validateMaterial(materialCode);
-
-		return new ReceiptItemPK(receipt, partner, material);
+		return new ReceiptItemPK(receiptRef, partnerRef, materialRef);
 	}
 
-	@Transactional(readOnly = true)
-	public List<ReceiptItemDTO> findAll() {
-		return receiptItemRepository.findAll().stream().map(ReceiptItemDTO::new).toList();
-	}
-
+	// FINDBYID
 	@Transactional(readOnly = true)
 	public ReceiptItemDTO findById(Long receiptId, Long partnerId, Long materialCode) {
 		ReceiptItemPK pk = buildReceiptItemPK(receiptId, partnerId, materialCode);
 
-		ReceiptItem entity = receiptItemRepository.findById(pk)
-				.orElseThrow(() -> new ResourceNotFoundException("ReceiptItem não encontrado para os IDs informados"));
+		Optional<ReceiptItem> obj = receiptItemRepository.findById(pk);
+		ReceiptItem entity = obj
+				.orElseThrow(() -> new ResourceNotFoundException("ReceiptItem not found for the given IDs"));
 
 		return new ReceiptItemDTO(entity);
 	}
 
+	// INSERT
 	@Transactional
 	public ReceiptItemDTO insert(Long parentReceiptId, ReceiptItemDTO dto) {
 
-		// valida coerência do ID no corpo
 		if (dto.getReceiptId() != null && !dto.getReceiptId().equals(parentReceiptId)) {
-			throw new IllegalArgumentException("ReceiptId no corpo (" + dto.getReceiptId()
-					+ ") difere do ID passado na URL (" + parentReceiptId + ")");
+			throw new IllegalArgumentException("O Receipt ID no corpo (" + dto.getReceiptId()
+					+ ") não corresponde ao ID do Path (" + parentReceiptId + ")");
 		}
 
-		// valida e monta a chave primária
+		// 2. Constrói a PK usando o ID da URL (priorizando o parentReceiptId)
+		// O buildReceiptItemPK carrega as referências de Receipt, Partner e Material.
 		ReceiptItemPK pk = buildReceiptItemPK(parentReceiptId, dto.getPartnerId(), dto.getMaterialCode());
 
+		// 3. Verifica se o item já existe (para evitar duplicidade em uma inserção de
+		// chave composta)
 		if (receiptItemRepository.existsById(pk)) {
-			throw new IllegalArgumentException("ReceiptItem já existe com (Receipt=" + parentReceiptId + ", Partner="
-					+ dto.getPartnerId() + ", Code=" + dto.getMaterialCode() + ")");
+			throw new IllegalArgumentException("Um ReceiptItem com esta chave (ReceiptID: " + parentReceiptId
+					+ ", PartnerID: " + dto.getPartnerId() + ", MaterialID: " + dto.getMaterialCode() + ") já existe.");
 		}
 
+		// 4. Cria a nova entidade e seta a PK (que está totalmente inicializada)
 		ReceiptItem entity = new ReceiptItem();
 		entity.setId(pk);
 
+		// 5. Copia os campos de dados não-PK do DTO para a Entidade
+		// Usamos o DTO original, pois o copyDtoToEntity lida apenas com os campos de
+		// dados (quantity, price, observation, etc.).
 		copyDtoToEntity(dto, entity);
 
+		// 6. Salva e retorna o DTO
 		entity = receiptItemRepository.save(entity);
 		return new ReceiptItemDTO(entity);
-
 	}
 
+	// UPDATE
 	@Transactional
 	public ReceiptItemDTO update(Long receiptId, Long partnerId, Long materialCode, ReceiptItemDTO dto) {
 
 		// 1. Constrói a PK para localizar o item existente
 		ReceiptItemPK pk = buildReceiptItemPK(receiptId, partnerId, materialCode);
 
-		ReceiptItem entity = receiptItemRepository.findById(pk)
-				.orElseThrow(() -> new ResourceNotFoundException("ReceiptItem não encontrado para update."));
+		try {
+			// 2. Obtém a referência da entidade
+			ReceiptItem entity = receiptItemRepository.getReferenceById(pk);
 
-		copyDtoToEntity(dto, entity);
+			// 3. Copia os novos dados (a PK não precisa ser alterada)
+			copyDtoToEntity(dto, entity);
 
-		entity = receiptItemRepository.save(entity);
-		return new ReceiptItemDTO(entity);
+			// 4. Salva e converte para DTO
+			entity = receiptItemRepository.save(entity);
+			return new ReceiptItemDTO(entity);
+
+		} catch (jakarta.persistence.EntityNotFoundException e) {
+			throw new ResourceNotFoundException("ReceiptItem not found for update.");
+		}
 	}
 
+	// DELETE
 	@Transactional
 	public void delete(Long receiptId, Long partnerId, Long materialCode) {
 		ReceiptItemPK pk = buildReceiptItemPK(receiptId, partnerId, materialCode);
@@ -138,49 +133,42 @@ public class ReceiptItemService {
 
 		receiptItemRepository.deleteById(pk);
 	}
+	// =======================
+	// MAPPER
+	// =======================
 
-	// --- FUNÇÃO AUXILIAR DE MAPPING ---
+	private void copyDtoToEntity(ReceiptItemDTO itemDto, ReceiptItem entity) {
 
-	private void copyDtoToEntity(ReceiptItemDTO dto, ReceiptItem entity) {
-
-		// Mapeamento dos campos que não fazem parte da PK:
+		entity.setDocumentNumber(itemDto.getDocumentNumber());
+		entity.setRecoveryYield(itemDto.getRecoveryYield());
+		entity.setQuantity(itemDto.getQuantity());
+		entity.setPrice(itemDto.getPrice());
+		entity.setObservation(itemDto.getObservation());
 
 		try {
-			TypeTransactionReceipt typeReceipt = TypeTransactionReceipt.fromDescription(dto.getTypeReceipt());
-			entity.setTypeReceipt(typeReceipt);
+			entity.setTypeReceipt(TypeTransactionReceipt.fromDescription(itemDto.getTypeReceipt()));
 		} catch (IllegalArgumentException e) {
-			throw new ResourceNotFoundException("Tipo de recebimento inválido: " + dto.getTypeReceipt());
+			throw new ResourceNotFoundException("Tipo de recebimento inválido: " + itemDto.getTypeReceipt());
 		}
 
 		try {
-			TypeCosts typeCosts = TypeCosts.fromDescription(dto.getTypeCosts());
-			entity.setTypeCosts(typeCosts);
+			entity.setTypeCosts(TypeCosts.fromDescription(itemDto.getTypeCosts()));
 		} catch (IllegalArgumentException e) {
-			throw new ResourceNotFoundException("Tipo de custo inválido: " + dto.getTypeCosts());
+			throw new ResourceNotFoundException("Tipo de custo inválido: " + itemDto.getTypeCosts());
 		}
 
-		entity.setRecoveryYield(dto.getRecoveryYield());
-		entity.setDocumentNumber(dto.getDocumentNumber());
-		entity.setQuantity(dto.getQuantity());
-		entity.setPrice(dto.getPrice());
-		entity.setObservation(dto.getObservation());
-
-		// 🧮 Recalcula o valor total (também está no @PrePersist/@PreUpdate da
-		// entidade)
-		if (dto.getQuantity() != null && dto.getPrice() != null) {
-			entity.setTotalValue(dto.getQuantity().multiply(dto.getPrice()));
+		// totalValue
+		if (itemDto.getQuantity() != null && itemDto.getPrice() != null) {
+			entity.setTotalValue(itemDto.getQuantity().multiply(itemDto.getPrice()));
 		} else {
 			entity.setTotalValue(BigDecimal.ZERO);
 		}
 
-		// 🧮 Recalcula a quantidade de metal líquido com base no rendimento da sucata
-		// (também está no @PrePersist/@PreUpdate da entidade)
-		if (dto.getQuantity() != null && dto.getRecoveryYield() != null) {
-			entity.setQuantityMco(dto.getQuantity().multiply(dto.getRecoveryYield()));
+		// quantityMco
+		if (itemDto.getQuantity() != null && itemDto.getRecoveryYield() != null) {
+			entity.setQuantityMco(itemDto.getQuantity().multiply(itemDto.getRecoveryYield()));
 		} else {
 			entity.setQuantityMco(BigDecimal.ZERO);
 		}
-
-		entity.setObservation(dto.getObservation());
 	}
 }

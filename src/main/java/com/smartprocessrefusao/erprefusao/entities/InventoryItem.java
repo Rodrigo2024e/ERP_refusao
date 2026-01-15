@@ -37,15 +37,15 @@ public class InventoryItem implements Serializable {
 	private BigDecimal quantityMco;
 
 	@ManyToOne
-	@JoinColumn(name = "inventory_id")
+	@JoinColumn(name = "inventory_id", nullable = false)
 	private Inventory inventory;
 
 	@ManyToOne
-	@JoinColumn(name = "material_id")
+	@JoinColumn(name = "material_id", nullable = false)
 	private Material material;
 
 	@ManyToOne
-	@JoinColumn(name = "partner_id")
+	@JoinColumn(name = "partner_id", nullable = false)
 	private Partner partner;
 
 	public InventoryItem() {

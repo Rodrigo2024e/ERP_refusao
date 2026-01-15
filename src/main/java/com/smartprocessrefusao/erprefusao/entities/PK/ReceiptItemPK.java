@@ -74,20 +74,18 @@ public class ReceiptItemPK implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(itemSequence, material, partner, receipt);
+		return Objects.hash(receipt, partner, material, itemSequence);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof ReceiptItemPK))
 			return false;
 		ReceiptItemPK other = (ReceiptItemPK) obj;
-		return Objects.equals(itemSequence, other.itemSequence) && Objects.equals(material, other.material)
-				&& Objects.equals(partner, other.partner) && Objects.equals(receipt, other.receipt);
+		return Objects.equals(receipt, other.receipt) && Objects.equals(partner, other.partner)
+				&& Objects.equals(material, other.material) && Objects.equals(itemSequence, other.itemSequence);
 	}
 
 }

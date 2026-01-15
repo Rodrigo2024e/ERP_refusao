@@ -1,5 +1,6 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -17,13 +18,13 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_receipt_item")
-public class ReceiptItem {
+public class ReceiptItem implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	private ReceiptItemPK id = new ReceiptItemPK();
 
 	private String documentNumber;
-
 	private BigDecimal recoveryYield;
 	private BigDecimal quantity;
 	private BigDecimal price;
@@ -141,9 +142,9 @@ public class ReceiptItem {
 	@PreUpdate
 	private void calculateTotalValue() {
 		if (quantity != null && price != null) {
-			totalValue = quantity.multiply(price);
+			this.totalValue = quantity.multiply(price);
 		} else {
-			totalValue = BigDecimal.ZERO;
+			this.totalValue = BigDecimal.ZERO;
 		}
 	}
 
@@ -156,12 +157,9 @@ public class ReceiptItem {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof ReceiptItem))
 			return false;
 		ReceiptItem other = (ReceiptItem) obj;
-		return Objects.equals(id, other.id);
+		return Objects.equals(this.id, other.id);
 	}
-
 }

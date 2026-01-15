@@ -1,7 +1,6 @@
 package com.smartprocessrefusao.erprefusao.services;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,9 +33,9 @@ public class MeltingItemService {
 				.orElseThrow(() -> new ResourceNotFoundException("Melting não encontrado: id = " + meltingId));
 	}
 
-	private Material validateMaterial(Long code) {
-		return materialRepository.findById(code)
-				.orElseThrow(() -> new ResourceNotFoundException("Material não encontrado: code = " + code));
+	private Material validateMaterial(Long materialCode) {
+		return materialRepository.findById(materialCode)
+				.orElseThrow(() -> new ResourceNotFoundException("Material não encontrado: materialCode = " + materialCode));
 	}
 
 	// --- MÉTODOS AUXILIARES DE PK ---
@@ -48,22 +47,17 @@ public class MeltingItemService {
 	 * @param code      do Material (parte da PK).
 	 * @return A chave ReceiptItemPK totalmente inicializada.
 	 */
-	private MeltingItemPK buildMeltingItemPK(Long meltingId, Long code) {
+	private MeltingItemPK buildMeltingItemPK(Long meltingId, Long materialCode) {
 
 		Melting melting = validateMelting(meltingId);
-		Material material = validateMaterial(code);
+		Material material = validateMaterial(materialCode);
 
 		return new MeltingItemPK(melting, material);
 	}
 
 	@Transactional(readOnly = true)
-	public List<MeltingItemDTO> findAll() {
-		return meltingItemRepository.findAll().stream().map(MeltingItemDTO::new).toList();
-	}
-
-	@Transactional(readOnly = true)
-	public MeltingItemDTO findById(Long meltingtId, Long code) {
-		MeltingItemPK pk = buildMeltingItemPK(meltingtId, code);
+	public MeltingItemDTO findById(Long meltingtId, Long materialCode) {
+		MeltingItemPK pk = buildMeltingItemPK(meltingtId, materialCode);
 
 		MeltingItem entity = meltingItemRepository.findById(pk)
 				.orElseThrow(() -> new ResourceNotFoundException("MeltingItem não encontrado para os IDs informados"));
@@ -99,35 +93,24 @@ public class MeltingItemService {
 	}
 
 	@Transactional
-	public MeltingItemDTO update(Long meltingId, Long code, MeltingItemDTO dto) {
+	public MeltingItemDTO update(Long meltingId, Long materialCode, MeltingItemDTO dto) {
 
-		// 1️⃣ Valida Melting
-		Melting melting = meltingRepository.findById(meltingId)
-				.orElseThrow(() -> new ResourceNotFoundException("Fusão não encontrada. ID: " + meltingId));
+		// 1. Constrói a PK para localizar o item existente
+		MeltingItemPK pk = buildMeltingItemPK(meltingId, materialCode);
 
-		// 2️⃣ Valida Material
-		Material material = materialRepository.findById(code)
-				.orElseThrow(() -> new ResourceNotFoundException("Material não encontrado. Código: " + code));
+		MeltingItem entity = meltingItemRepository.findById(pk)
+				.orElseThrow(() -> new ResourceNotFoundException("MeltingItem não encontrado para update."));
 
-		// 3️⃣ Monta PK corretamente
-		MeltingItemPK pk = new MeltingItemPK();
-		pk.setMelting(melting);
-		pk.setMaterial(material);
-
-		// 4️⃣ Busca o item da fusão
-		MeltingItem entity = meltingItemRepository.findById(pk).orElseThrow(() -> new ResourceNotFoundException(
-				"Item da fusão não encontrado para o material " + code + " na fusão " + meltingId));
-
-		// 5️⃣ Atualiza campos
 		copyDtoToEntity(dto, entity);
 
 		entity = meltingItemRepository.save(entity);
 		return new MeltingItemDTO(entity);
 	}
 
+
 	@Transactional
-	public void delete(Long meltingId, Long code) {
-		MeltingItemPK pk = buildMeltingItemPK(meltingId, code);
+	public void delete(Long meltingId, Long materialCode) {
+		MeltingItemPK pk = buildMeltingItemPK(meltingId, materialCode);
 
 		// Se a validação for necessária
 		if (!meltingItemRepository.existsById(pk)) {
