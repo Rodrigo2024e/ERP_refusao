@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -18,8 +16,8 @@ import jakarta.persistence.Table;
 public class Receipt extends Ticket implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@OneToMany(mappedBy = "id.receipt", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<ReceiptItem> receiptItems = new HashSet<>();
+	@OneToMany(mappedBy = "receipt", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ReceiptItem> receiptItems = new ArrayList<>();
 
 	@OneToMany(mappedBy = "receipt")
 	private List<Inventory> inventories = new ArrayList<>();
@@ -31,7 +29,7 @@ public class Receipt extends Ticket implements Serializable {
 		super(id, numTicket, dateTicket, numberPlate, netWeight);
 	}
 
-	public Set<ReceiptItem> getReceiptItems() {
+	public List<ReceiptItem> getReceiptItems() {
 		return receiptItems;
 	}
 

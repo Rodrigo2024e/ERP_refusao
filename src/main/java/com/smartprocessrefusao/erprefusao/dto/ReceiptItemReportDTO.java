@@ -13,13 +13,13 @@ public class ReceiptItemReportDTO {
 	private Integer itemSequence;
 	private Long partnerId;
 	private String partnerName;
+	private String documentNumber;
+	private String typeReceipt;
+	private String typeCosts;
 	private Long materialCode;
 	private String materialDescription;
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal recoveryYield;
-	private String documentNumber;
-	private String typeReceipt;
-	private String typeCosts;
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal quantity;
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
@@ -39,19 +39,19 @@ public class ReceiptItemReportDTO {
 		itemSequence = p.getItemSequence();
 		partnerId = p.getPartnerId();
 		partnerName = p.getPartnerName();
-		materialCode = p.getMaterialCode();
-		materialDescription = p.getMaterialDescription();
-		recoveryYield = p.getRecoveryYield();
 		documentNumber = p.getDocumentNumber();
 		typeReceipt = p.getTypeReceipt();
 		typeCosts = p.getTypeCosts();
+		materialCode = p.getMaterialCode();
+		materialDescription = p.getMaterialDescription();
+		recoveryYield = p.getRecoveryYield();
 		quantity = p.getQuantity();
 		price = p.getPrice();
 		totalValue = p.getTotalValue();
-		quantityMco = p.getQuantity();
+		quantityMco = p.getQuantityMco();
 		observation = p.getObservation();
 	}
-
+	
 	public Long getReceiptId() {
 		return receiptId;
 	}

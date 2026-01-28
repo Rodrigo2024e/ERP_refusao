@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.smartprocessrefusao.erprefusao.audit.Auditable;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,8 +30,8 @@ public class Address extends Auditable<String> implements Serializable {
 	private String neighborhood;
 	private String zipCode;
 
-	@ManyToOne
-	@JoinColumn(name = "city_id")
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "city_id", nullable = false)
 	private City city;
 
 	@OneToOne

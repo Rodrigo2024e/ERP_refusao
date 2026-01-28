@@ -25,7 +25,6 @@ import com.smartprocessrefusao.erprefusao.entities.Dispatch;
 import com.smartprocessrefusao.erprefusao.entities.DispatchItem;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.entities.Product;
-import com.smartprocessrefusao.erprefusao.entities.PK.DispatchItemPK;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloy;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyFootage;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyPol;
@@ -57,75 +56,71 @@ public class DispatchService {
 	@Autowired
 	private TicketRepository ticketRepository;
 
-	
-	//INSERT
+//	@Autowired
+//	private InventoryService inventoryService;
+
+	// INSERT
 	@Transactional
 	public DispatchDTO insert(DispatchDTO dto) {
 
-		// 1. Validação de número de ticket
 		Long numTicket = Optional.ofNullable(dto.getNumTicket())
 				.orElseThrow(() -> new IllegalArgumentException("O número do ticket é obrigatório."));
+
 		ticketRepository.findByNumTicket(numTicket).ifPresent(e -> {
-			throw new IllegalArgumentException("O número de ticket '" + numTicket + "' já existe no sistema.");
+			throw new IllegalArgumentException("O número de ticket '" + numTicket + "' já existe.");
 		});
 
-		// 2. Validação de soma das quantidades
 		BigDecimal totalItemsQuantity = calculateTotalItemQuantity(dto);
 		if (dto.getNetWeight() != null && totalItemsQuantity.compareTo(dto.getNetWeight()) > 0) {
 			throw new IllegalArgumentException("A soma das quantidades dos itens (" + totalItemsQuantity
-					+ ") não pode ultrapassar o Peso Líquido (Net Weight) do ticket (" + dto.getNetWeight() + ").");
+					+ ") não pode ultrapassar o Peso Líquido (" + dto.getNetWeight() + ").");
 		}
 
-		// 3. Mapeamento DTO → Entidade
 		Dispatch entity = new Dispatch();
 		copyDtoToEntity(dto, entity);
 		entity = dispatchRepository.save(entity);
 
-		// 4. Itens
-		Map<Long, Partner> partnerCache = new HashMap<>();
-		Map<Long, Product> productCache = new HashMap<>();
 		entity.getDispatchItems().clear();
 
 		if (dto.getDispatchItems() != null) {
-			Integer sequence = 1;
+
+			int sequence = 1;
+			Map<Long, Partner> partnerCache = new HashMap<>();
+			Map<Long, Product> productCache = new HashMap<>();
+
 			for (DispatchItemDTO itemDto : dto.getDispatchItems()) {
 
+				Partner partner = partnerCache.computeIfAbsent(itemDto.getPartnerId(),
+						id -> partnerRepository.findById(id)
+								.orElseThrow(() -> new ResourceNotFoundException("Partner não encontrado: " + id)));
+
+				Product product = productCache.computeIfAbsent(itemDto.getProductCode(),
+						id -> productRepository.findByProductCode(id)
+								.orElseThrow(() -> new ResourceNotFoundException("Product não encontrado: " + id)));
+
 				DispatchItem item = new DispatchItem();
+				item.setDispatch(entity);
+				item.setPartner(partner);
+				item.setProduct(product);
+				item.setItemSequence(sequence++);
 
-				Long partnerId = Optional.ofNullable(itemDto.getPartnerId())
-						.orElseThrow(() -> new ResourceNotFoundException("Partner ID é obrigatório."));
-
-				Partner partner = partnerCache.computeIfAbsent(partnerId, id -> partnerRepository.findById(id)
-						.orElseThrow(() -> new ResourceNotFoundException("Partner não encontrado: id = " + id)));
-
-				Long productCode = Optional.ofNullable(itemDto.getProductCode())
-						.orElseThrow(() -> new ResourceNotFoundException("Código do product é obrigatório."));
-
-				Product product = productCache.computeIfAbsent(productCode,
-						id -> productRepository.findByProductCode(productCode)
-								.orElseThrow(() -> new ResourceNotFoundException(
-										"Product não encontrado para o code: " + productCode)));
-
-				copyItemDtoToEntity(itemDto, item, entity, partner, product, sequence);
+				copyItemDtoToEntity(itemDto, item);
 				entity.getDispatchItems().add(item);
-				sequence++;
 			}
 		}
+
+//        inventoryService.insertFromDispatch(entity);
 
 		return new DispatchDTO(entity);
 	}
 
-	//UPDATE
+	// UPDATE
 	@Transactional
 	public DispatchDTO updateByNumTicket(Long numTicket, DispatchDTO dto) {
 
 		Dispatch entity = dispatchRepository.findByNumTicket(numTicket).orElseThrow(
-				() -> new ResourceNotFoundException("Dispatch não encontrado para atualização, ID: " + numTicket));
+				() -> new ResourceNotFoundException("Dispatch não encontrado para atualização: " + numTicket));
 
-		/*
-		 * == 1️⃣ VALIDAÇÃO DE
-		 * UNICIDADE DO NUMTICKET ===
-		 */
 		Long newNumTicket = Optional.ofNullable(dto.getNumTicket())
 				.orElseThrow(() -> new IllegalArgumentException("O número do ticket é obrigatório."));
 
@@ -133,170 +128,110 @@ public class DispatchService {
 
 		ticketRepository.findByNumTicket(newNumTicket).ifPresent(existing -> {
 			if (!existing.getId().equals(entityId)) {
-				throw new IllegalArgumentException(
-						String.format("O número de ticket '%d' já está em uso por outro registro.", newNumTicket));
+				throw new IllegalArgumentException("O número de ticket '" + newNumTicket + "' já está em uso.");
 			}
 		});
 
-		/*
-		 * 2️ REGRA DE NEGÓCIO —
-		 * PESO LÍQUIDO =====================================================
-		 */
 		BigDecimal totalItemsQuantity = calculateTotalItemQuantity(dto);
-		
 		if (dto.getNetWeight() != null && totalItemsQuantity.compareTo(dto.getNetWeight()) > 0) {
 			throw new IllegalArgumentException("A soma das quantidades dos itens (" + totalItemsQuantity
 					+ ") não pode ultrapassar o Peso Líquido (" + dto.getNetWeight() + ").");
 		}
 
-		/*
-		 * 3️ ATUALIZA CAMPOS
-		 * SIMPLES =====================================================
-		 */
 		copyDtoToEntity(dto, entity);
 
-		/*
-		 *  4️ MAPA DOS ITENS
-		 * ATUAIS (CHAVE = PK) =====================================================
-		 */
-		Map<DispatchItemPK, DispatchItem> currentItems = entity.getDispatchItems().stream()
+		// 🔑 MAPA POR PK TÉCNICA
+		Map<Long, DispatchItem> currentItems = entity.getDispatchItems().stream()
 				.collect(Collectors.toMap(DispatchItem::getId, Function.identity()));
 
-		/*
-		 * 5️ CACHE DE APOIO
-		 * =====================================================
-		 */
 		Map<Long, Partner> partnerCache = new HashMap<>();
 		Map<Long, Product> productCache = new HashMap<>();
 
-		/*
-		 *  6️ PROCESSA ITENS DO
-		 * DTO (DIFF INTELIGENTE) ===============================
-		 */
+		entity.getDispatchItems().clear();
+
 		if (dto.getDispatchItems() != null) {
 
-			Integer sequence = 1;
+			int sequence = 1;
 
 			for (DispatchItemDTO itemDto : dto.getDispatchItems()) {
 
+				DispatchItem item;
+
+				if (itemDto.getDispatchId() != null && currentItems.containsKey(itemDto.getDispatchId())) {
+					// ✏️ UPDATE
+					item = currentItems.remove(itemDto.getDispatchId());
+				} else {
+					// ➕ INSERT
+					item = new DispatchItem();
+					item.setDispatch(entity);
+				}
+
 				Partner partner = partnerCache.computeIfAbsent(itemDto.getPartnerId(),
 						id -> partnerRepository.findById(id)
-								.orElseThrow(() -> new ResourceNotFoundException("Parceiro não encontrado: " + id)));
+								.orElseThrow(() -> new ResourceNotFoundException("Partner não encontrado: " + id)));
 
 				Product product = productCache.computeIfAbsent(itemDto.getProductCode(),
 						id -> productRepository.findByProductCode(id)
 								.orElseThrow(() -> new ResourceNotFoundException("Product não encontrado: " + id)));
 
-				// 🔑 PK COMPLETA
-				DispatchItemPK pk = new DispatchItemPK(entity, partner, product);
-				pk.setItemSequence(sequence);
+				item.setPartner(partner);
+				item.setProduct(product);
+				item.setItemSequence(sequence++);
 
-				DispatchItem item = currentItems.remove(pk);
-
-				if (item == null) {
-					// ➕ NOVO ITEM
-					item = new DispatchItem();
-					item.setId(pk);
-					copyItemDtoToEntity(itemDto, item, entity, partner, product, sequence);
-					entity.getDispatchItems().add(item);
-				} else {
-					// ✏️ UPDATE DE ITEM EXISTENTE
-					copyItemDtoToEntity(itemDto, item, entity, partner, product, sequence);
-				}
-
-				sequence++;
+				copyItemDtoToEntity(itemDto, item);
+				entity.getDispatchItems().add(item);
 			}
 		}
 
-		/*
-		 * 7️ REMOVE ORPHANS
-		 * (SEGURANÇA TOTAL) ================================
-		 */
-		for (DispatchItem orphan : currentItems.values()) {
-			entity.getDispatchItems().remove(orphan);
-		}
+		// 🧹 orphanRemoval resolve automaticamente
 
-		/*
-		 *  8️ SALVA (CASCADE +
-		 * ORPHAN OK) =====================================================
-		 */
 		entity = dispatchRepository.save(entity);
-
-		/*
-		 * 9️ ATUALIZA ESTOQUE
-		 * =====================================================
-		 */
+//        inventoryService.updateFromDispatch(entity);
 
 		return new DispatchDTO(entity);
 	}
-	//DELETE
+
+	// DELETE
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public void delete(Long numTicket) {
+
 		if (!dispatchRepository.existsByNumTicket(numTicket)) {
-			throw new ResourceNotFoundException("Ticket not found " + numTicket);
+			throw new ResourceNotFoundException("Ticket não encontrado: " + numTicket);
 		}
+
 		try {
 			dispatchRepository.deleteByNumTicket(numTicket);
 		} catch (DataIntegrityViolationException e) {
-			throw new DatabaseException("Integrity violation");
+			throw new DatabaseException("Violação de integridade.");
 		}
 	}
 
-	// --- MÉTODOS AUXILIARES ---
-
+	// AUXILIARES
 	private void copyDtoToEntity(DispatchDTO dto, Dispatch entity) {
-		entity.setNumTicket(Long.valueOf(dto.getNumTicket()));
+		entity.setNumTicket(dto.getNumTicket());
 		entity.setDateTicket(dto.getDateTicket());
 		entity.setNumberPlate(dto.getNumberPlate().toUpperCase());
 		entity.setNetWeight(dto.getNetWeight());
 	}
 
-	private void copyItemDtoToEntity(DispatchItemDTO itemDto, DispatchItem itemEntity, Dispatch dispatch,
-			Partner partner, Product product, Integer itemSequence) {
+	private void copyItemDtoToEntity(DispatchItemDTO itemDto, DispatchItem entity) {
 
-		// --- 1. SETA OS COMPONENTES DA CHAVE COMPOSTA (PK) ---
-		itemEntity.getId().setDispatch(dispatch);
-		itemEntity.getId().setPartner(partner);
-		itemEntity.getId().setProduct(product);
-		itemEntity.getId().setItemSequence(itemSequence); // Novo campo sequencial
+		entity.setDocumentNumber(itemDto.getDocumentNumber());
+		entity.setQuantity(itemDto.getQuantity());
+		entity.setPrice(itemDto.getPrice());
 
-		// --- 2. SETA OUTROS ATRIBUTOS (Dados Simples) ---
-		itemEntity.setDocumentNumber(itemDto.getDocumentNumber());
-		itemEntity.setObservation(itemDto.getObservation().toUpperCase());
-		itemEntity.setPrice(itemDto.getPrice());
-		itemEntity.setQuantity(itemDto.getQuantity());
-
-		BigDecimal totalValue = itemEntity.getQuantity().multiply(itemEntity.getPrice());
-		itemEntity.setTotalValue(totalValue);
-
-		// Conversão de Enum
-		try {
-			TypeTransactionOutGoing typeDispatch = TypeTransactionOutGoing.fromDescription(itemDto.getTypeDispatch());
-			itemEntity.setTypeDispatch(typeDispatch);
-		} catch (IllegalArgumentException e) {
-			throw new ResourceNotFoundException("Tipo de expedição inválida: " + itemDto.getTypeDispatch());
+		if (itemDto.getQuantity() != null && itemDto.getPrice() != null) {
+			entity.setTotalValue(itemDto.getQuantity().multiply(itemDto.getPrice()));
+		} else {
+			entity.setTotalValue(BigDecimal.ZERO);
 		}
 
-		try {
-			AluminumAlloy alloy = AluminumAlloy.fromDescription(itemDto.getAlloy());
-			itemEntity.setAlloy(alloy);
-		} catch (IllegalArgumentException e) {
-			throw new ResourceNotFoundException("Tipo de liga inválida: " + itemDto.getAlloy());
-		}
+		entity.setObservation(itemDto.getObservation());
 
-		try {
-			AluminumAlloyPol alloyPol = AluminumAlloyPol.valueOf(itemDto.getAlloyPol());
-			itemEntity.setAlloyPol(alloyPol);
-		} catch (IllegalArgumentException e) {
-			throw new ResourceNotFoundException("Tipo de polegada inválida: " + itemDto.getAlloyPol());
-		}
-
-		try {
-			AluminumAlloyFootage alloyFootage = AluminumAlloyFootage.valueOf(itemDto.getAlloyFootage());
-			itemEntity.setAlloyFootage(alloyFootage);
-		} catch (IllegalArgumentException e) {
-			throw new ResourceNotFoundException("Tipo de metragem inválida: " + itemDto.getAlloyFootage());
-		}
+		entity.setTypeDispatch(TypeTransactionOutGoing.fromDescription(itemDto.getTypeDispatch()));
+		entity.setAlloy(AluminumAlloy.fromDescription(itemDto.getAlloy()));
+		entity.setAlloyPol(AluminumAlloyPol.valueOf(itemDto.getAlloyPol()));
+		entity.setAlloyFootage(AluminumAlloyFootage.valueOf(itemDto.getAlloyFootage()));
 
 	}
 
@@ -311,11 +246,11 @@ public class DispatchService {
 	// REPORT
 	@Transactional(readOnly = true)
 	public Page<DispatchReportDTO> findDetails(
-			Long dispatchId, 
+			Long id, 
 			Long numTicketId, 
-			LocalDate startDate,
-			LocalDate endDate, 
-			Long partnerId, 
+			LocalDate startDate, 
+			LocalDate endDate,
+			Long partnerId,
 			String productDescription, 
 			Long productCode, 
 			Pageable pageable) {
@@ -325,11 +260,10 @@ public class DispatchService {
 				startDate, 
 				endDate,
 				pageable);
-
-		List<Long> dispatchIds = page.stream().map(DispatchReportProjection::getDispatchId).toList();
-
+		List<Long> dispatchIds = page.stream().map(DispatchReportProjection::getId).toList();
 		Map<Long, List<DispatchItemReportDTO>> itemsMap = dispatchItemRepository
-				.findItemsByDispatchIds(dispatchIds, 
+				.findItemsByDispatchIds(
+						dispatchIds, 
 						numTicketId, 
 						startDate, 
 						endDate, 
@@ -338,9 +272,11 @@ public class DispatchService {
 						productCode)
 				.stream().map(p -> new DispatchItemReportDTO(p))
 				.collect(Collectors.groupingBy(DispatchItemReportDTO::getDispatchId));
-
-		return page.map(p -> new DispatchReportDTO(p.getDispatchId(), p.getNumTicketId(), p.getDateTicket(),
-				p.getNumberPlate(), p.getNetWeight(), itemsMap.getOrDefault(p.getDispatchId(), List.of())));
+		return page.map(p -> new DispatchReportDTO(
+				p.getId(),
+				p.getNumTicketId(), 
+				p.getDateTicket(),
+				p.getNumberPlate(), 
+				p.getNetWeight(), itemsMap.getOrDefault(p.getId(), List.of())));
 	}
-
 }

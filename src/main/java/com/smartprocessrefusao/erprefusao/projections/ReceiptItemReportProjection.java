@@ -9,12 +9,12 @@ public interface ReceiptItemReportProjection {
 	Integer getItemSequence();
 	Long getPartnerId();
 	String getPartnerName();
-	Long getMaterialCode();
-	String getMaterialDescription();
-	BigDecimal getRecoveryYield();
 	String getDocumentNumber();
 	String getTypeReceipt();
 	String getTypeCosts();
+	Long getMaterialCode();
+	String getMaterialDescription();
+	BigDecimal getRecoveryYield();
 	BigDecimal getQuantity();
 	BigDecimal getPrice();
 	BigDecimal getTotalValue();

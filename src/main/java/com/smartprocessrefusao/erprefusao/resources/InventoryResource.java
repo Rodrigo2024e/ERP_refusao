@@ -26,66 +26,82 @@ import com.smartprocessrefusao.erprefusao.projections.InventoryReportProjection;
 import com.smartprocessrefusao.erprefusao.services.InventoryService;
 
 import jakarta.validation.Valid;
-
 @RestController
-@RequestMapping(value = "api/inventories")
+@RequestMapping("/api/inventories")
 public class InventoryResource {
 
-	@Autowired
-	private InventoryService inventoryService;
+    @Autowired
+    private InventoryService inventoryService;
 
-	@GetMapping
-	public ResponseEntity<List<InventoryDTO>> findAll() {
-		List<InventoryDTO> list = inventoryService.findAll();
-		return ResponseEntity.ok().body(list);
-	}
+    /* ======================================================
+       CRUD
+       ====================================================== */
 
-	@GetMapping(value = "/{id}")
-	public ResponseEntity<InventoryDTO> findById(@PathVariable Long id) {
-		InventoryDTO dto = inventoryService.findById(id);
-		return ResponseEntity.ok().body(dto);
-	}
+    @GetMapping
+    public ResponseEntity<List<InventoryDTO>> findAll() {
+        List<InventoryDTO> list = inventoryService.findAll();
+        return ResponseEntity.ok(list);
+    }
 
-	@PostMapping
-	public ResponseEntity<InventoryDTO> insert(@Valid @RequestBody InventoryDTO dto) {
-		InventoryDTO newDto = inventoryService.insert(dto);
+    @GetMapping("/{id}")
+    public ResponseEntity<InventoryDTO> findById(@PathVariable Long id) {
+        InventoryDTO dto = inventoryService.findById(id);
+        return ResponseEntity.ok(dto);
+    }
 
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newDto.getId()).toUri();
+    @PostMapping
+    public ResponseEntity<InventoryDTO> insert(@Valid @RequestBody InventoryDTO dto) {
+        InventoryDTO newDto = inventoryService.insert(dto);
 
-		return ResponseEntity.created(uri).body(newDto);
-	}
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(newDto.getId())
+                .toUri();
 
-	@PutMapping(value = "/{id}")
-	public ResponseEntity<InventoryDTO> update(@PathVariable Long id, @Valid @RequestBody InventoryDTO dto) {
-		InventoryDTO updatedDto = inventoryService.update(id, dto);
-		return ResponseEntity.ok().body(updatedDto);
-	}
+        return ResponseEntity.created(uri).body(newDto);
+    }
 
-	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Long id) {
-		inventoryService.delete(id);
-		return ResponseEntity.noContent().build();
-	}
+    @PutMapping("/{id}")
+    public ResponseEntity<InventoryDTO> update(
+            @PathVariable Long id,
+            @Valid @RequestBody InventoryDTO dto) {
 
-	@GetMapping("/report-range")
-	public ResponseEntity<?> reportRange(
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@RequestParam(required = false) Long materialCode, Pageable pageable) {
+        InventoryDTO updatedDto = inventoryService.update(id, dto);
+        return ResponseEntity.ok(updatedDto);
+    }
 
-		try {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        inventoryService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 
-			Page<InventoryReportProjection> reportPage = inventoryService.getReportRange(startDate, endDate, materialCode, pageable);
+    /* ======================================================
+       RELATÓRIO DE INVENTÁRIO (HISTÓRICO)
+       ====================================================== */
 
-			Page<InventoryReportDTO> dtoPage = reportPage.map(InventoryReportDTO::new);
+    @GetMapping("/report-range")
+    public ResponseEntity<Page<InventoryReportDTO>> reportRange(
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate startDate,
 
-			return ResponseEntity.ok(dtoPage);
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate endDate,
 
-		} catch (IllegalArgumentException ex) {
-			return ResponseEntity.badRequest().body(Page.empty(pageable));
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(Page.empty(pageable));
-		}
-	}
+            @RequestParam(required = false)
+            Long materialCode,
 
+            Pageable pageable) {
+
+        Page<InventoryReportProjection> page =
+                inventoryService.getReportRange(startDate, endDate, materialCode, pageable);
+
+        Page<InventoryReportDTO> dtoPage =
+                page.map(InventoryReportDTO::new);
+
+        return ResponseEntity.ok(dtoPage);
+    }
 }

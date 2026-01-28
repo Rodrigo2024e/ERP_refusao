@@ -1,6 +1,7 @@
 package com.smartprocessrefusao.erprefusao.repositories;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -11,65 +12,58 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.Inventory;
+import com.smartprocessrefusao.erprefusao.entities.InventoryItem;
 import com.smartprocessrefusao.erprefusao.entities.Receipt;
 import com.smartprocessrefusao.erprefusao.projections.InventoryReportProjection;
 
 @Repository
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
-	@Query(value = """
-			    SELECT
-					m.material_code, 
-					m.description, 
-					
-					sb.total_adjustment_entries, 
-					sb.recovery_yield_adjustment_entries,
-					sb.total_adjustment_entries_mco,
-					
-					sb.total_purchase, 
-					sb.recovery_yield_purchase, 
-					sb.total_purchase_mco, 
-					sb.total_value,
-					sb.average_price,
-					sb.average_price_mco,
-					
-					sb.total_sent_for_processing, 
-					sb.recovery_yield_sent_for_processing,
-					sb.total_sent_for_processing_mco,
-					
-					sb.total_sales_scrap, 
-					sb.recovery_yield_sales_scrap,
-					sb.total_sales_scrap_mco, 
-					
-					sb.total_scrap_sales_return, 
-					sb.recovery_yield_scrap_sales_return,
-					sb.total_scrap_sales_return_mco, 
-					
-					sb.total_adjustment_exit, 
-					sb.recovery_yield_adjustment_exit,
-					sb.total_adjustment_exit_mco,
-				    
-					sb.final_balance, 
-					sb.recovery_yield_final_balance,
-					sb.final_balance_mco
-					
-				FROM tb_stock_balance sb
-				INNER JOIN tb_material m ON m.stock_balance_id = sb.id
-			    WHERE
-			        (:startDate IS NULL OR sb.date_stock >= :startDate)
-			        AND (:endDate IS NULL OR sb.date_stock <= :endDate)
-			        AND (:materialCode IS NULL OR m.material_code = :materialCode)
+    /* ======================================================
+       ITENS DE INVENTÁRIO (BASE DO ESTOQUE)
+       ====================================================== */
 
-			    GROUP BY
-			        m.material_code,
-			        m.description
+    @Query("""
+        SELECT ii
+        FROM InventoryItem ii
+        JOIN ii.material m
+        WHERE m.id = :materialId
+        ORDER BY ii.inventory.dateInventory, ii.id
+    """)
+    List<InventoryItem> findAllItemsByMaterial(@Param("materialId") Long materialId);
 
-			    ORDER BY
-			        m.material_code
-			""", nativeQuery = true)
-	Page<InventoryReportProjection> reportInventory(@Param("startDate") LocalDate startDate,
-			@Param("endDate") LocalDate endDate, @Param("materialCode") Long materialCode, Pageable pageable);
+    /* ======================================================
+       RELATÓRIO DE INVENTÁRIO
+       ====================================================== */
 
-	Optional<Inventory> findByReceipt(Receipt receipt);
+    @Query("""
+        SELECT 
+            i.dateInventory            AS dateInventory,
+            m.materialCode             AS materialCode,
+            m.description              AS materialDescription,
+            ii.typeReceipt             AS typeReceipt,
+            ii.quantity                AS quantity,
+            ii.quantityMco             AS quantityMco,
+            ii.totalValue              AS totalValue,
+            p.name                     AS partnerName
+        FROM Inventory i
+        JOIN i.items ii
+        JOIN ii.material m
+        JOIN ii.partner p
+        WHERE (:startDate IS NULL OR i.dateInventory >= :startDate)
+          AND (:endDate   IS NULL OR i.dateInventory <= :endDate)
+          AND (:materialCode IS NULL OR m.materialCode = :materialCode)
+        ORDER BY i.dateInventory DESC, m.materialCode
+    """)
+    Page<InventoryReportProjection> reportInventory(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("materialCode") Long materialCode,
+            Pageable pageable
+    );
 
+    Optional<Inventory> findByReceipt(Receipt receipt);
+
+    boolean existsByReceipt(Receipt receipt);
+    
 }

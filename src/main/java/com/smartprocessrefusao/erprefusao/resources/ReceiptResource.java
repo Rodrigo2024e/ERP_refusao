@@ -37,15 +37,15 @@ public class ReceiptResource {
 	public ResponseEntity<ReceiptDTO> insert(@Valid @RequestBody ReceiptDTO dto) {
 		ReceiptDTO newDto = receiptService.insert(dto);
 
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newDto.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newDto.getTicketId()).toUri();
 
 		return ResponseEntity.created(uri).body(newDto);
 	}
 
-	@PutMapping("/numTicket/{numTicket}")
-	public ResponseEntity<ReceiptDTO> updateByNumTicket(@PathVariable Long numTicket,
+	@PutMapping(value = "/numTicket/{numTicket}")
+	public ResponseEntity<ReceiptDTO> updateByNumTicket(
+			@PathVariable Long numTicket,
 			@RequestBody @Valid ReceiptDTO dto) {
-
 		ReceiptDTO updatedDto = receiptService.updateByNumTicket(numTicket, dto);
 		return ResponseEntity.ok(updatedDto);
 	}

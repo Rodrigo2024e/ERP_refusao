@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,12 +30,15 @@ public class Inventory implements Serializable {
 	private String description;
 	private String observation;
 
-	@ManyToOne
-	@JoinColumn(name = "receipt_id")
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "receipt_id", nullable = false)
 	private Receipt receipt;
 
-	@OneToMany(mappedBy = "inventory", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "inventory", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<InventoryItem> items = new ArrayList<>();
+
+	@OneToMany(mappedBy = "inventory", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<MaterialStockBalance> stockBalances = new ArrayList<>();
 
 	public Inventory() {
 	}
@@ -90,6 +94,10 @@ public class Inventory implements Serializable {
 
 	public List<InventoryItem> getItems() {
 		return items;
+	}
+
+	public List<MaterialStockBalance> getStockBalances() {
+		return stockBalances;
 	}
 
 	@Override

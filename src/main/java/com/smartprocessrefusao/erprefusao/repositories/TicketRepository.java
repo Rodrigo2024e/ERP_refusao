@@ -15,7 +15,7 @@ import jakarta.persistence.LockModeType;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
-	Optional<Ticket> findByNumTicketAndIdNot(Long numTicket, Long id);
+	Optional<Ticket> findByNumTicketAndIdNot(Long numTicket, Long ticketId);
 
 	Optional<Ticket> findByNumTicket(Long numTicket);
 

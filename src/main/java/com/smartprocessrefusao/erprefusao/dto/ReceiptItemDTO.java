@@ -20,7 +20,7 @@ public class ReceiptItemDTO {
 	@NotNull(message = "Informe o id do partner")
 	private Long partnerId;
 	private String partnerName;
-	
+
 	private String documentNumber;
 
 	@NotNull(message = "Informe o tipo material")
@@ -30,7 +30,6 @@ public class ReceiptItemDTO {
 	@NotNull(message = "Campo requerido")
 	@JsonSerialize(using = BigDecimalBrazilianSerializer.class)
 	private BigDecimal recoveryYield;
-
 
 	@NotNull(message = "Informe o tipo do recebimento")
 	private String typeReceipt;
@@ -58,10 +57,10 @@ public class ReceiptItemDTO {
 	public ReceiptItemDTO() {
 	}
 
-	public ReceiptItemDTO(Long receiptId, Long numTicketId, Integer itemSequence, Long partnerId, String partnerName,
-			Long materialCode, String description, BigDecimal recoveryYield, String documentNumber, String typeReceipt,
-			String typeCosts, BigDecimal quantity, BigDecimal price, BigDecimal totalValue, BigDecimal quantityMco,
-			String observation) {
+	public ReceiptItemDTO(Long receiptId, Long numTicketId, Integer itemSequence, Long partnerId,
+			String partnerName, Long materialCode, String description, BigDecimal recoveryYield, String documentNumber,
+			String typeReceipt, String typeCosts, BigDecimal quantity, BigDecimal price, BigDecimal totalValue,
+			BigDecimal quantityMco, String observation) {
 		this.receiptId = receiptId;
 		this.numTicketId = numTicketId;
 		this.itemSequence = itemSequence;
@@ -81,22 +80,22 @@ public class ReceiptItemDTO {
 	}
 
 	public ReceiptItemDTO(ReceiptItem entity) {
-		this.receiptId = entity.getId().getReceipt().getId();
-		this.numTicketId = entity.getId().getReceipt().getNumTicket();
-		this.itemSequence = entity.getId().getItemSequence();
-		this.partnerId = entity.getId().getPartner().getId();
-		this.partnerName = entity.getId().getPartner().getName();
-		this.materialCode = entity.getId().getMaterial().getMaterialCode();
-		this.description = entity.getId().getMaterial().getDescription();
-		this.recoveryYield = entity.getRecoveryYield();
-		this.documentNumber = entity.getDocumentNumber();
-		this.typeReceipt = entity.getTypeReceipt().toString();
-		this.typeCosts = entity.getTypeCosts().toString();
-		this.quantity = entity.getQuantity();
-		this.price = entity.getPrice();
-		this.totalValue = entity.getTotalValue();
-		this.quantityMco = entity.getQuantityMco();
-		this.observation = entity.getObservation();
+		receiptId = entity.getReceipt().getId();
+		numTicketId = entity.getReceipt().getNumTicket();
+		itemSequence = entity.getItemSequence();
+		partnerId = entity.getPartner().getId();
+		partnerName = entity.getPartner().getName();
+		materialCode = entity.getMaterial().getMaterialCode();
+		description = entity.getMaterial().getDescription();
+		recoveryYield = entity.getRecoveryYield();
+		documentNumber = entity.getDocumentNumber();
+		typeReceipt = entity.getTypeReceipt().toString();
+		typeCosts = entity.getTypeCosts().toString();
+		quantity = entity.getQuantity();
+		price = entity.getPrice();
+		totalValue = entity.getTotalValue();
+		quantityMco = entity.getQuantityMco();
+		observation = entity.getObservation();
 	}
 
 	public Long getReceiptId() {
@@ -119,6 +118,10 @@ public class ReceiptItemDTO {
 		return partnerName;
 	}
 
+	public String getDocumentNumber() {
+		return documentNumber;
+	}
+
 	public Long getMaterialCode() {
 		return materialCode;
 	}
@@ -129,10 +132,6 @@ public class ReceiptItemDTO {
 
 	public BigDecimal getRecoveryYield() {
 		return recoveryYield;
-	}
-
-	public String getDocumentNumber() {
-		return documentNumber;
 	}
 
 	public String getTypeReceipt() {

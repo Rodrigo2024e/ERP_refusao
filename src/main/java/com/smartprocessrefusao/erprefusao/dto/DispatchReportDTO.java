@@ -9,7 +9,7 @@ import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSe
 
 public class DispatchReportDTO {
 
-	private Long dispatchId;
+	private Long id;
 
 	private Long numTicketId;
 
@@ -26,9 +26,9 @@ public class DispatchReportDTO {
 
 	}
 
-	public DispatchReportDTO(Long dispatchId, Long numTicketId, LocalDate dateTicket, String numberPlate,
+	public DispatchReportDTO(Long id, Long numTicketId, LocalDate dateTicket, String numberPlate,
 			BigDecimal net_weight, List<DispatchItemReportDTO> dispatchItems) {
-		this.dispatchId = dispatchId;
+		this.id = id;
 		this.numTicketId = numTicketId;
 		this.dateTicket = dateTicket;
 		this.numberPlate = numberPlate;
@@ -36,8 +36,8 @@ public class DispatchReportDTO {
 		this.dispatchItems = dispatchItems;
 	}
 
-	public Long getDispatchId() {
-		return dispatchId;
+	public Long getId() {
+		return id;
 	}
 
 	public Long getNumTicketId() {

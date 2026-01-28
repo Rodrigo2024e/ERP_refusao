@@ -2,6 +2,7 @@ package com.smartprocessrefusao.erprefusao.repositories;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,16 +10,24 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.ReceiptItem;
-import com.smartprocessrefusao.erprefusao.entities.PK.ReceiptItemPK;
 import com.smartprocessrefusao.erprefusao.projections.ReceiptItemReportProjection;
 
 @Repository
-public interface ReceiptItemRepository extends JpaRepository<ReceiptItem, ReceiptItemPK> {
+public interface ReceiptItemRepository extends JpaRepository<ReceiptItem, Long> {
 
+	
+	@Query("""
+			select max(r.itemSequence)
+			from ReceiptItem r
+			where r.receipt.id = :receiptId
+		""")
+		Optional<Integer> findMaxSequenceByReceiptId(Long receiptId);
+
+	
+	
 	@Query(value = """
 			   SELECT
-				    ri.receipt_id AS receiptId,
-				    r.id,                   
+				    r.id AS receiptId,                   
 				    t.num_ticket AS numTicketId,
 				    t.date_ticket AS dateTicket,
 				    ri.item_sequence AS itemSequence,

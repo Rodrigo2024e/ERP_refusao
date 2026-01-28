@@ -22,8 +22,11 @@ public class Partner extends People implements IdProjection<Long> {
 	private Boolean client;
 	private Boolean active;
 
-	@OneToMany(mappedBy = "id.partner", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ReceiptItem> receiptItems = new ArrayList<>();
+
+	@OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<DispatchItem> dispatchItems = new ArrayList<>();
 
 	@OneToMany(mappedBy = "partner")
 	private List<InventoryItem> inventoryItems = new ArrayList<>();
@@ -88,6 +91,10 @@ public class Partner extends People implements IdProjection<Long> {
 
 	public List<ReceiptItem> getReceiptItems() {
 		return receiptItems;
+	}
+
+	public List<DispatchItem> getDispatchItems() {
+		return dispatchItems;
 	}
 
 	public List<InventoryItem> getInventoryItems() {

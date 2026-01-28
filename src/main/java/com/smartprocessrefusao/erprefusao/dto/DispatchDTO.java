@@ -14,7 +14,7 @@ import jakarta.validation.constraints.PastOrPresent;
 
 public class DispatchDTO {
 
-	private Long id;
+	private Long ticketId;
 
 	@NotNull(message = "Informe o número do ticket")
 	@Column(name = "numTicket", unique = true)
@@ -37,8 +37,8 @@ public class DispatchDTO {
 
 	}
 
-	public DispatchDTO(Long id, Long numTicket, LocalDate dateTicket, String numberPlate, BigDecimal netWeight) {
-		this.id = id;
+	public DispatchDTO(Long ticketId, Long numTicket, LocalDate dateTicket, String numberPlate, BigDecimal netWeight) {
+		this.ticketId = ticketId;
 		this.numTicket = numTicket;
 		this.dateTicket = dateTicket;
 		this.numberPlate = numberPlate;
@@ -47,21 +47,19 @@ public class DispatchDTO {
 	}
 
 	public DispatchDTO(Dispatch entity) {
-		id = entity.getId();
+		ticketId = entity.getId();
 		numTicket = entity.getNumTicket();
 		dateTicket = entity.getDateTicket();
 		numberPlate = entity.getNumberPlate();
 		netWeight = entity.getNetWeight();
-		
-		dispatchItems = entity.getDispatchItems().stream()
-		        .map(item -> new DispatchItemDTO(item))
-		        .collect(Collectors.toList());
-		
-	
+
+		dispatchItems = entity.getDispatchItems().stream().map(item -> new DispatchItemDTO(item))
+				.collect(Collectors.toList());
+
 	}
 
-	public Long getId() {
-		return id;
+	public Long getTicketId() {
+		return ticketId;
 	}
 
 	public Long getNumTicket() {
@@ -83,6 +81,5 @@ public class DispatchDTO {
 	public List<DispatchItemDTO> getDispatchItems() {
 		return dispatchItems;
 	}
-
 
 }

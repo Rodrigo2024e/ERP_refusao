@@ -20,7 +20,7 @@ public interface DispatchRepository extends JpaRepository<Dispatch, Long> {
 
 	@Query(value = """
 			SELECT
-			    d.id AS dispatchId,
+			    d.id AS id,
 			    t.num_ticket AS numTicketId,
 			    t.date_ticket AS dateTicket,
 			    t.number_plate AS numberPlate,

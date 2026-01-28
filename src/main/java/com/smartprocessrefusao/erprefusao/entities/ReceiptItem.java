@@ -4,16 +4,19 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import com.smartprocessrefusao.erprefusao.entities.PK.ReceiptItemPK;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeCosts;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
 
-import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -21,14 +24,32 @@ import jakarta.persistence.Table;
 public class ReceiptItem implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
-	private ReceiptItemPK id = new ReceiptItemPK();
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "receipt_id", nullable = false)
+	private Receipt receipt;
+
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "partner_id", nullable = false)
+	private Partner partner;
+
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "material_id", nullable = false)
+	private Material material;
+
+	@Column(name = "item_sequence", nullable = false)
+	private Integer itemSequence;
 
 	private String documentNumber;
 	private BigDecimal recoveryYield;
 	private BigDecimal quantity;
 	private BigDecimal price;
+	@Column(nullable = false)
 	private BigDecimal totalValue;
+	@Column(nullable = false)
 	private BigDecimal quantityMco;
 	private String observation;
 
@@ -41,12 +62,15 @@ public class ReceiptItem implements Serializable {
 	public ReceiptItem() {
 	}
 
-	public ReceiptItem(Receipt receipt, Partner partner, Material material, String documentNumber,
-			BigDecimal recoveryYield, BigDecimal quantity, BigDecimal price, BigDecimal totalValue,
-			BigDecimal quantityMco, String observation, TypeTransactionReceipt typeReceipt, TypeCosts typeCosts) {
-		id.setReceipt(receipt);
-		id.setPartner(partner);
-		id.setMaterial(material);
+	public ReceiptItem(Long id, Receipt receipt, Partner partner, Material material, Integer itemSequence,
+			String documentNumber, BigDecimal recoveryYield, BigDecimal quantity, BigDecimal price,
+			BigDecimal totalValue, BigDecimal quantityMco, String observation, TypeTransactionReceipt typeReceipt,
+			TypeCosts typeCosts) {
+		this.id = id;
+		this.receipt = receipt;
+		this.partner = partner;
+		this.material = material;
+		this.itemSequence = itemSequence;
 		this.documentNumber = documentNumber;
 		this.recoveryYield = recoveryYield;
 		this.quantity = quantity;
@@ -58,12 +82,44 @@ public class ReceiptItem implements Serializable {
 		this.typeCosts = typeCosts;
 	}
 
-	public ReceiptItemPK getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(ReceiptItemPK id) {
+	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Receipt getReceipt() {
+		return receipt;
+	}
+
+	public void setReceipt(Receipt receipt) {
+		this.receipt = receipt;
+	}
+
+	public Partner getPartner() {
+		return partner;
+	}
+
+	public void setPartner(Partner partner) {
+		this.partner = partner;
+	}
+
+	public Material getMaterial() {
+		return material;
+	}
+
+	public void setMaterial(Material material) {
+		this.material = material;
+	}
+
+	public Integer getItemSequence() {
+		return itemSequence;
+	}
+
+	public void setItemSequence(Integer itemSequence) {
+		this.itemSequence = itemSequence;
 	}
 
 	public String getDocumentNumber() {
@@ -138,16 +194,6 @@ public class ReceiptItem implements Serializable {
 		this.typeCosts = typeCosts;
 	}
 
-	@PrePersist
-	@PreUpdate
-	private void calculateTotalValue() {
-		if (quantity != null && price != null) {
-			this.totalValue = quantity.multiply(price);
-		} else {
-			this.totalValue = BigDecimal.ZERO;
-		}
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -157,9 +203,12 @@ public class ReceiptItem implements Serializable {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!(obj instanceof ReceiptItem))
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
 			return false;
 		ReceiptItem other = (ReceiptItem) obj;
-		return Objects.equals(this.id, other.id);
+		return Objects.equals(id, other.id);
 	}
+
 }

@@ -2,6 +2,7 @@ package com.smartprocessrefusao.erprefusao.repositories;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,15 +10,25 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.smartprocessrefusao.erprefusao.entities.DispatchItem;
-import com.smartprocessrefusao.erprefusao.entities.PK.DispatchItemPK;
 import com.smartprocessrefusao.erprefusao.projections.DispatchItemReportProjection;
 
 @Repository
-public interface DispatchItemRepository extends JpaRepository<DispatchItem, DispatchItemPK> {
+public interface DispatchItemRepository extends JpaRepository<DispatchItem, Long> {
+	
+	@Query("""
+			select max(d.itemSequence)
+			from DispatchItem d
+			where d.dispatch.id = :dispatchId
+		""")
+		Optional<Integer> findMaxSequenceByDispatchId(Long dispatchId);
+
+	
+	
+	
 	@Query(value = """
 			   SELECT
-				    di.dispatch_id AS dispatchId,
-				    d.id,                   
+				    
+				    d.id AS dispatchId,                   
 				    t.num_ticket AS numTicketId,
 				    t.date_ticket AS dateTicket,
 				    di.item_sequence AS itemSequence,

@@ -4,18 +4,21 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import com.smartprocessrefusao.erprefusao.entities.PK.DispatchItemPK;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloy;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyFootage;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyPol;
 import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionOutGoing;
 
-import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,12 +26,29 @@ import jakarta.persistence.Table;
 public class DispatchItem implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
-	private DispatchItemPK id = new DispatchItemPK();
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "dispatch_id", nullable = false)
+	private Dispatch dispatch;
+
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "partner_id", nullable = false)
+	private Partner partner;
+
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "product_id", nullable = false)
+	private Product product;
+
+	@Column(name = "item_sequence", nullable = false)
+	private Integer itemSequence;
 
 	private String documentNumber;
 	private BigDecimal quantity;
 	private BigDecimal price;
+	@Column(nullable = false)
 	private BigDecimal totalValue;
 	private String observation;
 
@@ -47,12 +67,15 @@ public class DispatchItem implements Serializable {
 	public DispatchItem() {
 	}
 
-	public DispatchItem(Dispatch dispatch, Partner partner, Product product, String documentNumber, BigDecimal quantity,
-			BigDecimal price, BigDecimal totalValue, String observation, TypeTransactionOutGoing typeDispatch,
-			AluminumAlloy alloy, AluminumAlloyPol alloyPol, AluminumAlloyFootage alloyFootage) {
-		id.setDispatch(dispatch);
-		id.setPartner(partner);
-		id.setProduct(product);
+	public DispatchItem(Long id, Dispatch dispatch, Partner partner, Product product, Integer itemSequence,
+			String documentNumber, BigDecimal quantity, BigDecimal price, BigDecimal totalValue, String observation,
+			TypeTransactionOutGoing typeDispatch, AluminumAlloy alloy, AluminumAlloyPol alloyPol,
+			AluminumAlloyFootage alloyFootage) {
+		this.id = id;
+		this.dispatch = dispatch;
+		this.partner = partner;
+		this.product = product;
+		this.itemSequence = itemSequence;
 		this.documentNumber = documentNumber;
 		this.quantity = quantity;
 		this.price = price;
@@ -64,12 +87,44 @@ public class DispatchItem implements Serializable {
 		this.alloyFootage = alloyFootage;
 	}
 
-	public DispatchItemPK getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(DispatchItemPK id) {
+	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Dispatch getDispatch() {
+		return dispatch;
+	}
+
+	public void setDispatch(Dispatch dispatch) {
+		this.dispatch = dispatch;
+	}
+
+	public Partner getPartner() {
+		return partner;
+	}
+
+	public void setPartner(Partner partner) {
+		this.partner = partner;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	public Integer getItemSequence() {
+		return itemSequence;
+	}
+
+	public void setItemSequence(Integer itemSequence) {
+		this.itemSequence = itemSequence;
 	}
 
 	public String getDocumentNumber() {
@@ -142,16 +197,6 @@ public class DispatchItem implements Serializable {
 
 	public void setAlloyFootage(AluminumAlloyFootage alloyFootage) {
 		this.alloyFootage = alloyFootage;
-	}
-
-	@PrePersist
-	@PreUpdate
-	private void calculateTotalValue() {
-		if (quantity != null && price != null) {
-			totalValue = quantity.multiply(price);
-		} else {
-			totalValue = BigDecimal.ZERO;
-		}
 	}
 
 	@Override

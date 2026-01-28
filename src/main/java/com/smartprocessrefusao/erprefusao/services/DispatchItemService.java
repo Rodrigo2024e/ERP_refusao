@@ -1,7 +1,6 @@
 package com.smartprocessrefusao.erprefusao.services;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,6 @@ import com.smartprocessrefusao.erprefusao.entities.Dispatch;
 import com.smartprocessrefusao.erprefusao.entities.DispatchItem;
 import com.smartprocessrefusao.erprefusao.entities.Partner;
 import com.smartprocessrefusao.erprefusao.entities.Product;
-import com.smartprocessrefusao.erprefusao.entities.PK.DispatchItemPK;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloy;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyFootage;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyPol;
@@ -38,111 +36,86 @@ public class DispatchItemService {
     @Autowired
     private ProductRepository productRepository;
 
-    // --- MÉTODOS AUXILIARES DE PK ---
+	//INSERT
+	@Transactional
+	public DispatchItemDTO insert(Long dispatchId, DispatchItemDTO dto) {
 
-    /**
-     * Constrói a chave primária composta (DispatchItemPK) usando referências.
-     * @param dispatchId O ID da Dispatch (parte da PK).
-     * @param partnerId O ID do Partner (parte da PK).
-     * @param productId O ID do Product (parte da PK).
-     * @return A chave DispatchItemPK totalmente inicializada.
-     */
-    private DispatchItemPK buildDispatchItemPK(Long dispatchId, Long partnerId, Long productCode) {
-        Dispatch dispatchRef = dispatchRepository.getReferenceById(dispatchId);
-        Partner partnerRef = partnerRepository.getReferenceById(partnerId);
-        Product productRef = productRepository.getReferenceById(productCode);
+		Dispatch dispatch = dispatchRepository.findById(dto.getDispatchId())
+				.orElseThrow(() -> new ResourceNotFoundException("Dispatch não encontrado: " + dto.getDispatchId()));
 
-        return new DispatchItemPK(dispatchRef, partnerRef, productRef);
-    }
+		Partner partner = partnerRepository.findById(dto.getPartnerId())
+				.orElseThrow(() -> new ResourceNotFoundException("Partner não encontrado: " + dto.getPartnerId()));
 
-    //FINDBYID
-    @Transactional(readOnly = true)
-    public DispatchItemDTO findById(Long dispatchId, Long partnerId, Long productCode) {
-        DispatchItemPK pk = buildDispatchItemPK(dispatchId, partnerId, productCode);
-        
-        Optional<DispatchItem> obj = dispatchItemRepository.findById(pk);
-        DispatchItem entity = obj.orElseThrow(() -> new ResourceNotFoundException("DispatchItem not found for the given IDs"));
-        
-        return new DispatchItemDTO(entity);
-    }
+		Product product = productRepository.findByProductCode(dto.getProductCode())
+				.orElseThrow(() -> new ResourceNotFoundException("Product não encontrado: " + dto.getProductCode()));
 
-    //INSERT
-    @Transactional
-    public DispatchItemDTO insert(Long parentDispatchId, DispatchItemDTO dto) {
+		DispatchItem entity = new DispatchItem();
+		entity.setDispatch(dispatch);
+		entity.setPartner(partner);
+		entity.setProduct(product);
 
-        if (dto.getDispatchId() != null && !dto.getDispatchId().equals(parentDispatchId)) {
-            throw new IllegalArgumentException("O Dispatch ID no corpo (" + dto.getDispatchId() + ") não corresponde ao ID do Path (" + parentDispatchId + ")");
-        }
+		// 🔢 sequência (exemplo simples)
+		Integer nextSequence = dispatchItemRepository
+				.findMaxSequenceByDispatchId(dispatchId)
+				.orElse(0) + 1;
 
-        // 2. Constrói a PK usando o ID da URL (priorizando o parentDispatchId)
-        // O buildDispatchItemPK carrega as referências de Dispatch, Partner e Product.
-        DispatchItemPK pk = buildDispatchItemPK(
-            parentDispatchId, 
-            dto.getPartnerId(), 
-            dto.getProductCode()
-        );
+		entity.setItemSequence(nextSequence);
 
-        // 3. Verifica se o item já existe (para evitar duplicidade em uma inserção de chave composta)
-        if (dispatchItemRepository.existsById(pk)) {
-            throw new IllegalArgumentException("Um DispatchItem com esta chave (DispatchID: " + parentDispatchId + 
-                                                ", PartnerID: " + dto.getPartnerId() + 
-                                                ", ProductID: " + dto.getProductCode() + ") já existe.");
-        }
-        
-        // 4. Cria a nova entidade e seta a PK (que está totalmente inicializada)
-        DispatchItem entity = new DispatchItem();
-        entity.setId(pk); 
-        
-        // 5. Copia os campos de dados não-PK do DTO para a Entidade
-        // Usamos o DTO original, pois o copyDtoToEntity lida apenas com os campos de dados (quantity, price, observation, etc.).
-        copyDtoToEntity(dto, entity); 
-        
-        // 6. Salva e retorna o DTO
-        entity = dispatchItemRepository.save(entity);
-        return new DispatchItemDTO(entity);
-    }
+		copyDtoToEntity(dto, entity);
 
-    //UPDATE
-    @Transactional
-    public DispatchItemDTO update(Long dispatchId, Long partnerId, Long productCode, DispatchItemDTO dto) {
-        
-        // 1. Constrói a PK para localizar o item existente
-        DispatchItemPK pk = buildDispatchItemPK(dispatchId, partnerId, productCode);
+		entity = dispatchItemRepository.save(entity);
+		return new DispatchItemDTO(entity);
+	}
 
-        try {
-            // 2. Obtém a referência da entidade
-            DispatchItem entity = dispatchItemRepository.getReferenceById(pk);
-            
-            // 3. Copia os novos dados (a PK não precisa ser alterada)
-            copyDtoToEntity(dto, entity);
-            
-            // 4. Salva e converte para DTO
-            entity = dispatchItemRepository.save(entity);
-            return new DispatchItemDTO(entity);
-            
-        } catch (jakarta.persistence.EntityNotFoundException e) {
-            throw new ResourceNotFoundException("DispatchItem not found for update.");
-        }
-    }
+	// UPDATE
+	@Transactional
+	public DispatchItemDTO update(Long itemId, DispatchItemDTO dto) {
 
-    //DELETE
-    @Transactional
-    public void delete(Long dispatchId, Long partnerId, Long productCode) {
-        DispatchItemPK pk = buildDispatchItemPK(dispatchId, partnerId, productCode);
-        
-        // Se a validação for necessária
-        if (!dispatchItemRepository.existsById(pk)) {
-            throw new ResourceNotFoundException("DispatchItem not found for deletion.");
-        }
-        
-        dispatchItemRepository.deleteById(pk);
-    }
+		DispatchItem entity = dispatchItemRepository.findById(itemId)
+				.orElseThrow(() -> new ResourceNotFoundException("DispatchItem não encontrado: " + itemId));
+
+		if (dto.getPartnerId() != null &&
+				!dto.getPartnerId().equals(entity.getPartner().getId())) {
+
+			Partner partner = partnerRepository.findById(dto.getPartnerId())
+					.orElseThrow(() -> new ResourceNotFoundException("Partner não encontrado: " + dto.getPartnerId()));
+			entity.setPartner(partner);
+		}
+
+		if (dto.getProductCode() != null &&
+				!dto.getProductCode().equals(entity.getProduct().getProductCode())) {
+
+			Product product = productRepository.findByProductCode(dto.getProductCode())
+					.orElseThrow(() -> new ResourceNotFoundException("Product não encontrado: " + dto.getProductCode()));
+			entity.setProduct(product);
+		}
+
+		copyDtoToEntity(dto, entity);
+
+		entity = dispatchItemRepository.save(entity);
+		return new DispatchItemDTO(entity);
+	}
+	
+	// DELETE
+	@Transactional
+	public void delete(Long itemId) {
+
+		if (!dispatchItemRepository.existsById(itemId)) {
+			throw new ResourceNotFoundException("DispatchItem não encontrado para exclusão: " + itemId);
+		}
+
+		dispatchItemRepository.deleteById(itemId);
+	}
 
     // --- FUNÇÃO AUXILIAR DE MAPPING ---
 
     private void copyDtoToEntity(DispatchItemDTO itemDto, DispatchItem itemEntity) {
         
         // Mapeamento dos campos que não fazem parte da PK:
+    	
+    	itemEntity.setDocumentNumber(itemDto.getDocumentNumber());
+		itemEntity.setQuantity(itemDto.getQuantity());
+		itemEntity.setPrice(itemDto.getPrice());
         
     	// Conversão de Enum
 		try {
@@ -173,10 +146,7 @@ public class DispatchItemService {
 			throw new ResourceNotFoundException("Tipo de metragem inválida: " + itemDto.getAlloyFootage());
 		}
 
-		itemEntity.setDocumentNumber(itemDto.getDocumentNumber());
-		itemEntity.setQuantity(itemDto.getQuantity());
-		itemEntity.setPrice(itemDto.getPrice());
-
+		
         // 🧮 Recalcula o valor total (também está no @PrePersist/@PreUpdate da entidade, mas bom ter aqui)
         if (itemDto.getQuantity() != null && itemDto.getPrice() != null) {
         	itemEntity.setTotalValue(itemDto.getQuantity().multiply(itemDto.getPrice()));

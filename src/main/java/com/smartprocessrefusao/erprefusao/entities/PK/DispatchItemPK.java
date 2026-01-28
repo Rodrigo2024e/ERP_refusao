@@ -28,7 +28,7 @@ public class DispatchItemPK implements Serializable {
 	@JoinColumn(name = "product_id")
 	private Product product;
 
-	@Column(name = "ITEM_SEQUENCE")
+	@Column(name = "item_sequence")
 	private Integer itemSequence;
 
 	public DispatchItemPK() {

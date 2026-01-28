@@ -1,6 +1,8 @@
 package com.smartprocessrefusao.erprefusao.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import com.smartprocessrefusao.erprefusao.audit.Auditable;
@@ -8,9 +10,11 @@ import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloy;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyFootage;
 import com.smartprocessrefusao.erprefusao.enumerados.AluminumAlloyPol;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,6 +22,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -41,23 +46,20 @@ public class Product extends Auditable<String> implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private AluminumAlloyFootage alloyFootage;
 
-	@ManyToOne
-	@JoinColumn(name = "unit_id")
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "unit_id", nullable = false)
 	private Unit unit;
 
-	@ManyToOne
-	@JoinColumn(name = "tax_class_id")
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "tax_class_id", nullable = false)
 	private TaxClassification taxClass;
 
 	@ManyToOne
 	@JoinColumn(name = "material_group_id")
 	private MaterialGroup materialGroup;
 
-//	@OneToMany(mappedBy = "id.material", cascade = CascadeType.ALL, orphanRemoval = true)
-//	private List<ReceiptItem> receiptItems = new ArrayList<>();
-
-//	@OneToMany(mappedBy = "id.material", cascade = CascadeType.ALL, orphanRemoval = true)
-//	private List<MeltingItem> meltingItems = new ArrayList<>();
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<DispatchItem> dispatchItems = new ArrayList<>();
 
 	public Product() {
 
@@ -146,6 +148,10 @@ public class Product extends Auditable<String> implements Serializable {
 
 	public void setMaterialGroup(MaterialGroup materialGroup) {
 		this.materialGroup = materialGroup;
+	}
+
+	public List<DispatchItem> getDispatchItems() {
+		return dispatchItems;
 	}
 
 	@Override

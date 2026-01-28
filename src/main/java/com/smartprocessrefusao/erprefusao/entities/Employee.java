@@ -8,6 +8,7 @@ import com.smartprocessrefusao.erprefusao.projections.IdProjection;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -27,8 +28,8 @@ public class Employee extends People implements IdProjection<Long> {
 	@OneToOne(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
 	private User user;
 
-	@ManyToOne
-	@JoinColumn(name = "departament_id")
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "departament_id", nullable = false)
 	private Departament departament;
 
 	@ManyToMany

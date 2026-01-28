@@ -1,34 +1,23 @@
 package com.smartprocessrefusao.erprefusao.entities.PK;
 
-import java.io.Serializable;
-import java.util.Objects;
-
-import com.smartprocessrefusao.erprefusao.entities.Material;
-import com.smartprocessrefusao.erprefusao.entities.Partner;
-import com.smartprocessrefusao.erprefusao.entities.Receipt;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-
+/*
 @Embeddable
 public class ReceiptItemPK implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@ManyToOne
-	@JoinColumn(name = "receipt_id")
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "receipt_id", nullable = false)
 	private Receipt receipt;
 
-	@ManyToOne
-	@JoinColumn(name = "partner_id")
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "partner_id", nullable = false)
 	private Partner partner;
 
-	@ManyToOne
-	@JoinColumn(name = "material_id")
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "material_id", nullable = false)
 	private Material material;
 
-	@Column(name = "ITEM_SEQUENCE")
+	@Column(name = "item_sequence")
 	private Integer itemSequence;
 
 	public ReceiptItemPK() {
@@ -74,18 +63,21 @@ public class ReceiptItemPK implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(receipt, partner, material, itemSequence);
+		return Objects.hash(itemSequence, material, partner, receipt);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!(obj instanceof ReceiptItemPK))
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
 			return false;
 		ReceiptItemPK other = (ReceiptItemPK) obj;
-		return Objects.equals(receipt, other.receipt) && Objects.equals(partner, other.partner)
-				&& Objects.equals(material, other.material) && Objects.equals(itemSequence, other.itemSequence);
+		return Objects.equals(itemSequence, other.itemSequence) && Objects.equals(material, other.material)
+				&& Objects.equals(partner, other.partner) && Objects.equals(receipt, other.receipt);
 	}
 
 }
+*/

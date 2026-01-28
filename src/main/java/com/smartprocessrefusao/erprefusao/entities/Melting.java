@@ -66,12 +66,12 @@ public class Melting extends Auditable<String> implements IdProjection<Long> {
 	@ManyToMany(mappedBy = "meltings", fetch = FetchType.LAZY)
 	private Set<Employee> employees = new HashSet<>();
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "partner_id")
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "partner_id", nullable = false)
 	private Partner partner;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "machine_id")
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "machine_id", nullable = false)
 	private Machine machine;
 
 	@OneToMany(mappedBy = "id.melting", cascade = CascadeType.ALL, orphanRemoval = true)

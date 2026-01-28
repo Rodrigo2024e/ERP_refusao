@@ -26,7 +26,7 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
 		        t.net_weight AS netWeight
 		    FROM tb_receipt r
 		    INNER JOIN tb_ticket t
-		        ON t.id = r.id
+		       ON t.id = r.id
 		    WHERE (:numTicket IS NULL OR t.num_ticket = :numTicket)
 		      AND (:startDate IS NULL OR t.date_ticket >= :startDate)
 		      AND (:endDate IS NULL OR t.date_ticket <= :endDate)

@@ -5,10 +5,10 @@ import java.time.LocalDate;
 
 public interface DispatchReportProjection {
 
-	Long getDispatchId();
+	Long getId();
 
 	Long getNumTicketId();
-
+	
 	LocalDate getDateTicket();
 
 	String getNumberPlate();

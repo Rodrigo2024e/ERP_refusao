@@ -37,13 +37,15 @@ public class DispatchResource {
 	@PostMapping
 	public ResponseEntity<DispatchDTO> insert(@Valid @RequestBody DispatchDTO dto) {
 		dto = dispatchService.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getNumTicket())
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getTicketId())
 				.toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
 
 	@PutMapping(value = "/numTicket/{numTicket}")
-	public ResponseEntity<DispatchDTO> updateByNumTicket(@PathVariable Long numTicket, @RequestBody DispatchDTO dto) {
+	public ResponseEntity<DispatchDTO> updateByNumTicket(
+			@PathVariable Long numTicket, 
+			@RequestBody @Valid DispatchDTO dto) {
 		DispatchDTO updatedDto = dispatchService.updateByNumTicket(numTicket, dto);
 		return ResponseEntity.ok(updatedDto);
 	}

@@ -7,7 +7,6 @@ import com.smartprocessrefusao.erprefusao.formatBigDecimal.BigDecimalBrazilianSe
 import com.smartprocessrefusao.erprefusao.projections.DispatchItemReportProjection;
 
 public class DispatchItemReportDTO {
-
 	private Long dispatchId;
 	private Long numTicketId;
 	private Long itemSequence;

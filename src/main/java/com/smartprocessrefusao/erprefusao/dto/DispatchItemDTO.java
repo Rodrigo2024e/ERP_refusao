@@ -57,10 +57,10 @@ public class DispatchItemDTO {
 	public DispatchItemDTO() {
 	}
 
-	public DispatchItemDTO(Long dispatchId, Long numTicketId, Integer itemSequence, Long partnerId, String partnerName,
-			String documentNumber, Long productCode, String productDescription, String typeDispatch, String alloy,
-			String alloyPol, String alloyFootage, BigDecimal quantity, BigDecimal price, BigDecimal totalValue,
-			String observation) {
+	public DispatchItemDTO(Long dispatchId, Long numTicketId, Integer itemSequence, Long partnerId,
+			String partnerName, String documentNumber, Long productCode, String productDescription, String typeDispatch,
+			String alloy, String alloyPol, String alloyFootage, BigDecimal quantity, BigDecimal price,
+			BigDecimal totalValue, String observation) {
 		this.dispatchId = dispatchId;
 		this.numTicketId = numTicketId;
 		this.itemSequence = itemSequence;
@@ -80,13 +80,13 @@ public class DispatchItemDTO {
 	}
 
 	public DispatchItemDTO(DispatchItem entity) {
-		dispatchId = entity.getId().getDispatch().getId();
-		numTicketId = entity.getId().getDispatch().getNumTicket();
-		itemSequence = entity.getId().getItemSequence();
-		partnerId = entity.getId().getPartner().getId();
-		partnerName = entity.getId().getPartner().getName();
-		productCode = entity.getId().getProduct().getProductCode();
-		productDescription = entity.getId().getProduct().getDescription();
+		dispatchId = entity.getDispatch().getId();
+		numTicketId = entity.getDispatch().getNumTicket();
+		itemSequence = entity.getItemSequence();
+		partnerId = entity.getPartner().getId();
+		partnerName = entity.getPartner().getName();
+		productCode = entity.getProduct().getProductCode();
+		productDescription = entity.getProduct().getDescription();
 		documentNumber = entity.getDocumentNumber();
 		typeDispatch = entity.getTypeDispatch().toString();
 		alloy = entity.getAlloy().toString();

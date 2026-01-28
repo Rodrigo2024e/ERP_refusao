@@ -16,7 +16,7 @@ import jakarta.validation.constraints.PastOrPresent;
 
 public class ReceiptDTO {
 
-	private Long id;
+	private Long ticketId;
 
 	@NotNull(message = "Informe o número do ticket")
 	@Column(name = "numTicket", unique = true)
@@ -39,8 +39,8 @@ public class ReceiptDTO {
 	public ReceiptDTO() {
 	}
 
-	public ReceiptDTO(Long id, Long numTicket, LocalDate dateTicket, String numberPlate, BigDecimal netWeight) {
-		this.id = id;
+	public ReceiptDTO(Long ticketId, Long numTicket, LocalDate dateTicket, String numberPlate, BigDecimal netWeight) {
+		this.ticketId = ticketId;
 		this.numTicket = numTicket;
 		this.dateTicket = dateTicket;
 		this.numberPlate = numberPlate;
@@ -49,7 +49,7 @@ public class ReceiptDTO {
 	}
 
 	public ReceiptDTO(Receipt entity) {
-		id = entity.getId();
+		ticketId = entity.getId();
 		numTicket = entity.getNumTicket();
 		numTicket = entity.getNumTicket();
 		dateTicket = entity.getDateTicket();
@@ -61,8 +61,8 @@ public class ReceiptDTO {
 
 	}
 
-	public Long getId() {
-		return id;
+	public Long getTicketId() {
+		return ticketId;
 	}
 
 	public Long getNumTicket() {

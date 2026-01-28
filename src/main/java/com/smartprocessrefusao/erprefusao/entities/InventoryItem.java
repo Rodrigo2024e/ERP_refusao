@@ -9,6 +9,7 @@ import com.smartprocessrefusao.erprefusao.enumerados.TypeTransactionReceipt;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,15 +37,15 @@ public class InventoryItem implements Serializable {
 	private BigDecimal totalValue;
 	private BigDecimal quantityMco;
 
-	@ManyToOne
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "inventory_id", nullable = false)
 	private Inventory inventory;
 
-	@ManyToOne
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "material_id", nullable = false)
 	private Material material;
 
-	@ManyToOne
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "partner_id", nullable = false)
 	private Partner partner;
 

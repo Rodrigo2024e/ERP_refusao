@@ -1,7 +1,6 @@
 package com.smartprocessrefusao.erprefusao.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +10,6 @@ import com.smartprocessrefusao.erprefusao.entities.MaterialStockBalance;
 public class MaterialStockBalanceDTO {
 
 	private Long id;
-	private LocalDate dateStock;
 	private BigDecimal totalPurchase = BigDecimal.ZERO;
 	private BigDecimal totalPurchaseMco = BigDecimal.ZERO;
 	private BigDecimal recoveryYieldPurchase = BigDecimal.ZERO;
@@ -45,7 +43,7 @@ public class MaterialStockBalanceDTO {
 	public MaterialStockBalanceDTO() {
 	}
 
-	public MaterialStockBalanceDTO(Long id, LocalDate dateStock, BigDecimal totalPurchase, BigDecimal totalPurchaseMco,
+	public MaterialStockBalanceDTO(Long id, BigDecimal totalPurchase, BigDecimal totalPurchaseMco,
 			BigDecimal recoveryYieldPurchase, BigDecimal totalSentForProcessing, BigDecimal totalSentForProcessingMco,
 			BigDecimal recoveryYieldSentForProcessing, BigDecimal totalScrapSalesReturn,
 			BigDecimal totalScrapSalesReturnMco, BigDecimal recoveryYieldScrapSalesReturn,
@@ -55,7 +53,6 @@ public class MaterialStockBalanceDTO {
 			BigDecimal recoveryYieldAdjustmentExit, BigDecimal finalBalance, BigDecimal finalBalanceMco,
 			BigDecimal recoveryYieldFinalBalance) {
 		this.id = id;
-		this.dateStock = dateStock;
 		this.totalPurchase = totalPurchase;
 		this.totalPurchaseMco = totalPurchaseMco;
 		this.recoveryYieldPurchase = recoveryYieldPurchase;
@@ -81,7 +78,6 @@ public class MaterialStockBalanceDTO {
 
 	public MaterialStockBalanceDTO(MaterialStockBalance entity) {
 		id = entity.getId();
-		dateStock = entity.getDateStock();
 
 		totalPurchase = entity.getTotalPurchase();
 		totalPurchaseMco = entity.getTotalPurchaseMco();
@@ -111,17 +107,13 @@ public class MaterialStockBalanceDTO {
 		finalBalanceMco = entity.getFinalBalanceMco();
 		recoveryYieldFinalBalance = entity.getRecoveryYieldFinalBalance();
 
-		materials = entity.getMaterials().stream().map(material -> new MaterialDTO(material))
-				.collect(Collectors.toList());
+//		materials = entity.getMaterials().stream().map(material -> new MaterialDTO(material))
+//				.collect(Collectors.toList());
 
 	}
 
 	public Long getId() {
 		return id;
-	}
-
-	public LocalDate getDateStock() {
-		return dateStock;
 	}
 
 	public BigDecimal getTotalPurchase() {
