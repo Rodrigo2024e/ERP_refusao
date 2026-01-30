@@ -97,7 +97,11 @@ public class InventoryResource {
             Pageable pageable) {
 
         Page<InventoryReportProjection> page =
-                inventoryService.getReportRange(startDate, endDate, materialCode, pageable);
+                inventoryService.getReportRange(
+                		startDate, 
+                		endDate, 
+                		materialCode, 
+                		pageable);
 
         Page<InventoryReportDTO> dtoPage =
                 page.map(InventoryReportDTO::new);

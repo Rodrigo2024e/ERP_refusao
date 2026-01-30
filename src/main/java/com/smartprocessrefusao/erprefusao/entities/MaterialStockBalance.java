@@ -2,6 +2,7 @@ package com.smartprocessrefusao.erprefusao.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
@@ -108,7 +109,6 @@ public class MaterialStockBalance implements Serializable {
 		this.finalBalanceMco = finalBalanceMco;
 		this.recoveryYieldFinalBalance = recoveryYieldFinalBalance;
 	}
-
 
 	public Long getId() {
 		return id;
@@ -347,28 +347,40 @@ public class MaterialStockBalance implements Serializable {
 	 * Calcula o saldo final somando o saldo anterior + entradas - saídas.
 	 */
 	public void updateFinalBalance() {
-	    // Cálculo do Saldo Quantidade (Normal)
-	    BigDecimal entries = totalPurchase
-	            .add(totalSentForProcessing) 
-	            .add(totalScrapSalesReturn)
-	            .add(totalAdjustmentEntries);
 
-	    BigDecimal exits = totalSalesScrap
-	            .add(totalAdjustmentExit);
+		// =========================
+		// SALDO NORMAL
+		// =========================
+		BigDecimal entries = totalPurchase.add(totalSentForProcessing).add(totalScrapSalesReturn)
+				.add(totalAdjustmentEntries);
 
-	    this.finalBalance = previousBalance.add(entries).subtract(exits);
+		BigDecimal exits = totalSalesScrap.add(totalAdjustmentExit);
 
-	    // Cálculo do Saldo MCO (O que faltava)
-	    BigDecimal entriesMco = totalPurchaseMco
-	            .add(totalSentForProcessingMco)
-	            .add(totalScrapSalesReturnMco)
-	            .add(totalAdjustmentEntriesMco);
-	    
-	    BigDecimal exitsMco = totalSalesScrapMco
-	            .add(totalAdjustmentExitMco);
+		this.finalBalance = previousBalance.add(entries).subtract(exits);
 
-	    // Agora o MCO acumula corretamente e subtrai as saídas
-	    this.finalBalanceMco = previousBalanceMco.add(entriesMco).subtract(exitsMco);
+		// =========================
+		// SALDO MCO
+		// =========================
+		BigDecimal entriesMco = totalPurchaseMco.add(totalSentForProcessingMco).add(totalScrapSalesReturnMco)
+				.add(totalAdjustmentEntriesMco);
+
+		BigDecimal exitsMco = totalSalesScrapMco.add(totalAdjustmentExitMco);
+
+		this.finalBalanceMco = previousBalanceMco.add(entriesMco).subtract(exitsMco);
+
+		// =========================
+		// RENDIMENTO (SEM DIVISÃO POR ZERO)
+		// =========================
+		// =========================
+		// RENDIMENTO DO SALDO FINAL
+		// =========================
+		if (finalBalance != null && finalBalance.compareTo(BigDecimal.ZERO) > 0 && finalBalanceMco != null) {
+
+			this.recoveryYieldFinalBalance = finalBalanceMco.divide(finalBalance, 6, RoundingMode.HALF_UP);
+
+		} else {
+			this.recoveryYieldFinalBalance = BigDecimal.ZERO;
+		}
 	}
 
 	@Override

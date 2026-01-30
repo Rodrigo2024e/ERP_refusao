@@ -36,31 +36,102 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
        RELATÓRIO DE INVENTÁRIO
        ====================================================== */
 
-    @Query("""
-        SELECT 
-            i.dateInventory            AS dateInventory,
-            m.materialCode             AS materialCode,
-            m.description              AS materialDescription,
-            ii.typeReceipt             AS typeReceipt,
-            ii.quantity                AS quantity,
-            ii.quantityMco             AS quantityMco,
-            ii.totalValue              AS totalValue,
-            p.name                     AS partnerName
-        FROM Inventory i
-        JOIN i.items ii
-        JOIN ii.material m
-        JOIN ii.partner p
-        WHERE (:startDate IS NULL OR i.dateInventory >= :startDate)
-          AND (:endDate   IS NULL OR i.dateInventory <= :endDate)
-          AND (:materialCode IS NULL OR m.materialCode = :materialCode)
-        ORDER BY i.dateInventory DESC, m.materialCode
-    """)
-    Page<InventoryReportProjection> reportInventory(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
-            @Param("materialCode") Long materialCode,
-            Pageable pageable
-    );
+    @Query(
+    	    value = """
+    	       SELECT
+    	    		i.date_inventory                                AS dateInventory,
+    	    		m.material_code                                 AS materialCode,
+    	    		m.description                                   AS description,
+
+    	    		SUM(sb.total_adjustment_entries)                 AS totalAdjustmentEntries,
+    	    		AVG(sb.recovery_yield_adjustment_entries)        AS recoveryYieldAdjustmentEntries,
+    	    		SUM(sb.total_adjustment_entries_mco)             AS totalAdjustmentEntriesMco,
+
+    	    		SUM(sb.total_purchase)                           AS totalPurchase,
+    	    		AVG(sb.recovery_yield_purchase)                  AS recoveryYieldPurchase,
+    	    		SUM(sb.total_purchase_mco)                       AS totalPurchaseMco,
+
+    	    		SUM(sb.total_value)                              AS totalValue,
+    	    		AVG(sb.average_price)                            AS averagePrice,
+    	    		AVG(sb.average_price_mco)                        AS averagePriceMco,
+
+    	    		SUM(sb.total_sent_for_processing)                AS totalSentForProcessing,
+    	    		AVG(sb.recovery_yield_sent_for_processing)       AS recoveryYieldSentForProcessing,
+    	    		SUM(sb.total_sent_for_processing_mco)            AS totalSentForProcessingMco,
+
+    	    		SUM(sb.total_sales_scrap)                        AS totalSalesScrap,
+    	    		AVG(sb.recovery_yield_sales_scrap)               AS recoveryYieldSalesScrap,
+    	    		SUM(sb.total_sales_scrap_mco)                    AS totalSalesScrapMco,
+
+    	    		SUM(sb.total_scrap_sales_return)                 AS totalScrapSalesReturn,
+    	    		AVG(sb.recovery_yield_scrap_sales_return)        AS recoveryYieldScrapSalesReturn,
+    	    		SUM(sb.total_scrap_sales_return_mco)             AS totalScrapSalesReturnMco,
+
+    	    		SUM(sb.total_adjustment_exit)                    AS totalAdjustmentExit,
+    	    		AVG(sb.recovery_yield_adjustment_exit)           AS recoveryYieldAdjustmentExit,
+    	    		SUM(sb.total_adjustment_exit_mco)                AS totalAdjustmentExitMco,
+
+    /* ==========================
+       SALDO FINAL (REGRA CORRETA)
+       ========================== */
+
+		    (
+		        SUM(sb.total_purchase)
+		      + SUM(sb.total_adjustment_entries)
+		      + SUM(sb.total_scrap_sales_return)
+		      - SUM(sb.total_sales_scrap)
+		      - SUM(sb.total_adjustment_exit)
+		      - SUM(sb.total_sent_for_processing)
+		    )                                               AS finalBalance,
+		
+		    (
+		        SUM(sb.total_purchase_mco)
+		      + SUM(sb.total_adjustment_entries_mco)
+		      + SUM(sb.total_scrap_sales_return_mco)
+		      - SUM(sb.total_sales_scrap_mco)
+		      - SUM(sb.total_adjustment_exit_mco)
+		      - SUM(sb.total_sent_for_processing_mco)
+		    )                                               AS finalBalanceMco,
+		
+		    AVG(sb.recovery_yield_final_balance)              AS recoveryYieldFinalBalance
+
+		FROM tb_material_stock_balance sb
+		JOIN tb_material m ON m.id = sb.material_id
+		JOIN tb_inventory i On i.id = sb.inventory_id
+		
+		WHERE (:startDate IS NULL OR i.date_inventory >= :startDate)
+		  AND (:endDate   IS NULL OR i.date_inventory <= :endDate)
+		  AND (:materialCode IS NULL OR m.material_code = :materialCode)
+		
+		GROUP BY
+		    i.date_inventory,
+		    m.material_code,
+		    m.description
+		
+		ORDER BY
+		    m.material_code
+
+    	    """,
+    	    countQuery = """
+		SELECT COUNT(*) FROM (
+		    SELECT 1
+		   FROM tb_material_stock_balance sb
+    	    JOIN tb_material m ON m.id = sb.material_id
+    	    JOIN tb_inventory i On i.id = sb.inventory_id
+		    WHERE (:startDate IS NULL OR i.date_inventory >= :startDate)
+		      AND (:endDate   IS NULL OR i.date_inventory <= :endDate)
+		      AND (:materialCode IS NULL OR m.material_code = :materialCode)
+		    GROUP BY i.date_inventory, m.material_code, m.description
+    	    """,
+    	    nativeQuery = true
+    	)
+    	Page<InventoryReportProjection> reportInventory(
+    	        LocalDate startDate,
+    	        LocalDate endDate,
+    	        Long materialCode,
+    	        Pageable pageable
+    	);
+
 
     Optional<Inventory> findByReceipt(Receipt receipt);
 

@@ -312,10 +312,15 @@ public class InventoryService {
 		return value != null ? value : BigDecimal.ZERO;
 	}
 
-	public Page<InventoryReportProjection> getReportRange(LocalDate startDate, LocalDate endDate, Long materialCode,
-			Pageable pageable) {
+	public Page<InventoryReportProjection> getReportRange(
+			LocalDate startDate, 
+			LocalDate endDate, 
+			Long materialCode,
+			Pageable pageable) 
+	{
 		if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
 			throw new IllegalArgumentException("Data inicial maior que data final");
+			
 		}
 		if (materialCode != null && !materialRepository.existsByMaterialCode(materialCode)) {
 			throw new IllegalArgumentException("Material inexistente: " + materialCode);
